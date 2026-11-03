@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD actal 7.18</title>
+    <title>Dominó R act 7.28</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -88,7 +88,6 @@
             width: 100%;
         }
 
-        /* --- BOTONES DE CONTROL SUPERIOR --- */
         .botones-cabecera {
             position: absolute; 
             top: 8px; 
@@ -122,7 +121,6 @@
         }
         .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
 
-        /* --- ESCENARIO DE JUEGO OPTIMIZADO --- */
         .escenario-mesa {
             position: relative;
             flex: 1;
@@ -154,7 +152,6 @@
         .marca-agua { position: absolute; font-size: 26px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 4px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .marca-agua span { font-size: 44px; margin-bottom: -6px; opacity: 0.12;}
 
-        /* --- JUGADORES FLOTANTES ALREDEDOR DE LA MESA --- */
         .jugador-flotante {
             position: absolute;
             z-index: 40;
@@ -171,8 +168,8 @@
         }
 
         .avatar { 
-            width: 32px; 
-            height: 32px; 
+            width: 34px; 
+            height: 34px; 
             background-color: #1e2430; 
             border: 2px solid #555; 
             border-radius: 50%; 
@@ -181,12 +178,23 @@
             justify-content: center; 
             font-size: 15px; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-            transition: border-color 0.3s, transform 0.3s;
+            transition: all 0.3s ease;
         }
         .turno-activo .avatar { 
             border-color: #00bcd4; 
             box-shadow: 0 0 14px #00bcd4; 
             transform: scale(1.12); 
+        }
+
+        /* Resaltar ganador de la mano */
+        .avatar-ganador-ronda .avatar {
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important;
+            animation: latirGanador 0.7s infinite alternate ease-in-out !important;
+        }
+        @keyframes latirGanador {
+            from { transform: scale(1.1); }
+            to { transform: scale(1.28); }
         }
 
         .nombre-tag {
@@ -221,7 +229,6 @@
         .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.92); }
         .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.92); }
 
-        /* Posiciones de rivales */
         #pos-j3 {
             top: 10px;
             left: 50%;
@@ -249,7 +256,6 @@
         }
         #pos-j2 .burbuja-estado { right: 110%; top: 50%; transform: translateY(-50%); }
 
-        /* Contenedor de dorsos de los rivales */
         .fichas-ocultas { display: flex; gap: 2px; align-items: center; justify-content: center; }
         .fichas-ocultas.v { flex-direction: column; }
 
@@ -281,7 +287,6 @@
         .ficha-dorso.h { width: 13px; height: 24px; } 
         .ficha-dorso.v { width: 24px; height: 13px; }
 
-        /* --- BARRA INFERIOR DEL JUGADOR (NOSOTROS) --- */
         .zona-nosotros-dock {
             position: absolute;
             bottom: 6px;
@@ -324,7 +329,6 @@
             overflow-x: auto;
         }
 
-        /* --- ESTILOS DE FICHAS --- */
         .ficha {
             width: 44px; 
             height: 82px; 
@@ -363,7 +367,6 @@
         .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
         .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
 
-        /* Contenedor central escalable de la mesa con transición suave */
         #zoom-container {
             position: absolute; 
             width: 100%; 
@@ -385,15 +388,65 @@
         }
         #toast-mensaje.visible { opacity: 1; }
 
-        #btn-siguiente { 
-            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 12px 28px; background: linear-gradient(45deg, #FF8C00, #FF0080); 
-            color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 15px; font-weight: 900; 
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
-            z-index: 110; white-space: nowrap;
+        /* --- CARTEL RESALTADOR DE VICTORIA DE MANO --- */
+        #banner-ganador-mano {
+            position: absolute; 
+            top: 38%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: rgba(10, 14, 23, 0.94);
+            border: 2px solid #ffd700;
+            padding: 10px 24px;
+            border-radius: 20px;
+            box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 110;
+            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bounceIn {
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        #banner-ganador-mano .texto-titulo {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #banner-ganador-mano .texto-puntos {
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: bold;
         }
 
-        /* --- LIBRETA DESLIZABLE LATERAL --- */
+        #btn-siguiente { 
+            position: absolute; 
+            top: 56%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            display: none;
+            padding: 10px 24px; 
+            background: linear-gradient(45deg, #FF8C00, #FF0080); 
+            color: white; 
+            border: none; 
+            border-radius: 22px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
+            z-index: 115; 
+            white-space: nowrap;
+        }
+
         .panel-anotacion {
             position: absolute;
             top: 0;
@@ -443,7 +496,6 @@
         .punto-anotado.nos { color: var(--azul-rd); }
         .punto-anotado.ellos { color: var(--rojo-rd); }
 
-        /* --- MODAL AJUSTES --- */
         #modal-ajustes {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 15, 24, 0.88); z-index: 2500; display: flex;
@@ -517,7 +569,6 @@
 <body class="ficha-blanco mesa-verde">
     <div class="contenedor-juego">
         
-        <!-- BOTONES DE ACCIÓN FLOTANTES -->
         <div class="botones-cabecera">
             <button class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
             <button class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
@@ -530,6 +581,13 @@
                 <div class="zona-tapete" id="mesa-tapete">
                     <div class="marca-agua"><span>🇩🇴</span>Dominó RD</div>
                     <div id="zoom-container"></div>
+
+                    <!-- BANNER RESALTADOR DE GANADOR -->
+                    <div id="banner-ganador-mano">
+                        <div class="texto-titulo" id="texto-ganador-mano">🏆 ¡Dominó de Nosotros!</div>
+                        <div class="texto-puntos" id="texto-puntos-mano">+24 Puntos</div>
+                    </div>
+
                     <button id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
                 </div>
 
@@ -563,7 +621,7 @@
                     <div class="fichas-ocultas v" id="mano-j2"></div>
                 </div>
 
-                <!-- NOSOTROS (ABAJO: AVATAR AL LADO DE LA MANO) -->
+                <!-- NOSOTROS (ABAJO) -->
                 <div class="zona-nosotros-dock">
                     <div class="avatar-nosotros-pill" id="pos-j1">
                         <div class="avatar" id="avatar-j1">😎</div>
@@ -582,7 +640,6 @@
             <div id="toast-mensaje">Cargando partida...</div>
         </div>
 
-        <!-- PANEL DE ANOTACIÓN (DESLIZABLE) -->
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
                 <button class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
@@ -609,7 +666,6 @@
             </div>
         </aside>
 
-        <!-- MODAL DE CONFIGURACIÓN -->
         <div id="modal-ajustes" class="oculto">
             <div class="tarjeta-ajustes">
                 <h2>⚙️ Configuración</h2>
@@ -685,6 +741,7 @@
         let jugadorSalida = 1; 
         let esPrimerTurnoDespuesDeSalida = false;
 
+        const nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
         const frasesPensando = ["A ver...", "Pensando...", "Mmm...", "Esa pinta..."];
         const frasesPaso = ["¡Paso en banda!", "¡Pasó! ❌", "No llevo...", "Toque, jefe."];
 
@@ -757,15 +814,20 @@
         function mostrarBurbuja(idJugador, mensaje, tipo, persistente = false, limpiar = true) {
             if(limpiar) limpiarBurbujas();
             const burbuja = document.getElementById(`burbuja-j${idJugador}`);
-            burbuja.innerText = mensaje;
-            burbuja.className = `burbuja-estado visible ${tipo}`;
-            if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
-                setTimeout(() => { burbuja.classList.remove('visible'); }, 2200);
+            if (burbuja) {
+                burbuja.innerText = mensaje;
+                burbuja.className = `burbuja-estado visible ${tipo}`;
+                if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
+                    setTimeout(() => { burbuja.classList.remove('visible'); }, 2200);
+                }
             }
         }
 
         function limpiarBurbujas() {
-            for(let i=1; i<=4; i++) document.getElementById(`burbuja-j${i}`).className = 'burbuja-estado';
+            for(let i=1; i<=4; i++) {
+                const b = document.getElementById(`burbuja-j${i}`);
+                if (b) b.className = 'burbuja-estado';
+            }
         }
 
         function mostrarToast(mensaje) {
@@ -835,12 +897,12 @@
 
         function resaltarTurnoActivo() {
             for(let i=1; i<=4; i++) {
-                const av = document.getElementById(`avatar-j${i}`);
-                if (av) av.parentElement.parentElement.classList.remove('turno-activo');
+                const wrap = document.getElementById(`pos-j${i}`);
+                if (wrap) wrap.classList.remove('turno-activo');
             }
             if (!juegoTerminado && !esperandoSeleccionPunta) {
-                const avAct = document.getElementById(`avatar-j${turnoActual}`);
-                if (avAct) avAct.parentElement.parentElement.classList.add('turno-activo');
+                const wrapAct = document.getElementById(`pos-j${turnoActual}`);
+                if (wrapAct) wrapAct.classList.add('turno-activo');
             }
         }
 
@@ -880,37 +942,39 @@
             contenedor.appendChild(divFicha);
         }
 
+        // --- RENDERIZADO CON GIRO NATURAL CADA 3 O 4 FICHAS ---
         function renderizarRama(rama, joint, isRightBranch, tapete, contenedorZoom, cx, cy, zIndexG, iniciaNosotros, margenX, margenY) {
             let prevIsDouble = fichaCentro[0] === fichaCentro[1];
 
-            rama.forEach((ficha) => {
-                const isDouble = ficha[0] === ficha[1]; let newDir = joint.dir;
+            // Patrones predefinidos de giros cada 3 fichas para lograr el efecto serpiente dominicano
+            // Rama Derecha dobla en sentido horario / Rama Izquierda en antihorario
+            const secuenciaDerecha = ['R', 'D', 'L', 'D', 'R', 'U', 'L', 'U'];
+            const secuenciaIzquierda = ['L', 'U', 'R', 'U', 'L', 'D', 'R', 'D'];
+            const secuenciaVerticalDer = ['D', 'R', 'U', 'R', 'D', 'L', 'U', 'L'];
+            const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
+
+            rama.forEach((ficha, idx) => {
+                const isDouble = ficha[0] === ficha[1]; 
                 
+                // Determinar dirección: cada 3 fichas rota hacia la siguiente dirección del patrón
+                let tramo = Math.floor(idx / 3);
+                let newDir = joint.dir;
+
                 if (iniciaNosotros) {
-                    if (isRightBranch) { 
-                        if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'R';
-                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'U';
-                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'L';
-                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'D';
-                    } else { 
-                        if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'L';
-                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'D';
-                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'R';
-                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'U';
-                    }
+                    newDir = isRightBranch 
+                        ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] 
+                        : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length];
                 } else {
-                    if (isRightBranch) { 
-                        if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'D';
-                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'L';
-                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'U';
-                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'R';
-                    } else { 
-                        if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'U';
-                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'R';
-                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'D';
-                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'L';
-                    }
+                    newDir = isRightBranch 
+                        ? secuenciaDerecha[tramo % secuenciaDerecha.length] 
+                        : secuenciaIzquierda[tramo % secuenciaIzquierda.length];
                 }
+
+                // Respaldo de seguridad si se acerca mucho a los bordes de la mesa
+                if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'D';
+                else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'U';
+                else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'L';
+                else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'R';
 
                 if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
 
@@ -940,11 +1004,8 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
             
-            // --- CÁMARA DINÁMICA / ZOOM ADAPTATIVO SEGÚN CANTIDAD DE FICHAS ---
             let totalFichasJugadas = 1 + ramaIzquierda.length + ramaDerecha.length;
-            
-            // Empieza en 0.85 (grande y nítido) y va alejándose suavemente hasta 0.44 conforme crece la mesa
-            let factorEscala = Math.max(0.44, 0.88 - (totalFichasJugadas * 0.018));
+            let factorEscala = Math.max(0.48, 0.85 - (totalFichasJugadas * 0.015));
             
             contenedorZoom.style.transform = `scale(${factorEscala})`;
             contenedorZoom.style.transformOrigin = 'center';
@@ -952,8 +1013,8 @@
             const cx = anchoTapete / 2, cy = altoTapete / 2; 
             let zIndexG = 10; 
 
-            const margenX = (anchoTapete / (2 * factorEscala)) - 55;
-            const margenY = (altoTapete / (2 * factorEscala)) - 55;
+            const margenX = (anchoTapete / (2 * factorEscala)) - 60;
+            const margenY = (altoTapete / (2 * factorEscala)) - 60;
 
             let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
             let esDoble = fichaCentro[0] === fichaCentro[1];
@@ -1024,6 +1085,7 @@
             if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
                 juegoTerminado = true;
                 document.getElementById('btn-siguiente').style.display = 'none';
+                document.getElementById('banner-ganador-mano').style.display = 'none';
                 mostrarModalVictoria(puntosNosotros >= metaPuntos ? 1 : 2);
                 return true;
             }
@@ -1032,21 +1094,22 @@
 
         function finalizarMano(ganador, porTranque = false, esCapicua = false) {
             juegoTerminado = true; limpiarBurbujas(); ocultarToast();
-            document.getElementById('btn-siguiente').style.display = 'block';
             
             let sumaPuntosMano = 0;
             for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
 
             let equipoGanador = 0; 
+            let jGanadorFinal = ganador;
+            let tipoVictoria = "¡DOMINÓ!";
             
             if (porTranque) {
                 let jTranco = ultimoJugadorEnJugar; let jSigue = (ultimoJugadorEnJugar % 4) + 1;
                 let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
 
-                let ganadorTranque = (ptsTranco <= ptsSigue) ? jTranco : jSigue;
-                equipoGanador = (ganadorTranque === 1 || ganadorTranque === 3) ? 1 : 2;
-                ultimoGanador = ganadorTranque;
-                mostrarBurbuja(ganadorTranque, `¡TRANQUE! 🔒 (+${sumaPuntosMano})`, "ganador", true);
+                jGanadorFinal = (ptsTranco <= ptsSigue) ? jTranco : jSigue;
+                equipoGanador = (jGanadorFinal === 1 || jGanadorFinal === 3) ? 1 : 2;
+                ultimoGanador = jGanadorFinal;
+                tipoVictoria = "¡TRANQUE! 🔒";
                 sacudirMesa();
             } else {
                 equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2;
@@ -1054,20 +1117,37 @@
                 
                 if (esCapicua) { 
                     sumaPuntosMano += 30; 
-                    mostrarBurbuja(ganador, `¡CAPICÚA! 🌟 (+${sumaPuntosMano})`, "capicua", true); 
+                    tipoVictoria = "¡CAPICÚA! 🌟";
                     sacudirMesa();
-                } 
-                else { 
-                    mostrarBurbuja(ganador, `¡DOMINÓ! 🏆 (+${sumaPuntosMano})`, "ganador", true); 
                 }
             }
 
             if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
-            
             agregarRondaHistorial(equipoGanador, sumaPuntosMano);
             
+            // --- RESALTAR JUGADOR GANADOR DE FORMA ESPECTACULAR ---
+            for (let i = 1; i <= 4; i++) {
+                const wrap = document.getElementById(`pos-j${i}`);
+                if (wrap) wrap.classList.remove('avatar-ganador-ronda');
+            }
+            const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`);
+            if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
+
+            // Mostrar el banner elegante sobre la mesa
+            const banner = document.getElementById('banner-ganador-mano');
+            const txtTitulo = document.getElementById('texto-ganador-mano');
+            const txtPtos = document.getElementById('texto-puntos-mano');
+            txtTitulo.innerHTML = `🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`;
+            txtPtos.innerText = `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`;
+            banner.style.display = 'flex';
+
+            document.getElementById('btn-siguiente').style.display = 'block';
+
             let termino = revisarPuntos();
-            if (termino) document.getElementById('btn-siguiente').style.display = 'none';
+            if (termino) {
+                document.getElementById('btn-siguiente').style.display = 'none';
+                banner.style.display = 'none';
+            }
             
             renderizarManos(); renderizarMesa();
         }
@@ -1243,6 +1323,12 @@
 
         function iniciarManoConAnimacion() {
             document.getElementById('btn-siguiente').style.display = 'none';
+            document.getElementById('banner-ganador-mano').style.display = 'none';
+            for (let i = 1; i <= 4; i++) {
+                const wrap = document.getElementById(`pos-j${i}`);
+                if (wrap) wrap.classList.remove('avatar-ganador-ronda');
+            }
+
             limpiarBurbujas(); ocultarToast();
             
             document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
@@ -1251,7 +1337,7 @@
 
             const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
             crearAnimacionFichas();
-            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2200);
+            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2000);
         }
 
         function ejecutarLogicaReparto() {
