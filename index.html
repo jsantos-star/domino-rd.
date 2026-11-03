@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominó RD - Edición Maestra</title>
+    <style>
+        :root {
+            --azul-rd: #00bcd4; 
+            --rojo-rd: #ff1744; 
+            --fondo-oscuro: #0f1522; 
+            --mesa-verde: #163823;
+            --madera: #5c3a21;
+
+            /* Variables de Fichas */
+            --ficha-bg: linear-gradient(135deg, #ffffff 0%, #e6e6e6 100%);
+            --ficha-punto: #111111;
+            --ficha-linea: linear-gradient(to right, #002868 50%, #ce1126 50%);
+            --ficha-linea-v: linear-gradient(to bottom, #002868 50%, #ce1126 50%);
+            --ficha-borde-par: #ccc;
+
+            /* Variables de Mesa */
+            --tapete-fondo: radial-gradient(circle, var(--mesa-verde) 0%, #08140c 100%);
+            --tapete-marca-agua: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- TEMAS DE FICHAS --- */
+        body.ficha-azul {
+            --ficha-bg: linear-gradient(135deg, #0d3b66 0%, #001f3f 100%);
+            --ficha-punto: #ffffff;
+            --ficha-linea: #00bcd4;
+            --ficha-linea-v: #00bcd4;
+            --ficha-borde-par: #1b4965;
+        }
+
+        body.ficha-rojo {
+            --ficha-bg: linear-gradient(135deg, #9b111e 0%, #56070c 100%);
+            --ficha-punto: #ffffff;
+            --ficha-linea: #ffc107;
+            --ficha-linea-v: #ffc107;
+            --ficha-borde-par: #780000;
+        }
+
+        /* --- TEMAS DE PAÑO DE LA MESA --- */
+        body.mesa-negro {
+            --tapete-fondo: radial-gradient(circle, #25282a 0%, #0d0e10 100%);
+            --tapete-marca-agua: rgba(255, 255, 255, 0.06);
+        }
+
+        body.mesa-azul {
+            --tapete-fondo: radial-gradient(circle, #0f3d64 0%, #06192a 100%);
+            --tapete-marca-agua: rgba(255, 255, 255, 0.08);
+        }
+
+        body.mesa-blanco {
+            --tapete-fondo: radial-gradient(circle, #f0f3f6 0%, #cfd7df 100%);
+            --tapete-marca-agua: rgba(0, 0, 0, 0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background-color: var(--fondo-oscuro); color: white; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+
+        .contenedor-juego { display: flex; width: 100%; max-width: 1600px; height: 100vh; position: relative; }
+
+        .area-principal { flex: 1; display: flex; flex-direction: column; position: relative; }
+        
+        .area-mesa { 
+            flex: 1; display: grid; padding: 40px 30px 20px 30px; gap: 15px; 
+            grid-template-columns: 160px 1fr 160px; 
+            grid-template-rows: 100px 1fr 130px; 
+            grid-template-areas: ". jugador3 ." "jugador4 tapete jugador2" ". jugador1 ."; 
+        }
+
+        /* --- BOTÓN Y MODAL DE CONFIGURACIÓN --- */
+        #btn-ajustes {
+            position: absolute; top: 18px; right: 335px; width: 44px; height: 44px;
+            background: rgba(19, 25, 38, 0.9); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%; color: #fff; font-size: 20px; display: flex;
+            justify-content: center; align-items: center; cursor: pointer; z-index: 120;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.25s ease;
+        }
+        #btn-ajustes:hover { transform: rotate(45deg) scale(1.08); border-color: var(--azul-rd); }
+
+        #modal-ajustes {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 24, 0.85); z-index: 2500; display: flex;
+            justify-content: center; align-items: center; backdrop-filter: blur(8px);
+        }
+        .tarjeta-ajustes {
+            background: #131926; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 30px; width: 90%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; gap: 18px;
+        }
+        .tarjeta-ajustes h2 { font-size: 22px; text-align: center; color: #fff; margin-bottom: 2px; }
+        .grupo-ajuste { display: flex; flex-direction: column; gap: 8px; }
+        .grupo-ajuste label { font-size: 13px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .opciones-botones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .opciones-colores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .opciones-mesa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        
+        .btn-opcion {
+            background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            color: #fff; padding: 10px 6px; font-weight: bold; font-size: 13px; cursor: pointer;
+            transition: all 0.2s ease; text-align: center;
+        }
+        .btn-opcion:hover { border-color: var(--azul-rd); }
+        .btn-opcion.activo { background: rgba(0, 188, 212, 0.2); border-color: var(--azul-rd); color: var(--azul-rd); box-shadow: 0 0 12px rgba(0, 188, 212, 0.4); }
+
+        .btn-color { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 4px; font-size: 12px; }
+        .muestra-color { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #fff; }
+        .muestra-blanca { background: #ffffff; }
+        .muestra-azul { background: #00bcd4; }
+        .muestra-roja { background: #ff1744; }
+
+        .muestra-m-verde { background: #163823; }
+        .muestra-m-negro { background: #18191a; }
+        .muestra-m-azul { background: #0f3d64; }
+        .muestra-m-blanco { background: #e0e5eb; }
+
+        .btn-cerrar-ajustes {
+            background: var(--azul-rd); color: #000; border: none; padding: 13px;
+            border-radius: 25px; font-size: 15px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; margin-top: 5px; transition: all 0.2s;
+        }
+        .btn-cerrar-ajustes:hover { background: #00e5ff; transform: translateY(-2px); }
+
+        /* --- LIBRETA DE ANOTACIÓN LATERAL --- */
+        .panel-anotacion {
+            width: 320px; background: #131926; border-left: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; padding: 25px 20px; 
+            box-shadow: -5px 0 25px rgba(0,0,0,0.8); z-index: 20; flex-shrink: 0;
+        }
+        
+        .header-libreta { text-align: center; margin-bottom: 20px; }
+        .header-libreta h1 { font-size: 26px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px;}
+        .header-libreta h1 span { color: #ce1126; } 
+        .meta-puntos { background: rgba(0, 188, 212, 0.15); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; color: var(--azul-rd); display: inline-block; cursor: pointer; transition: transform 0.2s; }
+        .meta-puntos:hover { transform: scale(1.05); }
+
+        .marcador-global { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; border-radius: 15px 15px 0 0; padding: 20px; border: 1px solid rgba(255,255,255,0.03); border-bottom: none; }
+        .equipo-score { display: flex; flex-direction: column; align-items: center; width: 40%; }
+        .equipo-score h3 { font-size: 15px; color: #ccc; margin-bottom: 8px; }
+        .equipo-score .puntos { font-size: 46px; font-weight: 900; }
+        .puntos.nosotros { color: var(--azul-rd); }
+        .puntos.ellos { color: var(--rojo-rd); }
+        .vs-circle { width: 35px; height: 35px; background: #2a3143; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; color: #888; }
+
+        .anotacion-grid {
+            flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 15px 15px; 
+            border: 1px solid rgba(255,255,255,0.03); border-top: 2px solid #2a3143; overflow: hidden;
+            margin-bottom: 25px;
+        }
+        .columna-puntos { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 15px 10px; overflow-y: auto; }
+        .divisor-linea { width: 2px; background: #2a3143; margin: 10px 0; border-radius: 2px;}
+        
+        .columna-puntos::-webkit-scrollbar { width: 4px; }
+        .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 4px; }
+
+        .punto-anotado { font-size: 24px; font-weight: bold; text-align: center; padding: 5px; }
+        .punto-anotado.nos { color: var(--azul-rd); }
+        .punto-anotado.ellos { color: var(--rojo-rd); }
+
+        #toast-mensaje {
+            position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 10px 25px;
+            border-radius: 25px; font-size: 15px; font-weight: bold;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 100; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        #toast-mensaje.visible { opacity: 1; }
+
+        #btn-siguiente { 
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 15px 40px; background: linear-gradient(45deg, #FF8C00, #FF0080); 
+            color: white; border: none; border-radius: 30px; cursor: pointer; font-size: 18px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            transition: all 0.3s ease; z-index: 100; overflow: hidden;
+        }
+        #btn-siguiente::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20px; height: 200%; background: rgba(255,255,255,0.4); transform: rotate(35deg); transition: all 0.5s ease; }
+        #btn-siguiente:hover { transform: translate(-50%, -55%) scale(1.05); box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6); }
+
+        .zona-jugador { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        #zona-j3 { justify-content: center; }
+        .zona-jugador.lateral { flex-direction: column; justify-content: center; }
+        
+        .avatar-container { position: relative; display: flex; justify-content: center; align-items: center; }
+        
+        .info-jugador { display: flex; align-items: center; gap: 10px; flex-direction: row !important; white-space: nowrap; }
+        #zona-j1 .info-jugador, #zona-j3 .info-jugador, #zona-j4 .info-jugador { flex-direction: row !important; } 
+        #zona-j2 .info-jugador { flex-direction: row-reverse !important; } 
+        
+        .burbuja-estado {
+            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%) translateY(10px);
+            background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff;
+            padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 15px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 50; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6); white-space: nowrap;
+        }
+        .burbuja-estado.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.9); font-size: 16px;}
+        .burbuja-estado.pensando { border-color: #ffcc00; color: #ffcc00; }
+        .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.9); font-size: 18px; }
+        .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.9); font-size: 18px; animation: latir 0.5s infinite alternate;}
+
+        .avatar { width: 50px; height: 50px; background-color: #222; border: 3px solid #555; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: border-color 0.3s; z-index: 5;}
+        .turno-activo .avatar { border-color: #00bcd4; box-shadow: 0 0 20px #00bcd4; transform: scale(1.1); }
+        .nombre-jugador { font-size: 14px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; z-index: 5;}
+
+        .fichas-ocultas { display: flex; gap: 4px; align-items: center; justify-content: center; margin-top: 8px;}
+        .fichas-ocultas.vertical { flex-direction: column; margin-top: 0; margin-left: 8px; margin-right: 8px;}
+
+        /* --- DORSO DE FICHA CON BANDERA DOMINICANA Y SELLO RD NEGRO --- */
+        .ficha-dorso { 
+            border-radius: 5px; 
+            border: 1px solid #1a2233; 
+            box-shadow: 1px 2px 5px rgba(0,0,0,0.6); 
+            position: relative; 
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: 
+                linear-gradient(to right, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+                linear-gradient(to bottom, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+                conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
+        }
+        .ficha-dorso::after {
+            content: 'RD';
+            font-size: 8px;
+            font-weight: 900;
+            color: #111111;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 1px 3px;
+            border-radius: 3px;
+            border: 0.5px solid rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+        .ficha-dorso.h { width: 22px; height: 44px; } 
+        .ficha-dorso.v { width: 44px; height: 22px; }
+
+        #zona-j1 { grid-area: jugador1; } 
+        #zona-j2 { grid-area: jugador2; }
+        #zona-j3 { grid-area: jugador3; } 
+        #zona-j4 { grid-area: jugador4; }
+
+        .zona-tapete {
+            grid-area: tapete; background: var(--tapete-fondo);
+            border-radius: 40px; border: 12px solid var(--madera); 
+            box-shadow: 0 0 0 4px #002868, 0 0 0 8px #ce1126, inset 0 0 60px rgba(0,0,0,0.9); 
+            position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        @keyframes shakeMesa { 0% { transform: translate(2px, 2px) rotate(0deg); } 10% { transform: translate(-2px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        .mesa-temblando { animation: shakeMesa 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+        .marca-agua { position: absolute; font-size: 50px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 12px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        .marca-agua span { font-size: 100px; margin-bottom: -15px; opacity: 0.12;}
+
+        /* --- FICHAS --- */
+        .ficha {
+            width: 50px; height: 100px; background: var(--ficha-bg);
+            border-radius: 8px; display: flex; flex-direction: column; padding: 5px;
+            box-shadow: 3px 5px 10px rgba(0,0,0,0.5); cursor: pointer; transition: all 0.2s;
+            border-top: 3px solid #002868; border-bottom: 3px solid #ce1126;
+            border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par);
+        }
+        
+        .ficha:hover { transform: translateY(-10px); }
+        .ficha.seleccionada { transform: translateY(-20px); box-shadow: 0 10px 25px rgba(0, 188, 212, 0.8); border-color: #00bcd4; }
+        .ficha-mesa { position: absolute; transition: none; }
+        .ficha-mesa:hover { transform: none; cursor: default; }
+        
+        @keyframes fichazo { 0% { transform: scale(1.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .ficha-animacion-golpe { animation: fichazo 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        .ficha.horizontal { width: 100px !important; height: 50px !important; flex-direction: row; border-top: 1px solid var(--ficha-borde-par); border-bottom: 1px solid var(--ficha-borde-par); border-left: 3px solid #002868; border-right: 3px solid #ce1126; }
+        .ficha.vertical { width: 50px !important; height: 100px !important; flex-direction: column; border-top: 3px solid #002868; border-bottom: 3px solid #ce1126; border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par); }
+
+        .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 4px; align-items: center; justify-items: center; }
+        .linea-divisoria { background: var(--ficha-linea); height: 3px; width: 90%; margin: 0 auto; border-radius: 2px; }
+        .ficha.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 3px; height: 90%; margin: auto 0; }
+        .punto { width: 8px; height: 8px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.4); }
+
+        .blanco .punto { display: none; }
+        .uno .punto:nth-child(1) { grid-area: 2 / 2; }
+        .dos .punto:nth-child(1) { grid-area: 1 / 1; } .dos .punto:nth-child(2) { grid-area: 3 / 3; }
+        .tres .punto:nth-child(1) { grid-area: 1 / 1; } .tres .punto:nth-child(2) { grid-area: 2 / 2; } .tres .punto:nth-child(3) { grid-area: 3 / 3; }
+        .cuatro .punto:nth-child(1) { grid-area: 1 / 1; } .cuatro .punto:nth-child(2) { grid-area: 3 / 1; } .cuatro .punto:nth-child(3) { grid-area: 1 / 3; } .cuatro .punto:nth-child(4) { grid-area: 3 / 3; }
+        .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
+        .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
+
+        .mano-jugador-activa { display: flex; justify-content: center; gap: 8px; width: 100%; margin-top: 10px;}
+
+        .marcador-punta { position: absolute; width: 55px; height: 55px; background-color: rgba(0, 188, 212, 0.4); border: 3px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 20px 5px rgba(0, 188, 212, 0.8); animation: latir 1s infinite alternate; z-index: 999; }
+        .marcador-punta:hover { background-color: rgba(0, 188, 212, 0.9); }
+        @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.1); } }
+
+        #pantalla-barajar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .oculto { display: none !important; }
+        #pantalla-barajar h2 { color: white; font-size: 30px; margin-top: 200px; text-shadow: 2px 2px 5px #00bcd4; z-index: 1100; }
+        .zona-revuelta { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; top:0; left:0;}
+        .ficha-revuelta { 
+            position: absolute; width: 30px; height: 45px; 
+            border-radius: 5px; border: 1px solid #1a2233; 
+            animation: mezclar 1.2s infinite ease-in-out alternate; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: 
+                linear-gradient(to right, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+                linear-gradient(to bottom, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+                conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
+        }
+        .ficha-revuelta::after {
+            content: 'RD'; font-size: 9px; font-weight: 900; color: #111111;
+            background: rgba(255, 255, 255, 0.85); padding: 1px 3px; border-radius: 3px;
+            border: 0.5px solid rgba(0, 0, 0, 0.4);
+        }
+        @keyframes mezclar { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg)); } 100% { transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg)); } }
+
+        #modal-victoria { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 21, 34, 0.95); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.1); padding: 50px; border-radius: 25px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-width: 400px; width: 90%; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tarjeta-victoria h1 { font-size: 35px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; gap: 15px;}
+        .tarjeta-victoria h1 span { font-size: 60px; } 
+        .tarjeta-victoria h2 { font-size: 26px; color: #fff; margin-bottom: 40px; font-weight: 400;}
+        .btn-jugar-nuevo { background: var(--azul-rd); color: #000; border: none; padding: 18px 30px; border-radius: 30px; font-size: 18px; font-weight: 900; cursor: pointer; transition: all 0.3s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase;}
+        .btn-jugar-nuevo:hover { background: #00e5ff; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,188,212,0.4); }
+        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="ficha-blanco mesa-verde">
+    <div class="contenedor-juego">
+        
+        <button id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración de Partida">⚙️</button>
+
+        <div class="area-principal">
+            <main class="area-mesa">
+                <div class="zona-jugador" id="zona-j3">
+                    <div class="info-jugador">
+                        <div class="avatar-container">
+                            <div class="avatar">👨🏽‍🦳</div>
+                            <div class="burbuja-estado" id="burbuja-j3"></div>
+                        </div>
+                        <div class="nombre-jugador">Compadre</div>
+                    </div>
+                    <div class="fichas-ocultas" id="mano-j3"></div>
+                </div>
+
+                <div class="zona-jugador lateral" id="zona-j4">
+                    <div class="info-jugador">
+                        <div class="avatar-container">
+                            <div class="avatar">👩🏽</div>
+                            <div class="burbuja-estado" id="burbuja-j4"></div>
+                        </div>
+                        <div class="nombre-jugador">Rival 2</div>
+                    </div>
+                    <div class="fichas-ocultas vertical" id="mano-j4"></div>
+                </div>
+
+                <div class="zona-tapete" id="mesa-tapete">
+                    <div class="marca-agua"><span>🇩🇴</span>República Dominicana</div>
+                    <div id="zoom-container" style="transform: scale(0.60); transform-origin: center; width: 100%; height: 100%; position: absolute; z-index: 2;"></div>
+                    
+                    <button id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
+                    
+                    <div id="pantalla-barajar" class="oculto">
+                        <div class="zona-revuelta" id="fichas-animadas"></div>
+                        <h2>¡Barajando!</h2>
+                    </div>
+                </div>
+
+                <div class="zona-jugador lateral" id="zona-j2">
+                    <div class="fichas-ocultas vertical" id="mano-j2"></div>
+                    <div class="info-jugador">
+                        <div class="nombre-jugador">Rival 1</div>
+                        <div class="avatar-container">
+                            <div class="avatar">🧔🏾‍♂️</div>
+                            <div class="burbuja-estado" id="burbuja-j2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="zona-jugador" id="zona-j1">
+                    <div class="info-jugador">
+                        <div class="avatar-container">
+                            <div class="avatar">😎</div>
+                            <div class="burbuja-estado" id="burbuja-j1"></div>
+                        </div>
+                        <div class="nombre-jugador">Nosotros</div>
+                    </div>
+                    <div class="mano-jugador-activa" id="mi-mano"></div>
+                </div>
+            </main>
+            <div id="toast-mensaje">Cargando partida...</div>
+        </div>
+
+        <aside class="panel-anotacion">
+            <div class="header-libreta">
+                <h1>Dominó <span>RD</span></h1>
+                <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">Meta: 200 pts</div>
+            </div>
+
+            <div class="marcador-global">
+                <div class="equipo-score">
+                    <h3>Nosotros</h3>
+                    <div class="puntos nosotros" id="ptos-lat-nosotros">0</div>
+                </div>
+                <div class="vs-circle">VS</div>
+                <div class="equipo-score">
+                    <h3>Ellos</h3>
+                    <div class="puntos ellos" id="ptos-lat-ellos">0</div>
+                </div>
+            </div>
+
+            <div class="anotacion-grid">
+                <div class="columna-puntos" id="historial-nosotros"></div>
+                <div class="divisor-linea"></div>
+                <div class="columna-puntos" id="historial-ellos"></div>
+            </div>
+        </aside>
+
+        <!-- MODAL DE CONFIGURACIÓN -->
+        <div id="modal-ajustes" class="oculto">
+            <div class="tarjeta-ajustes">
+                <h2>⚙️ Configuración</h2>
+
+                <div class="grupo-ajuste">
+                    <label>Puntuación Meta</label>
+                    <div class="opciones-botones">
+                        <button class="btn-opcion" id="btn-meta-50" onclick="cambiarMetaPuntos(50)">50</button>
+                        <button class="btn-opcion" id="btn-meta-100" onclick="cambiarMetaPuntos(100)">100</button>
+                        <button class="btn-opcion" id="btn-meta-150" onclick="cambiarMetaPuntos(150)">150</button>
+                        <button class="btn-opcion activo" id="btn-meta-200" onclick="cambiarMetaPuntos(200)">200</button>
+                    </div>
+                </div>
+
+                <div class="grupo-ajuste">
+                    <label>Color de las Fichas</label>
+                    <div class="opciones-colores">
+                        <button class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')">
+                            <span class="muestra-color muestra-blanca"></span> Blanco
+                        </button>
+                        <button class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')">
+                            <span class="muestra-color muestra-azul"></span> Azul
+                        </button>
+                        <button class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')">
+                            <span class="muestra-color muestra-roja"></span> Rojo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grupo-ajuste">
+                    <label>Color del Paño de Mesa</label>
+                    <div class="opciones-mesa">
+                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')">
+                            <span class="muestra-color muestra-m-verde"></span> Verde
+                        </button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')">
+                            <span class="muestra-color muestra-m-negro"></span> Negro
+                        </button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')">
+                            <span class="muestra-color muestra-m-azul"></span> Azul
+                        </button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')">
+                            <span class="muestra-color muestra-m-blanco"></span> Blanco
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-cerrar-ajustes" onclick="toggleModalAjustes()">Listo</button>
+            </div>
+        </div>
+        
+        <div id="modal-victoria" class="oculto">
+            <div class="tarjeta-victoria">
+                <h1 id="titulo-victoria-color"><span>🏆</span> ¡GANADOR!</h1>
+                <h2 id="equipo-ganador-texto">Equipo Nosotros</h2>
+                <button class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mazo = []; let jugadores = { 1: [], 2: [], 3: [], 4: [] }; 
+        const clasesNumeros = ['blanco', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'];
+
+        let puntosNosotros = 0; let puntosEllos = 0; let metaPuntos = 200;
+        let temaFichaActual = 'blanco'; let temaMesaActual = 'verde';
+        let ultimoGanador = null; 
+        let fichaCentro = null; let ramaIzquierda = []; let ramaDerecha = [];
+        let extremoIzquierdo = null; let extremoDerecho = null;
+        let turnoActual = 1; let juegoTerminado = false; let pasesConsecutivos = 0; 
+        let salidaObligatoria = false; let ultimoJugadorEnJugar = null; 
+        let esperandoSeleccionPunta = false; let fichaSeleccionada = null; let indexSeleccionado = null;
+        let jugadorSalida = 1; 
+        let esPrimerTurnoDespuesDeSalida = false;
+
+        const frasesPensando = ["A ver, a ver...", "Déjame pensar...", "Mmm...", "¿Será que tiro esta?"];
+        const frasesPaso = ["¡Me fui en banda!", "¡Pasó! ❌", "No llevo...", "Toque, jefe."];
+
+        function generarHTMLMitad(numero) {
+            let html = `<div class="mitad ${clasesNumeros[numero]}">`;
+            for(let i = 0; i < numero; i++) html += `<div class="punto"></div>`;
+            return html + `</div>`;
+        }
+
+        function sumarMano(mano) { return mano.reduce((sum, f) => sum + f[0] + f[1], 0); }
+
+        function toggleModalAjustes() {
+            const modal = document.getElementById('modal-ajustes');
+            modal.classList.toggle('oculto');
+        }
+
+        function cambiarMetaPuntos(nuevaMeta) {
+            metaPuntos = nuevaMeta;
+            document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
+            
+            [50, 100, 150, 200].forEach(pts => {
+                const b = document.getElementById(`btn-meta-${pts}`);
+                if (b) b.classList.toggle('activo', pts === nuevaMeta);
+            });
+
+            mostrarToast(`Meta actualizada a ${metaPuntos} puntos`);
+            revisarPuntos();
+        }
+
+        function actualizarClasesBody() {
+            document.body.className = `ficha-${temaFichaActual} mesa-${temaMesaActual}`;
+        }
+
+        function cambiarColorTemaFicha(tema) {
+            temaFichaActual = tema;
+            actualizarClasesBody();
+            
+            ['blanco', 'azul', 'rojo'].forEach(col => {
+                const b = document.getElementById(`btn-color-${col}`);
+                if (b) b.classList.toggle('activo', col === tema);
+            });
+
+            mostrarToast(`Color de fichas: ${tema.toUpperCase()}`);
+            renderizarManos();
+            renderizarMesa();
+        }
+
+        function cambiarColorMesa(tema) {
+            temaMesaActual = tema;
+            actualizarClasesBody();
+
+            ['verde', 'negro', 'azul', 'blanco'].forEach(m => {
+                const b = document.getElementById(`btn-mesa-${m}`);
+                if (b) b.classList.toggle('activo', m === tema);
+            });
+
+            mostrarToast(`Color de mesa: ${tema.toUpperCase()}`);
+        }
+
+        function mostrarBurbuja(idJugador, mensaje, tipo, persistente = false, limpiar = true) {
+            if(limpiar) limpiarBurbujas();
+            const burbuja = document.getElementById(`burbuja-j${idJugador}`);
+            burbuja.innerText = mensaje;
+            burbuja.className = `burbuja-estado visible ${tipo}`;
+            if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
+                setTimeout(() => { burbuja.classList.remove('visible'); }, 2500);
+            }
+        }
+
+        function limpiarBurbujas() {
+            for(let i=1; i<=4; i++) document.getElementById(`burbuja-j${i}`).className = 'burbuja-estado';
+        }
+
+        function mostrarToast(mensaje) {
+            const toast = document.getElementById('toast-mensaje');
+            toast.innerText = mensaje; toast.classList.add('visible');
+            setTimeout(() => { toast.classList.remove('visible'); }, 3000);
+        }
+
+        function ocultarToast() { document.getElementById('toast-mensaje').classList.remove('visible'); }
+
+        function sacudirMesa() {
+            const tapete = document.getElementById('mesa-tapete');
+            tapete.classList.remove('mesa-temblando');
+            void tapete.offsetWidth; 
+            tapete.classList.add('mesa-temblando');
+            setTimeout(() => tapete.classList.remove('mesa-temblando'), 600);
+        }
+
+        function dibujarFichasReveladas(idContenedor, mano, tipo) {
+            const cont = document.getElementById(idContenedor); cont.innerHTML = '';
+            mano.forEach(ficha => {
+                const wrapper = document.createElement('div');
+                wrapper.style.width = tipo === 'h' ? '25px' : '50px'; wrapper.style.height = tipo === 'h' ? '50px' : '25px';
+                wrapper.style.position = 'relative';
+
+                const divFicha = document.createElement('div');
+                divFicha.className = `ficha ${tipo === 'h' ? '' : 'horizontal'}`;
+                divFicha.style.transform = 'scale(0.5)'; divFicha.style.transformOrigin = 'top left';
+                divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
+                divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
+                
+                wrapper.appendChild(divFicha); cont.appendChild(wrapper);
+            });
+        }
+
+        function dibujarDorsos(idContenedor, cantidad, tipo) {
+            const cont = document.getElementById(idContenedor); cont.innerHTML = '';
+            for(let i=0; i<cantidad; i++) {
+                const dorso = document.createElement('div'); dorso.className = `ficha-dorso ${tipo}`; cont.appendChild(dorso);
+            }
+        }
+
+        function renderizarManos() {
+            const miMano = document.getElementById('mi-mano'); miMano.innerHTML = ''; 
+            jugadores[1].forEach((ficha, index) => {
+                const divFicha = document.createElement('div'); divFicha.className = 'ficha';
+                if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
+                divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
+                divFicha.onclick = () => intentarJugada(ficha, 1, index);
+                miMano.appendChild(divFicha);
+            });
+
+            if (juegoTerminado) {
+                dibujarFichasReveladas('mano-j2', jugadores[2], 'v');
+                dibujarFichasReveladas('mano-j3', jugadores[3], 'h');
+                dibujarFichasReveladas('mano-j4', jugadores[4], 'v');
+            } else {
+                dibujarDorsos('mano-j2', jugadores[2].length, 'v');
+                dibujarDorsos('mano-j3', jugadores[3].length, 'h');
+                dibujarDorsos('mano-j4', jugadores[4].length, 'v');
+            }
+        }
+
+        function resaltarTurnoActivo() {
+            for(let i=1; i<=4; i++) document.getElementById(`zona-j${i}`).classList.remove('turno-activo');
+            if (!juegoTerminado && !esperandoSeleccionPunta) document.getElementById(`zona-j${turnoActual}`).classList.add('turno-activo');
+        }
+
+        function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
+            let offsetPar = prevIsDouble ? 50 : 25; let offsetPerp = 25;
+            if (prevDir === 'R' && newDir === 'D') { joint.x -= offsetPerp; joint.y += offsetPar; }
+            else if (prevDir === 'R' && newDir === 'U') { joint.x -= offsetPerp; joint.y -= offsetPar; }
+            else if (prevDir === 'L' && newDir === 'D') { joint.x += offsetPerp; joint.y += offsetPar; }
+            else if (prevDir === 'L' && newDir === 'U') { joint.x += offsetPerp; joint.y -= offsetPar; }
+            else if (prevDir === 'D' && newDir === 'R') { joint.x += offsetPar; joint.y -= offsetPerp; }
+            else if (prevDir === 'D' && newDir === 'L') { joint.x -= offsetPar; joint.y -= offsetPerp; }
+            else if (prevDir === 'U' && newDir === 'R') { joint.x += offsetPar; joint.y += offsetPerp; }
+            else if (prevDir === 'U' && newDir === 'L') { joint.x -= offsetPar; joint.y += offsetPerp; }
+            joint.dir = newDir;
+        }
+
+        function drawFichaOrientada(ficha, cx, cy, dir, contenedor, zIndexLocal, esNueva = false) {
+            const esDoble = ficha[0] === ficha[1];
+            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
+            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
+            
+            if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
+            
+            let claseExtra = (dir === 'R' || dir === 'L') ? (esDoble ? 'vertical' : 'horizontal') : (esDoble ? 'horizontal' : 'vertical');
+            
+            const divFicha = document.createElement('div');
+            divFicha.className = `ficha ficha-mesa ${claseExtra} ${esNueva ? 'ficha-animacion-golpe' : ''}`;
+            divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
+            
+            let parte1 = ficha[0], parte2 = ficha[1];
+            if (dir === 'L' || dir === 'U') {
+                parte1 = ficha[1];
+                parte2 = ficha[0];
+            }
+            
+            divFicha.innerHTML = `${generarHTMLMitad(parte1)}<div class="linea-divisoria"></div>${generarHTMLMitad(parte2)}`;
+            contenedor.appendChild(divFicha);
+        }
+
+        function renderizarRama(rama, joint, isRightBranch, tapete, contenedorZoom, cx, cy, zIndexG, iniciaNosotros) {
+            let margenX = (tapete.clientWidth / 2) - 80; let margenY = (tapete.clientHeight / 2) - 80;
+            let prevIsDouble = fichaCentro[0] === fichaCentro[1];
+
+            rama.forEach((ficha, index) => {
+                const isDouble = ficha[0] === ficha[1]; let newDir = joint.dir;
+                
+                if (iniciaNosotros) {
+                    if (isRightBranch) { 
+                        if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'R';
+                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'U';
+                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'L';
+                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'D';
+                    } else { 
+                        if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'L';
+                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'D';
+                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'R';
+                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'U';
+                    }
+                } else {
+                    if (isRightBranch) { 
+                        if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'D';
+                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'L';
+                        else if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'U';
+                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'R';
+                    } else { 
+                        if (newDir === 'L' && (joint.x - cx) < -margenX) newDir = 'U';
+                        else if (newDir === 'U' && (joint.y - cy) < -margenY) newDir = 'R';
+                        else if (newDir === 'R' && (joint.x - cx) > margenX) newDir = 'D';
+                        else if (newDir === 'D' && (joint.y - cy) > margenY) newDir = 'L';
+                    }
+                }
+
+                if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
+
+                let advance = isDouble ? 50 : 100; let curCx, curCy;
+                if (newDir === 'R') { curCx = joint.x + advance/2; curCy = joint.y; joint.x += advance; }
+                else if (newDir === 'L') { curCx = joint.x - advance/2; curCy = joint.y; joint.x -= advance; }
+                else if (newDir === 'U') { curCx = joint.x; curCy = joint.y - advance/2; joint.y -= advance; }
+                else if (newDir === 'D') { curCx = joint.x; curCy = joint.y + advance/2; joint.y += advance; }
+
+                let esLaUltima = (index === rama.length - 1); 
+                drawFichaOrientada(ficha, curCx, curCy, newDir, contenedorZoom, zIndexG++, esLaUltima);
+                prevIsDouble = isDouble;
+            });
+
+            if (esperandoSeleccionPunta) {
+                const marcador = document.createElement('div'); marcador.className = 'marcador-punta';
+                marcador.style.left = joint.x + 'px'; marcador.style.top = joint.y + 'px';
+                marcador.onclick = () => ejecutarEleccion(!isRightBranch);
+                contenedorZoom.appendChild(marcador);
+            }
+        }
+
+        function renderizarMesa() {
+            const contenedorZoom = document.getElementById('zoom-container'); contenedorZoom.innerHTML = '';
+            if (!fichaCentro) return;
+            const tapete = document.getElementById('mesa-tapete');
+            const cx = tapete.clientWidth / 2, cy = tapete.clientHeight / 2; let zIndexG = 10; 
+
+            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
+            let esDoble = fichaCentro[0] === fichaCentro[1];
+            
+            let claseExtraCentro = '';
+            let w, h;
+            
+            if (iniciaNosotros) {
+                if (esDoble) { claseExtraCentro = 'horizontal'; w = 100; h = 50; } 
+                else { claseExtraCentro = 'vertical'; w = 50; h = 100; } 
+            } else {
+                if (esDoble) { claseExtraCentro = 'vertical'; w = 50; h = 100; } 
+                else { claseExtraCentro = 'horizontal'; w = 100; h = 50; } 
+            }
+
+            const divFicha = document.createElement('div');
+            let esUnicaFicha = ramaIzquierda.length === 0 && ramaDerecha.length === 0;
+            divFicha.className = `ficha ficha-mesa ${claseExtraCentro} ${esUnicaFicha ? 'ficha-animacion-golpe' : ''}`;
+            divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexG++;
+            divFicha.innerHTML = `${generarHTMLMitad(fichaCentro[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(fichaCentro[1])}`;
+            contenedorZoom.appendChild(divFicha);
+            
+            let jointDer, jointIzq;
+            if (iniciaNosotros) {
+                jointDer = { x: cx, y: cy + (h/2), dir: 'D' };
+                jointIzq = { x: cx, y: cy - (h/2), dir: 'U' };
+            } else {
+                jointDer = { x: cx + (w/2), y: cy, dir: 'R' };
+                jointIzq = { x: cx - (w/2), y: cy, dir: 'L' };
+            }
+
+            renderizarRama(ramaDerecha, jointDer, true, tapete, contenedorZoom, cx, cy, zIndexG, iniciaNosotros);
+            renderizarRama(ramaIzquierda, jointIzq, false, tapete, contenedorZoom, cx, cy, zIndexG + 100, iniciaNosotros);
+        }
+
+        function agregarRondaHistorial(equipoGanador, puntos) {
+            const colNosotros = document.getElementById('historial-nosotros');
+            const colEllos = document.getElementById('historial-ellos');
+            const item = document.createElement('div');
+            item.innerText = `+${puntos}`;
+            item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
+
+            if (equipoGanador === 1) { colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; } 
+            else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
+        }
+
+        function mostrarModalVictoria(ganadorEquipo) {
+            const modal = document.getElementById('modal-victoria');
+            const texto = document.getElementById('equipo-ganador-texto');
+            const titulo = document.getElementById('titulo-victoria-color');
+            texto.innerText = ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos';
+            texto.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
+            titulo.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
+            modal.classList.remove('oculto');
+        }
+
+        function reiniciarPartidaCompleta() {
+            puntosNosotros = 0; puntosEllos = 0; ultimoGanador = null;
+            document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
+            document.getElementById('historial-nosotros').innerHTML = ''; document.getElementById('historial-ellos').innerHTML = '';
+            document.getElementById('modal-victoria').classList.add('oculto');
+            iniciarManoConAnimacion();
+        }
+
+        function revisarPuntos() {
+            document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; 
+            document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
+
+            if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
+                juegoTerminado = true;
+                document.getElementById('btn-siguiente').style.display = 'none';
+                mostrarModalVictoria(puntosNosotros >= metaPuntos ? 1 : 2);
+                return true;
+            }
+            return false;
+        }
+
+        function finalizarMano(ganador, porTranque = false, esCapicua = false) {
+            juegoTerminado = true; limpiarBurbujas(); ocultarToast();
+            document.getElementById('btn-siguiente').style.display = 'block';
+            
+            let sumaPuntosMano = 0;
+            for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
+
+            let equipoGanador = 0; 
+            
+            if (porTranque) {
+                let jTranco = ultimoJugadorEnJugar; let jSigue = (ultimoJugadorEnJugar % 4) + 1;
+                let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
+
+                let ganadorTranque = (ptsTranco <= ptsSigue) ? jTranco : jSigue;
+                equipoGanador = (ganadorTranque === 1 || ganadorTranque === 3) ? 1 : 2;
+                ultimoGanador = ganadorTranque;
+                mostrarBurbuja(ganadorTranque, `¡TRANQUE! 🔒 (+${sumaPuntosMano})`, "ganador", true);
+                sacudirMesa();
+            } else {
+                equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2;
+                ultimoGanador = ganador;
+                
+                if (esCapicua) { 
+                    sumaPuntosMano += 30; 
+                    mostrarBurbuja(ganador, `¡CAPICÚA! 🌟 (+${sumaPuntosMano})`, "capicua", true); 
+                    sacudirMesa();
+                } 
+                else { 
+                    mostrarBurbuja(ganador, `¡DOMINÓ! 🏆 (+${sumaPuntosMano})`, "ganador", true); 
+                }
+            }
+
+            if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
+            
+            agregarRondaHistorial(equipoGanador, sumaPuntosMano);
+            
+            let termino = revisarPuntos();
+            if (termino) document.getElementById('btn-siguiente').style.display = 'none';
+            
+            renderizarManos(); renderizarMesa();
+        }
+
+        function avanzarTurno() {
+            if (juegoTerminado) return;
+            turnoActual = turnoActual === 4 ? 1 : turnoActual + 1;
+            if (!fichaCentro) { iniciarTurnoNormal(); return; }
+
+            let puedeJugar = jugadores[turnoActual].some(ficha => ficha[0] === extremoIzquierdo || ficha[1] === extremoIzquierdo || ficha[0] === extremoDerecho || ficha[1] === extremoDerecho);
+
+            if (!puedeJugar) {
+                pasesConsecutivos++; resaltarTurnoActivo();
+                if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
+                
+                let txtPaso = frasesPaso[Math.floor(Math.random() * frasesPaso.length)];
+
+                if (esPrimerTurnoDespuesDeSalida) {
+                    mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
+                    mostrarBurbuja(jugadorSalida, "+30 Salida 🔥", "ganador", false, false);
+                    let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
+                    if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
+                    agregarRondaHistorial(equipoSalida, 30);
+                    mostrarToast("¡30 a la salida! Anotados.");
+                    if(revisarPuntos()) return;
+                } else {
+                    mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
+                }
+                
+                esPrimerTurnoDespuesDeSalida = false;
+                setTimeout(avanzarTurno, 1500);
+            } else {
+                if (pasesConsecutivos === 3 && fichaCentro) {
+                    mostrarBurbuja(turnoActual, "¡Paso en banda! +30", "ganador", true);
+                    let equipo = (turnoActual === 1 || turnoActual === 3) ? 1 : 2;
+                    if (equipo === 1) puntosNosotros += 30; else puntosEllos += 30;
+                    agregarRondaHistorial(equipo, 30);
+                    let termino = revisarPuntos();
+                    pasesConsecutivos = 0;
+                    if(termino) return; 
+                }
+                pasesConsecutivos = 0; 
+                esPrimerTurnoDespuesDeSalida = false; 
+                iniciarTurnoNormal();
+            }
+        }
+
+        function iniciarTurnoNormal() {
+            resaltarTurnoActivo();
+            if (turnoActual !== 1) { 
+                let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
+                mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
+                setTimeout(turnoIA, 1500); 
+            }
+            else if (salidaObligatoria && !fichaCentro) { mostrarToast("Debes salir obligatoriamente con el Doble 6"); }
+            else { mostrarToast("¡Tu turno!"); }
+        }
+
+        function intentarJugada(ficha, idJugador, index) {
+            if (juegoTerminado || turnoActual !== idJugador) return; 
+            if (salidaObligatoria && !fichaCentro) { if (ficha[0] !== 6 || ficha[1] !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
+            if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); iniciarTurnoNormal(); }
+
+            let [a, b] = ficha;
+            let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
+            let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
+
+            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); return; } 
+
+            let esCapicua = false;
+            if (jugadores[idJugador].length === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) esCapicua = true;
+
+            if (idJugador === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
+                esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index;
+                fichaSeleccionada.esCapicua = esCapicua;
+                renderizarManos(); renderizarMesa(); 
+                mostrarToast("Toca un aro verde para colocar la ficha");
+                return; 
+            }
+
+            let ponerIzquierda = false;
+            if (fichaCentro && puedeIzq && puedeDer) ponerIzquierda = Math.random() > 0.5; 
+            else if (puedeIzq) ponerIzquierda = true;
+
+            procesarJugadaFinal(ficha, idJugador, index, ponerIzquierda, esCapicua);
+        }
+
+        function ejecutarEleccion(esIzquierda) {
+            esperandoSeleccionPunta = false; ocultarToast();
+            let esCapicua = fichaSeleccionada.esCapicua || false;
+            procesarJugadaFinal(fichaSeleccionada, 1, indexSeleccionado, esIzquierda, esCapicua);
+            fichaSeleccionada = null; indexSeleccionado = null;
+        }
+
+        function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
+            let [a, b] = ficha; 
+            
+            if (!fichaCentro) { 
+                let max = Math.max(a, b);
+                let min = Math.min(a, b);
+                
+                if (idJugador === 1 || idJugador === 2) {
+                    fichaCentro = [min, max];
+                    extremoIzquierdo = min;
+                    extremoDerecho = max;
+                } else {
+                    fichaCentro = [max, min];
+                    extremoIzquierdo = max;
+                    extremoDerecho = min;
+                }
+                salidaObligatoria = false; 
+                esPrimerTurnoDespuesDeSalida = true; 
+            } else if (colocarIzquierda) {
+                if (a === extremoIzquierdo) {
+                    ramaIzquierda.push([a, b]);
+                    extremoIzquierdo = b;
+                } else {
+                    ramaIzquierda.push([b, a]);
+                    extremoIzquierdo = a;
+                }
+            } else {
+                if (a === extremoDerecho) {
+                    ramaDerecha.push([a, b]);
+                    extremoDerecho = b;
+                } else {
+                    ramaDerecha.push([b, a]);
+                    extremoDerecho = a;
+                }
+            }
+            jugadores[idJugador].splice(index, 1); 
+            ultimoJugadorEnJugar = idJugador; 
+            
+            if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
+            limpiarBurbujas(); ocultarToast(); renderizarManos(); renderizarMesa(); avanzarTurno();
+        }
+
+        function turnoIA() {
+            if (juegoTerminado) return;
+            let manoIA = jugadores[turnoActual];
+            
+            if (salidaObligatoria && !fichaCentro) { 
+                let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6); 
+                if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; } 
+            }
+            
+            let validas = [];
+            for (let i = 0; i < manoIA.length; i++) {
+                let ficha = manoIA[i]; let [a, b] = ficha;
+                if (!fichaCentro || a === extremoDerecho || b === extremoDerecho || a === extremoIzquierdo || b === extremoIzquierdo) { 
+                    let peso = (a === b) ? 10 : 0; 
+                    peso += manoIA.filter(f => f[0]===a || f[1]===a).length;
+                    peso += manoIA.filter(f => f[0]===b || f[1]===b).length;
+                    validas.push({ficha, index: i, peso}); 
+                }
+            }
+            
+            if (validas.length > 0) {
+                validas.sort((a,b) => b.peso - a.peso);
+                intentarJugada(validas[0].ficha, turnoActual, validas[0].index);
+            }
+        }
+
+        function crearAnimacionFichas() {
+            const cont = document.getElementById('fichas-animadas'); cont.innerHTML = '';
+            for(let i=0; i<28; i++) {
+                const f = document.createElement('div'); f.className = 'ficha-revuelta';
+                f.style.setProperty('--rx', (Math.random() * 400 - 200)); f.style.setProperty('--ry', (Math.random() * 400 - 200));
+                f.style.setProperty('--rrot', (Math.random() * 360)); f.style.setProperty('--rx2', (Math.random() * 400 - 200));
+                f.style.setProperty('--ry2', (Math.random() * 400 - 200)); f.style.setProperty('--rrot2', (Math.random() * 360));
+                cont.appendChild(f);
+            }
+        }
+
+        function iniciarManoConAnimacion() {
+            document.getElementById('btn-siguiente').style.display = 'none';
+            limpiarBurbujas(); ocultarToast();
+            
+            document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
+            document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
+            document.getElementById('zoom-container').innerHTML = '';
+
+            const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
+            crearAnimacionFichas();
+            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2500);
+        }
+
+        function ejecutarLogicaReparto() {
+            mazo = [];
+            for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazo.push([i, j]);
+            for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
+            let pos = 0;
+            for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
+
+            fichaCentro = null; ramaIzquierda = []; ramaDerecha = [];
+            extremoIzquierdo = null; extremoDerecho = null;
+            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null;
+            esPrimerTurnoDespuesDeSalida = false;
+
+            let primerJuego = (puntosNosotros === 0 && puntosEllos === 0);
+            if (primerJuego) {
+                for (let i = 1; i <= 4; i++) { if (jugadores[i].some(f => f[0] === 6 && f[1] === 6)) { turnoActual = i; salidaObligatoria = true; break; } }
+            } else {
+                turnoActual = ultimoGanador || 1; salidaObligatoria = false;
+            }
+            
+            jugadorSalida = turnoActual; 
+
+            renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
+        }
+
+        iniciarManoConAnimacion();
+    </script>
+</body>
+</html>
