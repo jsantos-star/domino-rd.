@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Dominó RD - Edición Móvil & PC</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dominó RD</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
             --rojo-rd: #ff1744; 
-            --fondo-oscuro: #0f1522; 
+            --fondo-oscuro: #0a0e17; 
             --mesa-verde: #163823;
-            --madera: #5c3a21;
+            --madera: #4a2810;
 
-            /* Variables de Fichas */
             --ficha-bg: linear-gradient(135deg, #ffffff 0%, #e6e6e6 100%);
             --ficha-punto: #111111;
             --ficha-linea: linear-gradient(to right, #002868 50%, #ce1126 50%);
             --ficha-linea-v: linear-gradient(to bottom, #002868 50%, #ce1126 50%);
             --ficha-borde-par: #ccc;
 
-            /* Variables de Mesa */
             --tapete-fondo: radial-gradient(circle, var(--mesa-verde) 0%, #08140c 100%);
             --tapete-marca-agua: rgba(255, 255, 255, 0.05);
         }
 
-        /* --- TEMAS DE FICHAS --- */
         body.ficha-azul {
             --ficha-bg: linear-gradient(135deg, #0d3b66 0%, #001f3f 100%);
             --ficha-punto: #ffffff;
@@ -41,7 +41,6 @@
             --ficha-borde-par: #780000;
         }
 
-        /* --- TEMAS DE PAÑO DE LA MESA --- */
         body.mesa-negro {
             --tapete-fondo: radial-gradient(circle, #25282a 0%, #0d0e10 100%);
             --tapete-marca-agua: rgba(255, 255, 255, 0.06);
@@ -57,7 +56,7 @@
             --tapete-marca-agua: rgba(0, 0, 0, 0.06);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
 
         body { 
             background-color: var(--fondo-oscuro); 
@@ -67,16 +66,15 @@
             align-items: center; 
             height: 100vh; 
             height: 100dvh; 
+            width: 100vw;
             overflow: hidden; 
-            touch-action: manipulation;
+            touch-action: none;
         }
 
         .contenedor-juego { 
             display: flex; 
             width: 100%; 
-            max-width: 1600px; 
-            height: 100vh; 
-            height: 100dvh; 
+            height: 100%; 
             position: relative; 
             overflow: hidden;
         }
@@ -93,78 +91,77 @@
         .area-mesa { 
             flex: 1; 
             display: grid; 
-            padding: 20px 15px 15px 15px; 
-            gap: 10px; 
-            grid-template-columns: 90px 1fr 90px; 
-            grid-template-rows: 80px 1fr 100px; 
+            padding: 8px 12px; 
+            gap: 6px; 
+            grid-template-columns: 85px 1fr 85px; 
+            grid-template-rows: 55px 1fr 80px; 
             grid-template-areas: ". jugador3 ." "jugador4 tapete jugador2" ". jugador1 ."; 
             height: 100%;
+            width: 100%;
         }
 
-        /* --- BOTONES FLOTANTES SUPERIORES --- */
+        /* --- BOTONES DE CONTROL FLOTANTES --- */
         .botones-cabecera {
             position: absolute; 
-            top: 12px; 
-            right: 335px; 
+            top: 10px; 
+            right: 12px; 
             display: flex; 
-            gap: 10px; 
+            gap: 8px; 
             z-index: 120;
         }
 
         .btn-flotante {
-            height: 40px;
-            background: rgba(19, 25, 38, 0.9); 
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px; 
+            height: 34px;
+            background: rgba(19, 25, 38, 0.85); 
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 17px; 
             color: #fff; 
-            font-size: 15px; 
+            font-size: 13px; 
             display: flex;
             justify-content: center; 
             align-items: center; 
             cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-            transition: all 0.25s ease;
-            padding: 0 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
+            transition: all 0.2s ease;
+            padding: 0 12px;
             font-weight: bold;
+            backdrop-filter: blur(5px);
         }
         .btn-flotante.solo-icono {
-            width: 40px;
+            width: 34px;
             padding: 0;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
         }
-        .btn-flotante:hover { border-color: var(--azul-rd); }
-
-        #btn-abrir-libreta { display: none; }
+        .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
 
         /* --- MODAL AJUSTES --- */
         #modal-ajustes {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 24, 0.85); z-index: 2500; display: flex;
+            background: rgba(10, 15, 24, 0.88); z-index: 2500; display: flex;
             justify-content: center; align-items: center; backdrop-filter: blur(8px);
         }
         .tarjeta-ajustes {
-            background: #131926; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-            padding: 24px; width: 90%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column; gap: 16px;
+            background: #131926; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
+            padding: 20px; width: 92%; max-width: 420px; max-height: 94vh; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 14px;
         }
-        .tarjeta-ajustes h2 { font-size: 20px; text-align: center; color: #fff; }
-        .grupo-ajuste { display: flex; flex-direction: column; gap: 8px; }
-        .grupo-ajuste label { font-size: 12px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tarjeta-ajustes h2 { font-size: 18px; text-align: center; color: #fff; }
+        .grupo-ajuste { display: flex; flex-direction: column; gap: 6px; }
+        .grupo-ajuste label { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .opciones-botones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .opciones-colores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .opciones-colores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .opciones-mesa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
         
         .btn-opcion {
-            background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            color: #fff; padding: 10px 4px; font-weight: bold; font-size: 12px; cursor: pointer;
-            transition: all 0.2s ease; text-align: center;
+            background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+            color: #fff; padding: 8px 4px; font-weight: bold; font-size: 12px; cursor: pointer;
+            text-align: center;
         }
-        .btn-opcion:hover { border-color: var(--azul-rd); }
-        .btn-opcion.activo { background: rgba(0, 188, 212, 0.2); border-color: var(--azul-rd); color: var(--azul-rd); box-shadow: 0 0 10px rgba(0, 188, 212, 0.4); }
+        .btn-opcion.activo { background: rgba(0, 188, 212, 0.25); border-color: var(--azul-rd); color: var(--azul-rd); }
 
-        .btn-color { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 3px; font-size: 11px; }
+        .btn-color { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 11px; }
         .muestra-color { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; }
         .muestra-blanca { background: #ffffff; }
         .muestra-azul { background: #00bcd4; }
@@ -176,56 +173,67 @@
         .muestra-m-blanco { background: #e0e5eb; }
 
         .btn-cerrar-ajustes {
-            background: var(--azul-rd); color: #000; border: none; padding: 12px;
-            border-radius: 20px; font-size: 15px; font-weight: 900; cursor: pointer;
+            background: var(--azul-rd); color: #000; border: none; padding: 10px;
+            border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer;
             text-transform: uppercase; margin-top: 4px;
         }
 
-        /* --- LIBRETA DE ANOTACIÓN --- */
+        /* --- LIBRETA DESLIZABLE LATERAL --- */
         .panel-anotacion {
-            width: 320px; background: #131926; border-left: 1px solid rgba(255,255,255,0.05);
-            display: flex; flex-direction: column; padding: 20px 16px; 
-            box-shadow: -5px 0 25px rgba(0,0,0,0.8); z-index: 200; flex-shrink: 0;
-            transition: transform 0.3s ease;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 280px;
+            background: #131926;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            box-shadow: -10px 0 35px rgba(0,0,0,0.85);
+            z-index: 300;
+            transform: translateX(100%);
+            transition: transform 0.28s ease;
+        }
+        .panel-anotacion.abierta {
+            transform: translateX(0);
         }
         
-        .header-libreta { text-align: center; margin-bottom: 15px; position: relative; }
-        .header-libreta h1 { font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;}
+        .header-libreta { text-align: center; margin-bottom: 12px; position: relative; }
+        .header-libreta h1 { font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;}
         .header-libreta h1 span { color: #ce1126; } 
-        .meta-puntos { background: rgba(0, 188, 212, 0.15); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; color: var(--azul-rd); display: inline-block; cursor: pointer; }
+        .meta-puntos { background: rgba(0, 188, 212, 0.15); padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; color: var(--azul-rd); display: inline-block; cursor: pointer; }
         
         .btn-cerrar-libreta {
-            display: none; position: absolute; top: -5px; right: 0; background: none; border: none;
-            color: #fff; font-size: 22px; cursor: pointer; padding: 5px;
+            position: absolute; top: -6px; right: -4px; background: none; border: none;
+            color: #fff; font-size: 24px; cursor: pointer; padding: 4px 8px;
         }
 
-        .marcador-global { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; border-radius: 12px 12px 0 0; padding: 14px; border: 1px solid rgba(255,255,255,0.03); border-bottom: none; }
-        .equipo-score { display: flex; flex-direction: column; align-items: center; width: 40%; }
-        .equipo-score h3 { font-size: 13px; color: #ccc; margin-bottom: 4px; }
-        .equipo-score .puntos { font-size: 38px; font-weight: 900; }
+        .marcador-global { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; border-radius: 10px 10px 0 0; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.03); border-bottom: none; }
+        .equipo-score { display: flex; flex-direction: column; align-items: center; width: 42%; }
+        .equipo-score h3 { font-size: 12px; color: #ccc; margin-bottom: 2px; }
+        .equipo-score .puntos { font-size: 32px; font-weight: 900; }
         .puntos.nosotros { color: var(--azul-rd); }
         .puntos.ellos { color: var(--rojo-rd); }
-        .vs-circle { width: 30px; height: 30px; background: #2a3143; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; color: #888; }
+        .vs-circle { width: 26px; height: 26px; background: #2a3143; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: #888; }
 
         .anotacion-grid {
-            flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 12px 12px; 
+            flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 10px 10px; 
             border: 1px solid rgba(255,255,255,0.03); border-top: 2px solid #2a3143; overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        .columna-puntos { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 10px 8px; overflow-y: auto; }
-        .divisor-linea { width: 2px; background: #2a3143; margin: 10px 0; border-radius: 2px;}
-        
-        .columna-puntos::-webkit-scrollbar { width: 4px; }
-        .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 4px; }
-
-        .punto-anotado { font-size: 20px; font-weight: bold; text-align: center; padding: 4px; }
+        .columna-puntos { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; overflow-y: auto; }
+        .divisor-linea { width: 2px; background: #2a3143; margin: 6px 0; border-radius: 2px;}
+        .columna-puntos::-webkit-scrollbar { width: 3px; }
+        .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
+        .punto-anotado { font-size: 18px; font-weight: bold; text-align: center; padding: 2px; }
         .punto-anotado.nos { color: var(--azul-rd); }
         .punto-anotado.ellos { color: var(--rojo-rd); }
 
         #toast-mensaje {
-            position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.88); color: white; padding: 8px 20px;
-            border-radius: 20px; font-size: 13px; font-weight: bold;
+            position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.92); color: white; padding: 6px 16px;
+            border-radius: 16px; font-size: 12px; font-weight: bold;
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
             z-index: 100; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);
             white-space: nowrap; max-width: 90%; text-overflow: ellipsis; overflow: hidden;
@@ -234,9 +242,9 @@
 
         #btn-siguiente { 
             display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 12px 30px; background: linear-gradient(45deg, #FF8C00, #FF0080); 
-            color: white; border: none; border-radius: 30px; cursor: pointer; font-size: 16px; font-weight: 900; 
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            padding: 12px 28px; background: linear-gradient(45deg, #FF8C00, #FF0080); 
+            color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 15px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
             z-index: 100; white-space: nowrap;
         }
 
@@ -246,34 +254,35 @@
         
         .avatar-container { position: relative; display: flex; justify-content: center; align-items: center; }
         
-        .info-jugador { display: flex; align-items: center; gap: 6px; flex-direction: row !important; white-space: nowrap; }
+        .info-jugador { display: flex; align-items: center; gap: 4px; flex-direction: row !important; white-space: nowrap; }
         #zona-j1 .info-jugador, #zona-j3 .info-jugador, #zona-j4 .info-jugador { flex-direction: row !important; } 
         #zona-j2 .info-jugador { flex-direction: row-reverse !important; } 
         
         .burbuja-estado {
-            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%) translateY(10px);
-            background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff;
-            padding: 6px 14px; border-radius: 16px; font-weight: bold; font-size: 13px;
-            opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 50; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6); white-space: nowrap;
+            position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%) translateY(8px);
+            background: rgba(0,0,0,0.9); border: 1.5px solid #fff; color: #fff;
+            padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 11px;
+            opacity: 0; transition: all 0.25s ease; pointer-events: none; z-index: 50; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6); white-space: nowrap;
         }
         .burbuja-estado.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.9); font-size: 14px;}
+        .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.92); }
         .burbuja-estado.pensando { border-color: #ffcc00; color: #ffcc00; }
-        .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.9); font-size: 15px; }
-        .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.9); font-size: 15px; animation: latir 0.5s infinite alternate;}
+        .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.92); }
+        .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.92); }
 
-        .avatar { width: 44px; height: 44px; background-color: #222; border: 2px solid #555; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: border-color 0.3s; z-index: 5;}
-        .turno-activo .avatar { border-color: #00bcd4; box-shadow: 0 0 15px #00bcd4; transform: scale(1.08); }
-        .nombre-jugador { font-size: 12px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 10px; z-index: 5;}
+        .avatar { width: 34px; height: 34px; background-color: #222; border: 2px solid #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); z-index: 5;}
+        .turno-activo .avatar { border-color: #00bcd4; box-shadow: 0 0 12px #00bcd4; transform: scale(1.08); }
+        .nombre-jugador { font-size: 10px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.65); padding: 2px 6px; border-radius: 8px; z-index: 5;}
 
-        .fichas-ocultas { display: flex; gap: 3px; align-items: center; justify-content: center; margin-top: 6px;}
-        .fichas-ocultas.vertical { flex-direction: column; margin-top: 0; margin-left: 6px; margin-right: 6px;}
+        .fichas-ocultas { display: flex; gap: 2px; align-items: center; justify-content: center; margin-top: 3px;}
+        .fichas-ocultas.vertical { flex-direction: column; margin-top: 0; margin-left: 3px; margin-right: 3px;}
 
+        /* --- DORSO DE FICHA (RD) --- */
         .ficha-dorso { 
-            border-radius: 4px; 
+            border-radius: 3px; 
             border: 1px solid #1a2233; 
-            box-shadow: 1px 2px 4px rgba(0,0,0,0.6); 
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
             position: relative; 
             overflow: hidden;
             display: flex;
@@ -286,63 +295,59 @@
         }
         .ficha-dorso::after {
             content: 'RD';
-            font-size: 7px;
+            font-size: 6px;
             font-weight: 900;
             color: #111111;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 1px 2px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0 1px;
             border-radius: 2px;
-            border: 0.5px solid rgba(0, 0, 0, 0.4);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             z-index: 2;
         }
-        .ficha-dorso.h { width: 18px; height: 36px; } 
-        .ficha-dorso.v { width: 36px; height: 18px; }
+        .ficha-dorso.h { width: 14px; height: 26px; } 
+        .ficha-dorso.v { width: 26px; height: 14px; }
 
         #zona-j1 { grid-area: jugador1; } 
         #zona-j2 { grid-area: jugador2; }
         #zona-j3 { grid-area: jugador3; } 
         #zona-j4 { grid-area: jugador4; }
 
+        /* --- TAPETE Y AUTO-ESCALA --- */
         .zona-tapete {
             grid-area: tapete; background: var(--tapete-fondo);
-            border-radius: 25px; border: 8px solid var(--madera); 
-            box-shadow: 0 0 0 3px #002868, 0 0 0 6px #ce1126, inset 0 0 40px rgba(0,0,0,0.9); 
+            border-radius: 20px; border: 6px solid var(--madera); 
+            box-shadow: 0 0 0 2px #002868, 0 0 0 4px #ce1126, inset 0 0 30px rgba(0,0,0,0.85); 
             position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;
-            transition: background 0.3s ease;
+            width: 100%; height: 100%;
         }
 
-        @keyframes shakeMesa { 0% { transform: translate(2px, 2px) rotate(0deg); } 10% { transform: translate(-2px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
-        .mesa-temblando { animation: shakeMesa 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shakeMesa { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 80% { transform: translate(1px, -1px); } 100% { transform: translate(0, 0); } }
+        .mesa-temblando { animation: shakeMesa 0.4s ease both; }
 
-        .marca-agua { position: absolute; font-size: 32px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 6px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
-        .marca-agua span { font-size: 60px; margin-bottom: -10px; opacity: 0.12;}
+        .marca-agua { position: absolute; font-size: 24px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 4px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        .marca-agua span { font-size: 40px; margin-bottom: -6px; opacity: 0.12;}
 
         /* --- FICHAS --- */
         .ficha {
             width: 50px; height: 100px; background: var(--ficha-bg);
-            border-radius: 8px; display: flex; flex-direction: column; padding: 4px;
-            box-shadow: 2px 4px 8px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.15s;
-            border-top: 3px solid #002868; border-bottom: 3px solid #ce1126;
+            border-radius: 7px; display: flex; flex-direction: column; padding: 4px;
+            box-shadow: 2px 3px 7px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.15s;
+            border-top: 2.5px solid #002868; border-bottom: 2.5px solid #ce1126;
             border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par);
             flex-shrink: 0;
         }
         
         .ficha:hover { transform: translateY(-8px); }
-        .ficha.seleccionada { transform: translateY(-16px); box-shadow: 0 8px 20px rgba(0, 188, 212, 0.8); border-color: #00bcd4; }
-        .ficha-mesa { position: absolute; transition: none; }
-        .ficha-mesa:hover { transform: none; cursor: default; }
-        
-        @keyframes fichazo { 0% { transform: scale(1.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .ficha-animacion-golpe { animation: fichazo 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.9); border-color: #00bcd4; }
+        .ficha-mesa { position: absolute; }
 
-        .ficha.horizontal { width: 100px !important; height: 50px !important; flex-direction: row; border-top: 1px solid var(--ficha-borde-par); border-bottom: 1px solid var(--ficha-borde-par); border-left: 3px solid #002868; border-right: 3px solid #ce1126; }
-        .ficha.vertical { width: 50px !important; height: 100px !important; flex-direction: column; border-top: 3px solid #002868; border-bottom: 3px solid #ce1126; border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par); }
+        .ficha.horizontal { width: 100px !important; height: 50px !important; flex-direction: row; border-top: 1px solid var(--ficha-borde-par); border-bottom: 1px solid var(--ficha-borde-par); border-left: 2.5px solid #002868; border-right: 2.5px solid #ce1126; }
+        .ficha.vertical { width: 50px !important; height: 100px !important; flex-direction: column; border-top: 2.5px solid #002868; border-bottom: 2.5px solid #ce1126; border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par); }
 
-        .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 3px; align-items: center; justify-items: center; }
+        .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5px; padding: 3px; align-items: center; justify-items: center; }
         .linea-divisoria { background: var(--ficha-linea); height: 2px; width: 90%; margin: 0 auto; border-radius: 2px; }
         .ficha.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 2px; height: 90%; margin: auto 0; }
-        .punto { width: 7px; height: 7px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.4); }
+        .punto { width: 7px; height: 7px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
 
         .blanco .punto { display: none; }
         .uno .punto:nth-child(1) { grid-area: 2 / 2; }
@@ -352,27 +357,39 @@
         .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
         .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
 
+        /* --- MANO DEL JUGADOR: FICHAS GRANDES Y LEGIBLES --- */
         .mano-jugador-activa { 
             display: flex; 
             justify-content: center; 
+            align-items: flex-end;
             gap: 6px; 
             width: 100%; 
-            margin-top: 6px;
+            margin-top: 4px;
             max-width: 100%;
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding: 2px 4px 6px 4px;
+        }
+        .mano-jugador-activa .ficha {
+            width: 44px;
+            height: 78px;
+            border-radius: 6px;
+            padding: 3px;
+        }
+        .mano-jugador-activa .punto {
+            width: 6.5px;
+            height: 6.5px;
         }
 
-        .marcador-punta { position: absolute; width: 45px; height: 45px; background-color: rgba(0, 188, 212, 0.4); border: 3px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 15px 4px rgba(0, 188, 212, 0.8); animation: latir 1s infinite alternate; z-index: 999; }
-        @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.1); } }
+        .marcador-punta { position: absolute; width: 44px; height: 44px; background-color: rgba(0, 188, 212, 0.45); border: 2.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 14px 4px rgba(0, 188, 212, 0.85); animation: latir 0.9s infinite alternate; z-index: 999; }
+        @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.15); } }
 
-        #pantalla-barajar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        #pantalla-barajar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .oculto { display: none !important; }
-        #pantalla-barajar h2 { color: white; font-size: 26px; margin-top: 160px; text-shadow: 2px 2px 5px #00bcd4; z-index: 1100; }
+        #pantalla-barajar h2 { color: white; font-size: 24px; margin-top: 140px; text-shadow: 2px 2px 5px #00bcd4; z-index: 1100; }
         .zona-revuelta { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; top:0; left:0;}
         .ficha-revuelta { 
-            position: absolute; width: 26px; height: 40px; 
-            border-radius: 4px; border: 1px solid #1a2233; 
+            position: absolute; width: 24px; height: 38px; 
+            border-radius: 3px; border: 1px solid #1a2233; 
             animation: mezclar 1.2s infinite ease-in-out alternate; 
             overflow: hidden; display: flex; align-items: center; justify-content: center;
             background: 
@@ -381,94 +398,25 @@
                 conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
         }
         .ficha-revuelta::after {
-            content: 'RD'; font-size: 8px; font-weight: 900; color: #111111;
-            background: rgba(255, 255, 255, 0.85); padding: 1px 2px; border-radius: 2px;
+            content: 'RD'; font-size: 7px; font-weight: 900; color: #111111;
+            background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px;
         }
         @keyframes mezclar { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg)); } 100% { transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg)); } }
 
         #modal-victoria { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 21, 34, 0.95); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.1); padding: 35px 25px; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-width: 360px; width: 90%; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .tarjeta-victoria h1 { font-size: 28px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; gap: 8px;}
-        .tarjeta-victoria h1 span { font-size: 45px; } 
-        .tarjeta-victoria h2 { font-size: 22px; color: #fff; margin-bottom: 25px; font-weight: 400;}
-        .btn-jugar-nuevo { background: var(--azul-rd); color: #000; border: none; padding: 14px 25px; border-radius: 25px; font-size: 16px; font-weight: 900; cursor: pointer; transition: all 0.3s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase;}
-        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* ============================================================
-           --- ADAPTACIÓN RESPONSIVA PARA DISPOSITIVOS MÓVILES ---
-           ============================================================ */
-        @media (max-width: 850px) {
-            .botones-cabecera {
-                right: 12px;
-                top: 8px;
-            }
-
-            #btn-abrir-libreta { display: flex; }
-            .btn-cerrar-libreta { display: block; }
-
-            /* La libreta se convierte en cajón deslizable */
-            .panel-anotacion {
-                position: absolute;
-                top: 0;
-                right: 0;
-                height: 100%;
-                width: 290px;
-                transform: translateX(100%);
-                box-shadow: -10px 0 30px rgba(0,0,0,0.9);
-            }
-            .panel-anotacion.abierta {
-                transform: translateX(0);
-            }
-
-            .area-mesa {
-                padding: 10px 6px;
-                gap: 6px;
-                grid-template-columns: 60px 1fr 60px;
-                grid-template-rows: 65px 1fr 85px;
-            }
-
-            .avatar { width: 36px; height: 36px; font-size: 16px; }
-            .nombre-jugador { font-size: 10px; padding: 2px 6px; }
-            
-            /* Fichas del jugador adaptadas para pantalla chica */
-            .ficha {
-                width: 38px;
-                height: 76px;
-                border-radius: 6px;
-                padding: 3px;
-            }
-            .punto { width: 5px; height: 5px; }
-
-            .ficha-dorso.h { width: 14px; height: 28px; }
-            .ficha-dorso.v { width: 28px; height: 14px; }
-            .ficha-dorso::after { font-size: 6px; }
-
-            .marca-agua { font-size: 20px; letter-spacing: 3px; }
-            .marca-agua span { font-size: 40px; margin-bottom: -5px; }
-        }
-
-        @media (max-height: 550px) {
-            /* Teléfono en posición horizontal (Landscape) */
-            .area-mesa {
-                padding: 6px 10px;
-                gap: 4px;
-                grid-template-columns: 75px 1fr 75px;
-                grid-template-rows: 55px 1fr 65px;
-            }
-            .botones-cabecera { top: 6px; }
-            .ficha { width: 34px; height: 68px; }
-            .punto { width: 5px; height: 5px; }
-            .avatar { width: 32px; height: 32px; font-size: 14px; }
-            .nombre-jugador { font-size: 9px; }
-            #toast-mensaje { bottom: 75px; }
-        }
+        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 320px; width: 90%; }
+        .tarjeta-victoria h1 { font-size: 24px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 6px;}
+        .tarjeta-victoria h1 span { font-size: 40px; } 
+        .tarjeta-victoria h2 { font-size: 18px; color: #fff; margin-bottom: 20px; font-weight: 400;}
+        .btn-jugar-nuevo { background: var(--azul-rd); color: #000; border: none; padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase;}
     </style>
 </head>
 <body class="ficha-blanco mesa-verde">
     <div class="contenedor-juego">
         
-        <!-- BOTONES DE ACCIÓN SUPERIOR -->
+        <!-- BOTONES DE ACCIÓN FLOTANTES -->
         <div class="botones-cabecera">
+            <button class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
             <button class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
             <button class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración">⚙️</button>
         </div>
@@ -534,6 +482,7 @@
             <div id="toast-mensaje">Cargando partida...</div>
         </div>
 
+        <!-- PANEL DE ANOTACIÓN (DESLIZABLE) -->
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
                 <button class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
@@ -647,6 +596,14 @@
 
         function sumarMano(mano) { return mano.reduce((sum, f) => sum + f[0] + f[1], 0); }
 
+        function togglePantallaCompleta() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
         function toggleLibreta() {
             const panel = document.getElementById('panel-anotacion');
             panel.classList.toggle('abierta');
@@ -717,7 +674,7 @@
         function mostrarToast(mensaje) {
             const toast = document.getElementById('toast-mensaje');
             toast.innerText = mensaje; toast.classList.add('visible');
-            setTimeout(() => { toast.classList.remove('visible'); }, 3000);
+            setTimeout(() => { toast.classList.remove('visible'); }, 2500);
         }
 
         function ocultarToast() { document.getElementById('toast-mensaje').classList.remove('visible'); }
@@ -727,15 +684,13 @@
             tapete.classList.remove('mesa-temblando');
             void tapete.offsetWidth; 
             tapete.classList.add('mesa-temblando');
-            setTimeout(() => tapete.classList.remove('mesa-temblando'), 600);
+            setTimeout(() => tapete.classList.remove('mesa-temblando'), 500);
         }
 
         function dibujarFichasReveladas(idContenedor, mano, tipo) {
             const cont = document.getElementById(idContenedor); cont.innerHTML = '';
-            const esMovil = window.innerWidth <= 850;
-            const w = tipo === 'h' ? (esMovil ? '18px' : '25px') : (esMovil ? '36px' : '50px');
-            const h = tipo === 'h' ? (esMovil ? '36px' : '50px') : (esMovil ? '18px' : '25px');
-            const escala = esMovil ? '0.36' : '0.5';
+            const w = tipo === 'h' ? '14px' : '28px';
+            const h = tipo === 'h' ? '28px' : '14px';
 
             mano.forEach(ficha => {
                 const wrapper = document.createElement('div');
@@ -744,7 +699,7 @@
 
                 const divFicha = document.createElement('div');
                 divFicha.className = `ficha ${tipo === 'h' ? '' : 'horizontal'}`;
-                divFicha.style.transform = `scale(${escala})`; 
+                divFicha.style.transform = 'scale(0.28)'; 
                 divFicha.style.transformOrigin = 'top left';
                 divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
                 divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
@@ -799,7 +754,7 @@
             joint.dir = newDir;
         }
 
-        function drawFichaOrientada(ficha, cx, cy, dir, contenedor, zIndexLocal, esNueva = false) {
+        function drawFichaOrientada(ficha, cx, cy, dir, contenedor, zIndexLocal) {
             const esDoble = ficha[0] === ficha[1];
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
@@ -809,7 +764,7 @@
             let claseExtra = (dir === 'R' || dir === 'L') ? (esDoble ? 'vertical' : 'horizontal') : (esDoble ? 'horizontal' : 'vertical');
             
             const divFicha = document.createElement('div');
-            divFicha.className = `ficha ficha-mesa ${claseExtra} ${esNueva ? 'ficha-animacion-golpe' : ''}`;
+            divFicha.className = `ficha ficha-mesa ${claseExtra}`;
             divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
             
             let parte1 = ficha[0], parte2 = ficha[1];
@@ -825,7 +780,7 @@
         function renderizarRama(rama, joint, isRightBranch, tapete, contenedorZoom, cx, cy, zIndexG, iniciaNosotros, margenX, margenY) {
             let prevIsDouble = fichaCentro[0] === fichaCentro[1];
 
-            rama.forEach((ficha, index) => {
+            rama.forEach((ficha) => {
                 const isDouble = ficha[0] === ficha[1]; let newDir = joint.dir;
                 
                 if (iniciaNosotros) {
@@ -862,8 +817,7 @@
                 else if (newDir === 'U') { curCx = joint.x; curCy = joint.y - advance/2; joint.y -= advance; }
                 else if (newDir === 'D') { curCx = joint.x; curCy = joint.y + advance/2; joint.y += advance; }
 
-                let esLaUltima = (index === rama.length - 1); 
-                drawFichaOrientada(ficha, curCx, curCy, newDir, contenedorZoom, zIndexG++, esLaUltima);
+                drawFichaOrientada(ficha, curCx, curCy, newDir, contenedorZoom, zIndexG++);
                 prevIsDouble = isDouble;
             });
 
@@ -880,12 +834,14 @@
             if (!fichaCentro) return;
             const tapete = document.getElementById('mesa-tapete');
             
-            // Auto-escala adaptativa del tapete según resolución
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
-            let factorEscala = 0.60;
-            if (anchoTapete < 400 || altoTapete < 300) factorEscala = 0.42;
-            else if (anchoTapete < 600 || altoTapete < 400) factorEscala = 0.50;
+            
+            // Auto-escala adaptada para aprovechar el tapete al máximo
+            let factorEscala = 0.65;
+            if (altoTapete < 220) factorEscala = 0.44;
+            else if (altoTapete < 280) factorEscala = 0.52;
+            else if (anchoTapete < 500) factorEscala = 0.50;
             
             contenedorZoom.style.transform = `scale(${factorEscala})`;
             contenedorZoom.style.transformOrigin = 'center';
@@ -893,9 +849,8 @@
             const cx = anchoTapete / 2, cy = altoTapete / 2; 
             let zIndexG = 10; 
 
-            // Márgenes virtuales corregidos por la escala
-            const margenX = (anchoTapete / (2 * factorEscala)) - 70;
-            const margenY = (altoTapete / (2 * factorEscala)) - 70;
+            const margenX = (anchoTapete / (2 * factorEscala)) - 60;
+            const margenY = (altoTapete / (2 * factorEscala)) - 60;
 
             let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
             let esDoble = fichaCentro[0] === fichaCentro[1];
@@ -912,8 +867,7 @@
             }
 
             const divFicha = document.createElement('div');
-            let esUnicaFicha = ramaIzquierda.length === 0 && ramaDerecha.length === 0;
-            divFicha.className = `ficha ficha-mesa ${claseExtraCentro} ${esUnicaFicha ? 'ficha-animacion-golpe' : ''}`;
+            divFicha.className = `ficha ficha-mesa ${claseExtraCentro}`;
             divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexG++;
             divFicha.innerHTML = `${generarHTMLMitad(fichaCentro[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(fichaCentro[1])}`;
             contenedorZoom.appendChild(divFicha);
@@ -1034,14 +988,14 @@
                     let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
                     if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
                     agregarRondaHistorial(equipoSalida, 30);
-                    mostrarToast("¡30 a la salida! Anotados.");
+                    mostrarToast("¡30 a la salida!");
                     if(revisarPuntos()) return;
                 } else {
                     mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
                 }
                 
                 esPrimerTurnoDespuesDeSalida = false;
-                setTimeout(avanzarTurno, 1500);
+                setTimeout(avanzarTurno, 1300);
             } else {
                 if (pasesConsecutivos === 3 && fichaCentro) {
                     mostrarBurbuja(turnoActual, "¡Paso en banda! +30", "ganador", true);
@@ -1063,9 +1017,9 @@
             if (turnoActual !== 1) { 
                 let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
                 mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
-                setTimeout(turnoIA, 1500); 
+                setTimeout(turnoIA, 1200); 
             }
-            else if (salidaObligatoria && !fichaCentro) { mostrarToast("Debes salir obligatoriamente con el Doble 6"); }
+            else if (salidaObligatoria && !fichaCentro) { mostrarToast("Debes salir con el Doble 6"); }
             else { mostrarToast("¡Tu turno!"); }
         }
 
@@ -1087,7 +1041,7 @@
                 esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index;
                 fichaSeleccionada.esCapicua = esCapicua;
                 renderizarManos(); renderizarMesa(); 
-                mostrarToast("Toca un aro para colocar la ficha");
+                mostrarToast("Toca el círculo donde colocarla");
                 return; 
             }
 
@@ -1177,9 +1131,9 @@
             const cont = document.getElementById('fichas-animadas'); cont.innerHTML = '';
             for(let i=0; i<28; i++) {
                 const f = document.createElement('div'); f.className = 'ficha-revuelta';
-                f.style.setProperty('--rx', (Math.random() * 300 - 150)); f.style.setProperty('--ry', (Math.random() * 300 - 150));
-                f.style.setProperty('--rrot', (Math.random() * 360)); f.style.setProperty('--rx2', (Math.random() * 300 - 150));
-                f.style.setProperty('--ry2', (Math.random() * 300 - 150)); f.style.setProperty('--rrot2', (Math.random() * 360));
+                f.style.setProperty('--rx', (Math.random() * 260 - 130)); f.style.setProperty('--ry', (Math.random() * 260 - 130));
+                f.style.setProperty('--rrot', (Math.random() * 360)); f.style.setProperty('--rx2', (Math.random() * 260 - 130));
+                f.style.setProperty('--ry2', (Math.random() * 260 - 130)); f.style.setProperty('--rrot2', (Math.random() * 360));
                 cont.appendChild(f);
             }
         }
@@ -1194,7 +1148,7 @@
 
             const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
             crearAnimacionFichas();
-            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2500);
+            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2200);
         }
 
         function ejecutarLogicaReparto() {
@@ -1224,6 +1178,13 @@
         window.addEventListener('resize', () => {
             renderizarManos();
             renderizarMesa();
+        });
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                renderizarManos();
+                renderizarMesa();
+            }, 200);
         });
 
         iniciarManoConAnimacion();
