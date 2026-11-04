@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 923</title>
+    <title>Dominó RD 408</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -501,7 +501,7 @@
         .ficha:hover { transform: translateY(-8px); }
         .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95); border-color: #00bcd4; }
 
-        /* --- FICHAS EN LA MESA (ESTRUCTURA Y CONTRASTE RESTAURADOS) --- */
+        /* --- FICHAS EN LA MESA --- */
         .ficha-mesa { 
             position: absolute; 
             pointer-events: none; 
@@ -510,7 +510,8 @@
             border-radius: 8px;
             display: flex;
             padding: 4px;
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.6);
+            box-shadow: 3px 6px 15px rgba(0,0,0,0.9), inset 0 0 6px rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
             box-sizing: border-box;
         }
         .ficha-mesa.vertical { 
@@ -1009,9 +1010,18 @@
 
         function togglePantallaCompleta() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
+                document.documentElement.requestFullscreen().then(() => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado por el navegador:", err));
+                    }
+                }).catch(() => {});
             } else {
-                if (document.exitFullscreen) document.exitFullscreen();
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
+                }
             }
         }
 
@@ -1230,19 +1240,18 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- PLAN DETERMINISTA DE SERPIENTE AMPLIA (CERO COLISIONES) ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
                 if (isRightBranch) {
-                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 3, 2, 3] };
+                    return { dirs: ['D', 'R', 'U', 'R'], counts: [1, 2, 2, 2] };
                 } else {
-                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 3, 2, 3] };
+                    return { dirs: ['U', 'L', 'D', 'L'], counts: [1, 2, 2, 2] };
                 }
             } else {
                 if (isRightBranch) {
-                    return { dirs: ['R', 'D', 'L', 'D'], counts: [3, 2, 3, 2] };
+                    return { dirs: ['R', 'D', 'R', 'U'], counts: [1, 2, 2, 2] };
                 } else {
-                    return { dirs: ['L', 'U', 'R', 'U'], counts: [3, 2, 3, 2] };
+                    return { dirs: ['L', 'U', 'L', 'D'], counts: [1, 2, 2, 2] };
                 }
             }
         }
@@ -1322,9 +1331,8 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            // --- ZONA SEGURA DE LA CÁMARA (NO TOCA AVATARES NI BANDEJA) ---
             const paddingTop = 75;    
-            const paddingBottom = 135; 
+            const paddingBottom = 190; 
             const paddingSide = 75;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
@@ -1342,7 +1350,6 @@
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            // Fichas nítidas y grandes desde el primer turno
             let escalaOptima = Math.min(escalaW, escalaH, 1.35);
             escalaOptima = Math.max(0.35, escalaOptima);
 
