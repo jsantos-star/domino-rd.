@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 0833</title>
+    <title>Dominó RD 923</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -480,6 +480,7 @@
             background: rgba(7, 10, 16, 0.85);
         }
 
+        /* --- FICHAS EN LA MANO --- */
         .ficha {
             width: 48px; 
             height: 90px; 
@@ -497,17 +498,43 @@
             border-right: 1px solid var(--ficha-borde-par);
             flex-shrink: 0;
         }
-        
         .ficha:hover { transform: translateY(-8px); }
         .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95); border-color: #00bcd4; }
-        .ficha-mesa { position: absolute; pointer-events: none; }
 
-        .ficha.horizontal { width: 90px !important; height: 48px !important; flex-direction: row; border-top: 1px solid var(--ficha-borde-par); border-bottom: 1px solid var(--ficha-borde-par); border-left: 2.5px solid #002868; border-right: 2.5px solid #ce1126; }
-        .ficha.vertical { width: 48px !important; height: 90px !important; flex-direction: column; border-top: 2.5px solid #002868; border-bottom: 2.5px solid #ce1126; border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par); }
+        /* --- FICHAS EN LA MESA (ESTRUCTURA Y CONTRASTE RESTAURADOS) --- */
+        .ficha-mesa { 
+            position: absolute; 
+            pointer-events: none; 
+            transition: none;
+            background: var(--ficha-bg);
+            border-radius: 8px;
+            display: flex;
+            padding: 4px;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+        }
+        .ficha-mesa.vertical { 
+            width: 50px !important; 
+            height: 100px !important; 
+            flex-direction: column;
+            border-top: 3px solid #002868;
+            border-bottom: 3px solid #ce1126;
+            border-left: 1px solid var(--ficha-borde-par);
+            border-right: 1px solid var(--ficha-borde-par);
+        }
+        .ficha-mesa.horizontal { 
+            width: 100px !important; 
+            height: 50px !important; 
+            flex-direction: row;
+            border-left: 3px solid #002868;
+            border-right: 3px solid #ce1126;
+            border-top: 1px solid var(--ficha-borde-par);
+            border-bottom: 1px solid var(--ficha-borde-par);
+        }
 
         .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 2px; align-items: center; justify-items: center; }
         .linea-divisoria { background: var(--ficha-linea); height: 2px; width: 90%; margin: 0 auto; border-radius: 2px; }
-        .ficha.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 2px; height: 90%; margin: auto 0; }
+        .ficha-mesa.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 2px; height: 90%; margin: auto 0; }
         .punto { width: 7px; height: 7px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
 
         .blanco .punto { display: none; }
@@ -544,14 +571,14 @@
             width: 100%; 
             height: 100%; 
             z-index: 2;
-            transition: transform 0.35s ease-out;
+            transition: transform 0.28s ease-out;
         }
 
         .marcador-punta { position: absolute; width: 44px; height: 44px; background-color: rgba(0, 188, 212, 0.45); border: 2.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 14px 4px rgba(0, 188, 212, 0.85); animation: latir 0.9s infinite alternate; z-index: 999; }
         @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.15); } }
 
         #toast-mensaje {
-            position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%);
+            position: absolute; bottom: 105px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.92); color: white; padding: 6px 16px;
             border-radius: 16px; font-size: 12px; font-weight: bold;
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
@@ -560,7 +587,7 @@
         }
         #toast-mensaje.visible { opacity: 1; }
 
-        /* --- CARTELES (BANNERS) ÉPICOS DE VICTORIA Y SALIDA --- */
+        /* --- CARTELES (BANNERS) DE VICTORIA --- */
         #banner-ganador-mano {
             position: absolute; 
             top: 36%; 
@@ -1105,7 +1132,7 @@
                 wrapper.style.animationDelay = `${index * 0.08}s`;
 
                 const divFicha = document.createElement('div');
-                divFicha.className = `ficha ${tipo === 'h' ? '' : 'horizontal'} ficha-revelada`;
+                divFicha.className = `ficha-mesa ${tipo === 'h' ? 'horizontal' : 'vertical'} ficha-revelada`;
                 divFicha.style.transform = 'scale(0.24)'; 
                 divFicha.style.transformOrigin = 'top left';
                 divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
@@ -1154,32 +1181,36 @@
             }
         }
 
+        // --- CÁLCULO EXACTO DE GIROS EN 90° ---
         function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
-            let offsetPar = prevIsDouble ? 45 : 24; 
-            let offsetPerp = 24;
-            if (prevDir === 'R' && newDir === 'D') { joint.x -= offsetPerp; joint.y += offsetPar; }
-            else if (prevDir === 'R' && newDir === 'U') { joint.x -= offsetPerp; joint.y -= offsetPar; }
-            else if (prevDir === 'L' && newDir === 'D') { joint.x += offsetPerp; joint.y += offsetPar; }
-            else if (prevDir === 'L' && newDir === 'U') { joint.x += offsetPerp; joint.y -= offsetPar; }
-            else if (prevDir === 'D' && newDir === 'R') { joint.x += offsetPar; joint.y -= offsetPerp; }
-            else if (prevDir === 'D' && newDir === 'L') { joint.x -= offsetPar; joint.y -= offsetPerp; }
-            else if (prevDir === 'U' && newDir === 'R') { joint.x += offsetPar; joint.y += offsetPerp; }
-            else if (prevDir === 'U' && newDir === 'L') { joint.x -= offsetPar; joint.y += offsetPerp; }
+            let backAlongPrev = 25; 
+            let outPerp = prevIsDouble ? 50 : 25; 
+
+            if (prevDir === 'R' && newDir === 'D') { joint.x -= backAlongPrev; joint.y += outPerp; }
+            else if (prevDir === 'R' && newDir === 'U') { joint.x -= backAlongPrev; joint.y -= outPerp; }
+            else if (prevDir === 'L' && newDir === 'D') { joint.x += backAlongPrev; joint.y += outPerp; }
+            else if (prevDir === 'L' && newDir === 'U') { joint.x += backAlongPrev; joint.y -= outPerp; }
+            else if (prevDir === 'D' && newDir === 'R') { joint.y -= backAlongPrev; joint.x += outPerp; }
+            else if (prevDir === 'D' && newDir === 'L') { joint.y -= backAlongPrev; joint.x -= outPerp; }
+            else if (prevDir === 'U' && newDir === 'R') { joint.y += backAlongPrev; joint.x += outPerp; }
+            else if (prevDir === 'U' && newDir === 'L') { joint.y += backAlongPrev; joint.x -= outPerp; }
             joint.dir = newDir;
         }
 
         function drawFichaOrientada(ficha, cx, cy, dir, contenedor, zIndexLocal) {
             const esDoble = ficha[0] === ficha[1];
-            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
-            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
+            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
+            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
             
-            if (dir === 'U' || dir === 'D') { if (esDoble) { w = 90; h = 48; } }
+            if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
             
             let claseExtra = (dir === 'R' || dir === 'L') ? (esDoble ? 'vertical' : 'horizontal') : (esDoble ? 'horizontal' : 'vertical');
             
             const divFicha = document.createElement('div');
-            divFicha.className = `ficha ficha-mesa ${claseExtra}`;
-            divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
+            divFicha.className = `ficha-mesa ${claseExtra}`;
+            divFicha.style.left = (cx - w/2) + 'px'; 
+            divFicha.style.top = (cy - h/2) + 'px'; 
+            divFicha.style.zIndex = zIndexLocal; 
             
             let parte1 = ficha[0], parte2 = ficha[1];
             if (dir === 'L' || dir === 'U') {
@@ -1193,121 +1224,93 @@
 
         function simularFichaBounds(ficha, cx, cy, dir) {
             const esDoble = ficha[0] === ficha[1];
-            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
-            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
-            if (dir === 'U' || dir === 'D') { if (esDoble) { w = 90; h = 48; } }
+            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
+            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
+            if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- CAJA LÓGICA ESTRICTA (NUNCA CHOCARÁ CON ARRIBA/ABAJO) ---
+        // --- PLAN DETERMINISTA DE SERPIENTE AMPLIA (CERO COLISIONES) ---
+        function getBranchPlan(iniciaNosotros, isRightBranch) {
+            if (iniciaNosotros) {
+                if (isRightBranch) {
+                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 3, 2, 3] };
+                } else {
+                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 3, 2, 3] };
+                }
+            } else {
+                if (isRightBranch) {
+                    return { dirs: ['R', 'D', 'L', 'D'], counts: [3, 2, 3, 2] };
+                } else {
+                    return { dirs: ['L', 'U', 'R', 'U'], counts: [3, 2, 3, 2] };
+                }
+            }
+        }
+
+        function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
+            let plan = getBranchPlan(iniciaNosotros, isRightBranch);
+            let prevIsDouble = fichaCentro[0] === fichaCentro[1];
+            let currentDir = joint.dir;
+            let cycleLen = plan.counts.reduce((a, b) => a + b, 0);
+
+            rama.forEach((ficha, idx) => {
+                let isD = ficha[0] === ficha[1];
+                let modIdx = idx % cycleLen;
+                let acc = 0;
+                let targetDir = plan.dirs[0];
+
+                for (let k = 0; k < plan.counts.length; k++) {
+                    acc += plan.counts[k];
+                    if (modIdx < acc) {
+                        targetDir = plan.dirs[k];
+                        break;
+                    }
+                }
+
+                if (targetDir !== currentDir) {
+                    aplicarGiro(joint, prevIsDouble, currentDir, targetDir);
+                    currentDir = targetDir;
+                }
+
+                let advance = isD ? 50 : 100;
+                let curCx = joint.x + (currentDir === 'R' ? advance / 2 : (currentDir === 'L' ? -advance / 2 : 0));
+                let curCy = joint.y + (currentDir === 'D' ? advance / 2 : (currentDir === 'U' ? -advance / 2 : 0));
+
+                joint.x += (currentDir === 'R' ? advance : (currentDir === 'L' ? -advance : 0));
+                joint.y += (currentDir === 'D' ? advance : (currentDir === 'U' ? -advance : 0));
+
+                callbackFicha(ficha, curCx, curCy, currentDir);
+                prevIsDouble = isD;
+            });
+            joint.dir = currentDir;
+        }
+
         function calcularCadenaBounds() {
             if (!fichaCentro) return null;
             let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
             
             let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
             let esDoble = fichaCentro[0] === fichaCentro[1];
-            let w = iniciaNosotros ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
-            let h = iniciaNosotros ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
+            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
+            let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
 
             bounds.minX = -w/2; bounds.maxX = w/2;
             bounds.minY = -h/2; bounds.maxY = h/2;
 
-            function procesarRamaSim(rama, isRight) {
-                let joint = isRight 
-                    ? (iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' })
-                    : (iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' });
-                
-                let prevIsDouble = esDoble;
-                const secuenciaDerecha = ['R', 'D', 'L', 'D', 'R', 'U', 'L', 'U'];
-                const secuenciaIzquierda = ['L', 'U', 'R', 'U', 'L', 'D', 'R', 'D'];
-                const secuenciaVerticalDer = ['D', 'R', 'U', 'R', 'D', 'L', 'U', 'L'];
-                const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
+            let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
+            let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
-                // Barreras de seguridad (Píxeles lógicos)
-                const MAX_Y = 120; // Nunca se alejará más de 120px de altura del centro
-                const MAX_X = 260; // Crece hacia los lados
+            const calcBounds = (f, cx, cy, dir) => {
+                let b = simularFichaBounds(f, cx, cy, dir);
+                bounds.minX = Math.min(bounds.minX, b.minX);
+                bounds.maxX = Math.max(bounds.maxX, b.maxX);
+                bounds.minY = Math.min(bounds.minY, b.minY);
+                bounds.maxY = Math.max(bounds.maxY, b.maxY);
+            };
 
-                rama.forEach((f, idx) => {
-                    let isD = f[0] === f[1];
-                    let tramo = Math.floor(idx / 3);
-                    let intendedDir = iniciaNosotros 
-                        ? (isRight ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
-                        : (isRight ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
-
-                    // Sobrescritura de seguridad (fuerza el giro si toca los límites)
-                    let newDir = intendedDir;
-                    if (newDir === 'U' && joint.y < -MAX_Y) newDir = isRight ? 'L' : 'R';
-                    if (newDir === 'D' && joint.y > MAX_Y) newDir = isRight ? 'R' : 'L';
-                    if (newDir === 'L' && joint.x < -MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
-                    if (newDir === 'R' && joint.x > MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
-
-                    if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
-
-                    let advance = isD ? 48 : 90;
-                    let curCx = joint.x + (newDir === 'R' ? advance/2 : (newDir === 'L' ? -advance/2 : 0));
-                    let curCy = joint.y + (newDir === 'D' ? advance/2 : (newDir === 'U' ? -advance/2 : 0));
-
-                    joint.x += (newDir === 'R' ? advance : (newDir === 'L' ? -advance : 0));
-                    joint.y += (newDir === 'D' ? advance : (newDir === 'U' ? -advance : 0));
-
-                    let b = simularFichaBounds(f, curCx, curCy, newDir);
-                    bounds.minX = Math.min(bounds.minX, b.minX);
-                    bounds.maxX = Math.max(bounds.maxX, b.maxX);
-                    bounds.minY = Math.min(bounds.minY, b.minY);
-                    bounds.maxY = Math.max(bounds.maxY, b.maxY);
-                    prevIsDouble = isD;
-                });
-            }
-
-            procesarRamaSim(ramaDerecha, true);
-            procesarRamaSim(ramaIzquierda, false);
+            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, calcBounds);
+            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, calcBounds);
             return bounds;
-        }
-
-        function renderizarRama(rama, joint, isRightBranch, contenedorZoom, zIndexG, iniciaNosotros) {
-            let prevIsDouble = fichaCentro[0] === fichaCentro[1];
-            const secuenciaDerecha = ['R', 'D', 'L', 'D', 'R', 'U', 'L', 'U'];
-            const secuenciaIzquierda = ['L', 'U', 'R', 'U', 'L', 'D', 'R', 'D'];
-            const secuenciaVerticalDer = ['D', 'R', 'U', 'R', 'D', 'L', 'U', 'L'];
-            const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
-
-            const MAX_Y = 120;
-            const MAX_X = 260;
-
-            rama.forEach((ficha, idx) => {
-                const isDouble = ficha[0] === ficha[1]; 
-                let tramo = Math.floor(idx / 3);
-                let intendedDir = iniciaNosotros 
-                    ? (isRightBranch ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
-                    : (isRightBranch ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
-
-                let newDir = intendedDir;
-                if (newDir === 'U' && joint.y < -MAX_Y) newDir = isRightBranch ? 'L' : 'R';
-                if (newDir === 'D' && joint.y > MAX_Y) newDir = isRightBranch ? 'R' : 'L';
-                if (newDir === 'L' && joint.x < -MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
-                if (newDir === 'R' && joint.x > MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
-
-                if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
-
-                let advance = isDouble ? 48 : 90; 
-                let curCx = joint.x + (newDir === 'R' ? advance/2 : (newDir === 'L' ? -advance/2 : 0));
-                let curCy = joint.y + (newDir === 'D' ? advance/2 : (newDir === 'U' ? -advance/2 : 0));
-
-                joint.x += (newDir === 'R' ? advance : (newDir === 'L' ? -advance : 0));
-                joint.y += (newDir === 'D' ? advance : (newDir === 'U' ? -advance : 0));
-
-                drawFichaOrientada(ficha, curCx, curCy, newDir, contenedorZoom, zIndexG++);
-                prevIsDouble = isDouble;
-            });
-
-            if (esperandoSeleccionPunta) {
-                const marcador = document.createElement('div'); 
-                marcador.className = 'marcador-punta';
-                marcador.style.left = joint.x + 'px'; 
-                marcador.style.top = joint.y + 'px';
-                marcador.onclick = () => ejecutarEleccion(!isRightBranch);
-                contenedorZoom.appendChild(marcador);
-            }
         }
 
         function renderizarMesa() {
@@ -1319,9 +1322,10 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            const paddingTop = 90;    
-            const paddingBottom = 150; 
-            const paddingSide = 70;   
+            // --- ZONA SEGURA DE LA CÁMARA (NO TOCA AVATARES NI BANDEJA) ---
+            const paddingTop = 75;    
+            const paddingBottom = 135; 
+            const paddingSide = 75;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
             const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
@@ -1330,16 +1334,16 @@
             const centroSeguroY = paddingTop + (areaSeguraH / 2);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = Math.max(90, bounds.maxX - bounds.minX + 90);
-            const altoCadena = Math.max(90, bounds.maxY - bounds.minY + 90);
+            const anchoCadena = (bounds.maxX - bounds.minX) + 40;
+            const altoCadena = (bounds.maxY - bounds.minY) + 40;
             const centroCadenaX = (bounds.minX + bounds.maxX) / 2;
             const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            // Mayor margen de zoom: Se ven muy grandes al inicio, y no se encogen hasta que sea estrictamente necesario.
-            let escalaOptima = Math.min(escalaW, escalaH, 1.40);
+            // Fichas nítidas y grandes desde el primer turno
+            let escalaOptima = Math.min(escalaW, escalaH, 1.35);
             escalaOptima = Math.max(0.35, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
@@ -1350,12 +1354,12 @@
 
             let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
             let esDoble = fichaCentro[0] === fichaCentro[1];
-            let w = iniciaNosotros ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
-            let h = iniciaNosotros ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
+            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
+            let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let claseExtraCentro = (w > h) ? 'horizontal' : 'vertical';
 
             const divFicha = document.createElement('div');
-            divFicha.className = `ficha ficha-mesa ${claseExtraCentro}`;
+            divFicha.className = `ficha-mesa ${claseExtraCentro}`;
             divFicha.style.left = (-w/2) + 'px'; 
             divFicha.style.top = (-h/2) + 'px'; 
             divFicha.style.zIndex = 10;
@@ -1365,8 +1369,31 @@
             let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
             let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
-            renderizarRama(ramaDerecha, jointDer, true, contenedorZoom, 11, iniciaNosotros);
-            renderizarRama(ramaIzquierda, jointIzq, false, contenedorZoom, 100, iniciaNosotros);
+            let zIndexG = 11;
+            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, (f, cx, cy, dir) => {
+                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
+            });
+            
+            zIndexG = 100;
+            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, (f, cx, cy, dir) => {
+                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
+            });
+
+            if (esperandoSeleccionPunta) {
+                const marcadorDer = document.createElement('div'); 
+                marcadorDer.className = 'marcador-punta';
+                marcadorDer.style.left = jointDer.x + 'px'; 
+                marcadorDer.style.top = jointDer.y + 'px';
+                marcadorDer.onclick = () => ejecutarEleccion(false);
+                contenedorZoom.appendChild(marcadorDer);
+                
+                const marcadorIzq = document.createElement('div'); 
+                marcadorIzq.className = 'marcador-punta';
+                marcadorIzq.style.left = jointIzq.x + 'px'; 
+                marcadorIzq.style.top = jointIzq.y + 'px';
+                marcadorIzq.onclick = () => ejecutarEleccion(true);
+                contenedorZoom.appendChild(marcadorIzq);
+            }
         }
 
         function agregarRondaHistorial(equipoGanador, puntos) {
@@ -1556,7 +1583,7 @@
                 esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index;
                 fichaSeleccionada.esCapicua = esCapicua;
                 renderizarManos(); renderizarMesa(); 
-                mostrarToast("Toca el círculo donde colocarla");
+                mostrarToast("Toca el aro verde donde colocarla");
                 return; 
             }
 
