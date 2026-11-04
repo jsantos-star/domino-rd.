@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 408</title>
+    <title>Dominó RD 454</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -480,63 +480,90 @@
             background: rgba(7, 10, 16, 0.85);
         }
 
-        /* --- FICHAS EN LA MANO --- */
+        /* --- FICHAS EN LA MANO (EFECTO 3D REALISTA) --- */
         .ficha {
             width: 48px; 
             height: 90px; 
             background: var(--ficha-bg);
-            border-radius: 8px; 
+            border-radius: 6px; 
             display: flex; 
             flex-direction: column; 
             padding: 4px;
-            box-shadow: 2px 3px 8px rgba(0,0,0,0.5); 
             cursor: pointer; 
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            border-top: 2.5px solid #002868; 
-            border-bottom: 2.5px solid #ce1126;
-            border-left: 1px solid var(--ficha-borde-par); 
-            border-right: 1px solid var(--ficha-borde-par);
             flex-shrink: 0;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.6), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0,0,0,0.3);
         }
         .ficha:hover { transform: translateY(-8px); }
-        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95); border-color: #00bcd4; }
+        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95), inset 2px 2px 5px rgba(255,255,255,0.8); border-color: #00bcd4; }
 
-        /* --- FICHAS EN LA MESA --- */
+        /* --- FICHAS EN LA MESA (EFECTO 3D REALISTA) --- */
         .ficha-mesa { 
             position: absolute; 
             pointer-events: none; 
             transition: none;
             background: var(--ficha-bg);
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             padding: 4px;
-            box-shadow: 3px 6px 15px rgba(0,0,0,0.9), inset 0 0 6px rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.15);
             box-sizing: border-box;
+            box-shadow: 3px 6px 12px rgba(0,0,0,0.75), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0,0,0,0.3);
         }
         .ficha-mesa.vertical { 
             width: 50px !important; 
             height: 100px !important; 
             flex-direction: column;
-            border-top: 3px solid #002868;
-            border-bottom: 3px solid #ce1126;
-            border-left: 1px solid var(--ficha-borde-par);
-            border-right: 1px solid var(--ficha-borde-par);
         }
         .ficha-mesa.horizontal { 
             width: 100px !important; 
             height: 50px !important; 
             flex-direction: row;
-            border-left: 3px solid #002868;
-            border-right: 3px solid #ce1126;
-            border-top: 1px solid var(--ficha-borde-par);
-            border-bottom: 1px solid var(--ficha-borde-par);
         }
 
         .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 2px; align-items: center; justify-items: center; }
-        .linea-divisoria { background: var(--ficha-linea); height: 2px; width: 90%; margin: 0 auto; border-radius: 2px; }
-        .ficha-mesa.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 2px; height: 90%; margin: auto 0; }
-        .punto { width: 7px; height: 7px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
+        
+        /* Ranura oscura hundida */
+        .linea-divisoria { 
+            background: rgba(0,0,0,0.8); 
+            height: 3px; 
+            width: 90%; 
+            margin: 0 auto; 
+            border-radius: 2px; 
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.4);
+            position: relative;
+        }
+        .ficha-mesa.horizontal .linea-divisoria { 
+            width: 3px; 
+            height: 90%; 
+            margin: auto 0; 
+            box-shadow: inset 1px 0 2px rgba(0,0,0,0.8), 1px 0 0 rgba(255,255,255,0.4);
+        }
+        
+        /* Clavito dorado central (Spinner) */
+        .linea-divisoria::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 9px;
+            height: 9px;
+            background: radial-gradient(circle, #fff700 0%, #b8860b 100%);
+            border-radius: 50%;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.7), inset -1px -1px 2px rgba(0,0,0,0.4);
+            z-index: 5;
+        }
+
+        /* Puntos grabados/hundidos */
+        .punto { 
+            width: 9px; 
+            height: 9px; 
+            background-color: var(--ficha-punto); 
+            border-radius: 50%; 
+            box-shadow: inset 1px 2px 4px rgba(0,0,0,0.9), 0.5px 1px 1px rgba(255,255,255,0.5); 
+        }
 
         .blanco .punto { display: none; }
         .uno .punto:nth-child(1) { grid-area: 2 / 2; }
@@ -1240,18 +1267,25 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
+        // --- NUEVA LÓGICA DE GIROS (3 Fichas rectas, doble 2, doble 2) ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
+                // Si la ficha inicial está horizontal, los lados largos están arriba/abajo
                 if (isRightBranch) {
-                    return { dirs: ['D', 'R', 'U', 'R'], counts: [1, 2, 2, 2] };
+                    // Empieza hacia abajo (3 fichas), dobla derecha (2), sube (2), derecha (2)
+                    return { dirs: ['D', 'R', 'U', 'R'], counts: [3, 2, 2, 2] };
                 } else {
-                    return { dirs: ['U', 'L', 'D', 'L'], counts: [1, 2, 2, 2] };
+                    // Empieza hacia arriba (3 fichas), dobla izquierda (2), baja (2), izquierda (2)
+                    return { dirs: ['U', 'L', 'D', 'L'], counts: [3, 2, 2, 2] };
                 }
             } else {
+                // Si la ficha inicial está vertical, los lados largos están derecha/izquierda
                 if (isRightBranch) {
-                    return { dirs: ['R', 'D', 'R', 'U'], counts: [1, 2, 2, 2] };
+                    // Empieza hacia derecha (3 fichas), dobla abajo (2), izquierda (2), abajo (2)
+                    return { dirs: ['R', 'D', 'L', 'D'], counts: [3, 2, 2, 2] };
                 } else {
-                    return { dirs: ['L', 'U', 'L', 'D'], counts: [1, 2, 2, 2] };
+                    // Empieza hacia izquierda (3 fichas), dobla arriba (2), derecha (2), arriba (2)
+                    return { dirs: ['L', 'U', 'R', 'U'], counts: [3, 2, 2, 2] };
                 }
             }
         }
