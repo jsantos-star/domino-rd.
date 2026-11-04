@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD act 0823</title>
+    <title>Dominó RD 0833</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -320,7 +320,6 @@
             transform: scale(1.12); 
         }
 
-        /* --- ANIMACIONES DE VICTORIA Y PASO --- */
         .avatar-ganador-ronda .avatar {
             border-color: #ffd700 !important;
             box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important;
@@ -519,7 +518,6 @@
         .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
         .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
 
-        /* Fichas levantadas al final */
         .wrapper-revelada {
             animation: saltarYFlotar 0.6s ease-out forwards;
             z-index: 80;
@@ -598,7 +596,6 @@
             font-weight: bold;
         }
 
-        /* Variaciones de colores épicos para el banner */
         #banner-ganador-mano.domino {
             border-color: #ffd700;
             box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0,0,0,0.9);
@@ -1202,6 +1199,7 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
+        // --- CAJA LÓGICA ESTRICTA (NUNCA CHOCARÁ CON ARRIBA/ABAJO) ---
         function calcularCadenaBounds() {
             if (!fichaCentro) return null;
             let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
@@ -1225,12 +1223,23 @@
                 const secuenciaVerticalDer = ['D', 'R', 'U', 'R', 'D', 'L', 'U', 'L'];
                 const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
 
+                // Barreras de seguridad (Píxeles lógicos)
+                const MAX_Y = 120; // Nunca se alejará más de 120px de altura del centro
+                const MAX_X = 260; // Crece hacia los lados
+
                 rama.forEach((f, idx) => {
                     let isD = f[0] === f[1];
                     let tramo = Math.floor(idx / 3);
-                    let newDir = iniciaNosotros 
+                    let intendedDir = iniciaNosotros 
                         ? (isRight ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
                         : (isRight ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
+
+                    // Sobrescritura de seguridad (fuerza el giro si toca los límites)
+                    let newDir = intendedDir;
+                    if (newDir === 'U' && joint.y < -MAX_Y) newDir = isRight ? 'L' : 'R';
+                    if (newDir === 'D' && joint.y > MAX_Y) newDir = isRight ? 'R' : 'L';
+                    if (newDir === 'L' && joint.x < -MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
+                    if (newDir === 'R' && joint.x > MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
 
                     if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
 
@@ -1262,12 +1271,21 @@
             const secuenciaVerticalDer = ['D', 'R', 'U', 'R', 'D', 'L', 'U', 'L'];
             const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
 
+            const MAX_Y = 120;
+            const MAX_X = 260;
+
             rama.forEach((ficha, idx) => {
                 const isDouble = ficha[0] === ficha[1]; 
                 let tramo = Math.floor(idx / 3);
-                let newDir = iniciaNosotros 
+                let intendedDir = iniciaNosotros 
                     ? (isRightBranch ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
                     : (isRightBranch ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
+
+                let newDir = intendedDir;
+                if (newDir === 'U' && joint.y < -MAX_Y) newDir = isRightBranch ? 'L' : 'R';
+                if (newDir === 'D' && joint.y > MAX_Y) newDir = isRightBranch ? 'R' : 'L';
+                if (newDir === 'L' && joint.x < -MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
+                if (newDir === 'R' && joint.x > MAX_X) newDir = joint.y > 0 ? 'U' : 'D';
 
                 if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
 
@@ -1301,10 +1319,9 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            // --- MÁRGENES MÁS AJUSTADOS PARA QUE LAS FICHAS CREZCAN MÁS ---
-            const paddingTop = 60;    
-            const paddingBottom = 110; 
-            const paddingSide = 65;   
+            const paddingTop = 90;    
+            const paddingBottom = 150; 
+            const paddingSide = 70;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
             const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
@@ -1313,16 +1330,16 @@
             const centroSeguroY = paddingTop + (areaSeguraH / 2);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = bounds.maxX - bounds.minX + 20;
-            const altoCadena = bounds.maxY - bounds.minY + 20;
+            const anchoCadena = Math.max(90, bounds.maxX - bounds.minX + 90);
+            const altoCadena = Math.max(90, bounds.maxY - bounds.minY + 90);
             const centroCadenaX = (bounds.minX + bounds.maxX) / 2;
             const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            // Aumentamos el máximo a 1.40 para que inicien grandes, y mínimo de 0.35 para cadenas largas
-            let escalaOptima = Math.min(escalaW, escalaH, 1.4);
+            // Mayor margen de zoom: Se ven muy grandes al inicio, y no se encogen hasta que sea estrictamente necesario.
+            let escalaOptima = Math.min(escalaW, escalaH, 1.40);
             escalaOptima = Math.max(0.35, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
