@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD act 0812</title>
+    <title>Dominó RD act 0823</title>
     <style>
         :root {
-            --azul-rd: #00bcd4;
-            --rojo-rd: #ff1744;
-            --fondo-oscuro: #070a10;
+            --azul-rd: #00bcd4; 
+            --rojo-rd: #ff1744; 
+            --fondo-oscuro: #070a10; 
             --mesa-verde: #163823;
             --madera: #4a2810;
 
@@ -58,42 +56,35 @@
             --tapete-marca-agua: rgba(0, 0, 0, 0.06);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
 
-        body {
-            background-color: var(--fondo-oscuro);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            height: 100dvh;
+        body { 
+            background-color: var(--fondo-oscuro); 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            height: 100dvh; 
             width: 100vw;
-            overflow: hidden;
+            overflow: hidden; 
             touch-action: none;
         }
 
-        .contenedor-juego {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .contenedor-juego { 
+            display: flex; 
+            width: 100%; 
+            height: 100%; 
+            position: relative; 
             overflow: hidden;
         }
 
-        .area-principal {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 100%;
+        .area-principal { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            height: 100%; 
             width: 100%;
         }
 
@@ -115,7 +106,6 @@
             backdrop-filter: blur(10px);
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
-
         #pantalla-bienvenida.desvanecer {
             opacity: 0;
             transform: scale(1.05);
@@ -137,17 +127,9 @@
             gap: 12px;
             animation: zoomIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         @keyframes zoomIn {
-            from {
-                transform: scale(0.85);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .btn-config-bienvenida {
@@ -167,24 +149,20 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
         .btn-config-bienvenida:hover {
             background: rgba(0, 188, 212, 0.25);
             border-color: var(--azul-rd);
             transform: rotate(45deg);
         }
-
-        .btn-config-bienvenida:active {
-            transform: scale(0.92);
-        }
+        .btn-config-bienvenida:active { transform: scale(0.92); }
 
         .bandera-svg {
             width: 58px;
             height: 38px;
             border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
             margin-bottom: 2px;
         }
 
@@ -196,11 +174,7 @@
             color: #ffffff;
             margin: 0;
         }
-
-        .caja-bienvenida h1 span {
-            color: #ce1126;
-        }
-
+        .caja-bienvenida h1 span { color: #ce1126; }
         .caja-bienvenida p {
             font-size: 13px;
             color: #b0bec5;
@@ -212,7 +186,6 @@
             gap: 8px;
             margin-bottom: 4px;
         }
-
         .tag-info-bienvenida {
             background: rgba(0, 188, 212, 0.12);
             border: 1px solid rgba(0, 188, 212, 0.3);
@@ -223,7 +196,6 @@
             border-radius: 12px;
             cursor: pointer;
         }
-
         .tag-info-bienvenida:hover {
             background: rgba(0, 188, 212, 0.25);
         }
@@ -247,49 +219,41 @@
             justify-content: center;
             gap: 8px;
         }
-
-        .btn-iniciar-partida:active {
-            transform: scale(0.96);
-        }
+        .btn-iniciar-partida:active { transform: scale(0.96); }
 
         /* --- BOTONES DE CONTROL SUPERIOR EN MESA --- */
         .botones-cabecera {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            display: flex;
-            gap: 8px;
+            position: absolute; 
+            top: 8px; 
+            right: 12px; 
+            display: flex; 
+            gap: 8px; 
             z-index: 150;
         }
 
         .btn-flotante {
             height: 32px;
-            background: rgba(19, 25, 38, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 16px;
-            color: #fff;
-            font-size: 12px;
+            background: rgba(19, 25, 38, 0.88); 
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 16px; 
+            color: #fff; 
+            font-size: 12px; 
             display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
             padding: 0 10px;
             font-weight: bold;
             backdrop-filter: blur(5px);
         }
-
         .btn-flotante.solo-icono {
             width: 32px;
             padding: 0;
             border-radius: 50%;
             font-size: 15px;
         }
-
-        .btn-flotante:active {
-            transform: scale(0.92);
-            border-color: var(--azul-rd);
-        }
+        .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
 
         .escenario-mesa {
             position: relative;
@@ -306,65 +270,21 @@
             width: 100%;
             height: 100%;
             background: var(--tapete-fondo);
-            border-radius: 20px;
-            border: 6px solid var(--madera);
-            box-shadow: 0 0 0 2px #002868, 0 0 0 4px #ce1126, inset 0 0 40px rgba(0, 0, 0, 0.85);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
+            border-radius: 20px; 
+            border: 6px solid var(--madera); 
+            box-shadow: 0 0 0 2px #002868, 0 0 0 4px #ce1126, inset 0 0 40px rgba(0,0,0,0.85); 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
             align-items: center;
         }
 
-        @keyframes shakeMesa {
-            0% {
-                transform: translate(2px, 2px);
-            }
+        @keyframes shakeMesa { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 80% { transform: translate(1px, -1px); } 100% { transform: translate(0, 0); } }
+        .mesa-temblando { animation: shakeMesa 0.4s ease both; }
 
-            20% {
-                transform: translate(-3px, 0);
-            }
-
-            40% {
-                transform: translate(2px, -2px);
-            }
-
-            60% {
-                transform: translate(-2px, 2px);
-            }
-
-            80% {
-                transform: translate(1px, -1px);
-            }
-
-            100% {
-                transform: translate(0, 0);
-            }
-        }
-
-        .mesa-temblando {
-            animation: shakeMesa 0.4s ease both;
-        }
-
-        .marca-agua {
-            position: absolute;
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--tapete-marca-agua);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-align: center;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .marca-agua span {
-            font-size: 44px;
-            margin-bottom: -6px;
-            opacity: 0.12;
-        }
+        .marca-agua { position: absolute; font-size: 26px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 4px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        .marca-agua span { font-size: 44px; margin-bottom: -6px; opacity: 0.12;}
 
         .jugador-flotante {
             position: absolute;
@@ -381,24 +301,23 @@
             gap: 4px;
         }
 
-        .avatar {
-            width: 34px;
-            height: 34px;
-            background-color: #1e2430;
-            border: 2px solid #555;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        .avatar { 
+            width: 34px; 
+            height: 34px; 
+            background-color: #1e2430; 
+            border: 2px solid #555; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 15px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
             transition: all 0.3s ease;
         }
-
-        .turno-activo .avatar {
-            border-color: #00bcd4;
-            box-shadow: 0 0 14px #00bcd4;
-            transform: scale(1.12);
+        .turno-activo .avatar { 
+            border-color: #00bcd4; 
+            box-shadow: 0 0 14px #00bcd4; 
+            transform: scale(1.12); 
         }
 
         /* --- ANIMACIONES DE VICTORIA Y PASO --- */
@@ -407,93 +326,56 @@
             box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important;
             animation: latirGanador 0.7s infinite alternate ease-in-out !important;
         }
-
         @keyframes latirGanador {
-            from {
-                transform: scale(1.1);
-            }
-
-            to {
-                transform: scale(1.28);
-            }
+            from { transform: scale(1.1); }
+            to { transform: scale(1.28); }
         }
 
-        /* Resaltar en rojo vibrante al que Pasa */
         .avatar-paso .avatar {
             border-color: #ff3333 !important;
             box-shadow: 0 0 22px 6px #ff3333 !important;
             animation: vibrarPaso 0.15s infinite alternate ease-in-out !important;
         }
-
-        .avatar-paso .ficha,
-        .avatar-paso .ficha-dorso {
+        .avatar-paso .ficha, .avatar-paso .ficha-dorso {
             border-color: #ff3333 !important;
             box-shadow: 0 0 10px #ff3333 !important;
         }
-
         @keyframes vibrarPaso {
-            from {
-                transform: translateX(-3px) scale(1.05);
-            }
-
-            to {
-                transform: translateX(3px) scale(1.05);
-            }
+            from { transform: translateX(-3px) scale(1.05); }
+            to { transform: translateX(3px) scale(1.05); }
         }
 
         .nombre-tag {
-            font-size: 10px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 2px 6px;
+            font-size: 10px; 
+            font-weight: bold; 
+            color: #fff; 
+            background: rgba(0,0,0,0.75); 
+            padding: 2px 6px; 
             border-radius: 8px;
             white-space: nowrap;
         }
 
         .burbuja-estado {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.92);
-            border: 1.5px solid #fff;
+            position: absolute; 
+            background: rgba(0,0,0,0.92); 
+            border: 1.5px solid #fff; 
             color: #fff;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-weight: bold;
+            padding: 3px 8px; 
+            border-radius: 10px; 
+            font-weight: bold; 
             font-size: 11px;
-            opacity: 0;
-            transition: all 0.25s ease;
-            pointer-events: none;
-            z-index: 60;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            opacity: 0; 
+            transition: all 0.25s ease; 
+            pointer-events: none; 
+            z-index: 60; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
             white-space: nowrap;
         }
-
-        .burbuja-estado.visible {
-            opacity: 1;
-        }
-
-        .burbuja-estado.paso {
-            border-color: #ff3333;
-            color: #ff3333;
-            background: rgba(40, 0, 0, 0.92);
-        }
-
-        .burbuja-estado.pensando {
-            border-color: #ffcc00;
-            color: #ffcc00;
-        }
-
-        .burbuja-estado.ganador {
-            border-color: #00ff00;
-            color: #00ff00;
-            background: rgba(0, 40, 0, 0.92);
-        }
-
-        .burbuja-estado.capicua {
-            border-color: #FF0080;
-            color: #FF0080;
-            background: rgba(40, 0, 40, 0.92);
-        }
+        .burbuja-estado.visible { opacity: 1; }
+        .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.92); }
+        .burbuja-estado.pensando { border-color: #ffcc00; color: #ffcc00; }
+        .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.92); }
+        .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.92); }
 
         #pos-j3 {
             top: 10px;
@@ -502,12 +384,7 @@
             flex-direction: column;
             gap: 2px;
         }
-
-        #pos-j3 .burbuja-estado {
-            top: 115%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+        #pos-j3 .burbuja-estado { top: 115%; left: 50%; transform: translateX(-50%); }
 
         #pos-j4 {
             left: 12px;
@@ -516,12 +393,7 @@
             flex-direction: column;
             gap: 4px;
         }
-
-        #pos-j4 .burbuja-estado {
-            left: 110%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        #pos-j4 .burbuja-estado { left: 110%; top: 50%; transform: translateY(-50%); }
 
         #pos-j2 {
             right: 12px;
@@ -530,39 +402,25 @@
             flex-direction: column;
             gap: 4px;
         }
+        #pos-j2 .burbuja-estado { right: 110%; top: 50%; transform: translateY(-50%); }
 
-        #pos-j2 .burbuja-estado {
-            right: 110%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        .fichas-ocultas { display: flex; gap: 2px; align-items: center; justify-content: center; }
+        .fichas-ocultas.v { flex-direction: column; }
 
-        .fichas-ocultas {
-            display: flex;
-            gap: 2px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fichas-ocultas.v {
-            flex-direction: column;
-        }
-
-        .ficha-dorso {
-            border-radius: 3px;
-            border: 1px solid #1a2233;
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-            position: relative;
+        .ficha-dorso { 
+            border-radius: 3px; 
+            border: 1px solid #1a2233; 
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+            position: relative; 
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            background:
+            background: 
                 linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
         }
-
         .ficha-dorso::after {
             content: 'RD';
             font-size: 6px;
@@ -574,16 +432,8 @@
             letter-spacing: 0.3px;
             z-index: 2;
         }
-
-        .ficha-dorso.h {
-            width: 13px;
-            height: 24px;
-        }
-
-        .ficha-dorso.v {
-            width: 24px;
-            height: 13px;
-        }
+        .ficha-dorso.h { width: 13px; height: 24px; } 
+        .ficha-dorso.v { width: 24px; height: 13px; }
 
         .zona-nosotros-dock {
             position: absolute;
@@ -609,314 +459,114 @@
             flex-shrink: 0;
             position: relative;
         }
+        .avatar-nosotros-pill .burbuja-estado { bottom: 120%; left: 50%; transform: translateX(-50%); }
 
-        .avatar-nosotros-pill .burbuja-estado {
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .mano-jugador-activa {
-            display: flex;
-            justify-content: center;
+        .mano-jugador-activa { 
+            display: flex; 
+            justify-content: center; 
             align-items: flex-end;
-            gap: 6px;
+            gap: 6px; 
             pointer-events: auto;
             background: rgba(7, 10, 16, 0.65);
             padding: 4px 8px;
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.08);
             backdrop-filter: blur(4px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             max-width: 85vw;
             overflow-x: auto;
             transition: opacity 0.2s ease;
         }
-
         .mano-jugador-activa:hover {
             background: rgba(7, 10, 16, 0.85);
         }
 
         .ficha {
-            width: 48px;
-            height: 90px;
+            width: 48px; 
+            height: 90px; 
             background: var(--ficha-bg);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
+            border-radius: 8px; 
+            display: flex; 
+            flex-direction: column; 
             padding: 4px;
-            box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
+            box-shadow: 2px 3px 8px rgba(0,0,0,0.5); 
+            cursor: pointer; 
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            border-top: 2.5px solid #002868;
+            border-top: 2.5px solid #002868; 
             border-bottom: 2.5px solid #ce1126;
-            border-left: 1px solid var(--ficha-borde-par);
+            border-left: 1px solid var(--ficha-borde-par); 
             border-right: 1px solid var(--ficha-borde-par);
             flex-shrink: 0;
         }
+        
+        .ficha:hover { transform: translateY(-8px); }
+        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95); border-color: #00bcd4; }
+        .ficha-mesa { position: absolute; pointer-events: none; }
 
-        .ficha:hover {
-            transform: translateY(-8px);
-        }
+        .ficha.horizontal { width: 90px !important; height: 48px !important; flex-direction: row; border-top: 1px solid var(--ficha-borde-par); border-bottom: 1px solid var(--ficha-borde-par); border-left: 2.5px solid #002868; border-right: 2.5px solid #ce1126; }
+        .ficha.vertical { width: 48px !important; height: 90px !important; flex-direction: column; border-top: 2.5px solid #002868; border-bottom: 2.5px solid #ce1126; border-left: 1px solid var(--ficha-borde-par); border-right: 1px solid var(--ficha-borde-par); }
 
-        .ficha.seleccionada {
-            transform: translateY(-14px);
-            box-shadow: 0 0 16px rgba(0, 188, 212, 0.95);
-            border-color: #00bcd4;
-        }
+        .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 2px; align-items: center; justify-items: center; }
+        .linea-divisoria { background: var(--ficha-linea); height: 2px; width: 90%; margin: 0 auto; border-radius: 2px; }
+        .ficha.horizontal .linea-divisoria { background: var(--ficha-linea-v); width: 2px; height: 90%; margin: auto 0; }
+        .punto { width: 7px; height: 7px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
 
-        .ficha-mesa {
-            position: absolute;
-            pointer-events: none;
-        }
-
-        .ficha.horizontal {
-            width: 90px !important;
-            height: 48px !important;
-            flex-direction: row;
-            border-top: 1px solid var(--ficha-borde-par);
-            border-bottom: 1px solid var(--ficha-borde-par);
-            border-left: 2.5px solid #002868;
-            border-right: 2.5px solid #ce1126;
-        }
-
-        .ficha.vertical {
-            width: 48px !important;
-            height: 90px !important;
-            flex-direction: column;
-            border-top: 2.5px solid #002868;
-            border-bottom: 2.5px solid #ce1126;
-            border-left: 1px solid var(--ficha-borde-par);
-            border-right: 1px solid var(--ficha-borde-par);
-        }
-
-        .mitad {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 2px;
-            padding: 2px;
-            align-items: center;
-            justify-items: center;
-        }
-
-        .linea-divisoria {
-            background: var(--ficha-linea);
-            height: 2px;
-            width: 90%;
-            margin: 0 auto;
-            border-radius: 2px;
-        }
-
-        .ficha.horizontal .linea-divisoria {
-            background: var(--ficha-linea-v);
-            width: 2px;
-            height: 90%;
-            margin: auto 0;
-        }
-
-        .punto {
-            width: 7px;
-            height: 7px;
-            background-color: var(--ficha-punto);
-            border-radius: 50%;
-            box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3);
-        }
-
-        .blanco .punto {
-            display: none;
-        }
-
-        .uno .punto:nth-child(1) {
-            grid-area: 2 / 2;
-        }
-
-        .dos .punto:nth-child(1) {
-            grid-area: 1 / 1;
-        }
-
-        .dos .punto:nth-child(2) {
-            grid-area: 3 / 3;
-        }
-
-        .tres .punto:nth-child(1) {
-            grid-area: 1 / 1;
-        }
-
-        .tres .punto:nth-child(2) {
-            grid-area: 2 / 2;
-        }
-
-        .tres .punto:nth-child(3) {
-            grid-area: 3 / 3;
-        }
-
-        .cuatro .punto:nth-child(1) {
-            grid-area: 1 / 1;
-        }
-
-        .cuatro .punto:nth-child(2) {
-            grid-area: 3 / 1;
-        }
-
-        .cuatro .punto:nth-child(3) {
-            grid-area: 1 / 3;
-        }
-
-        .cuatro .punto:nth-child(4) {
-            grid-area: 3 / 3;
-        }
-
-        .cinco .punto:nth-child(1) {
-            grid-area: 1 / 1;
-        }
-
-        .cinco .punto:nth-child(2) {
-            grid-area: 3 / 1;
-        }
-
-        .cinco .punto:nth-child(3) {
-            grid-area: 2 / 2;
-        }
-
-        .cinco .punto:nth-child(4) {
-            grid-area: 1 / 3;
-        }
-
-        .cinco .punto:nth-child(5) {
-            grid-area: 3 / 3;
-        }
-
-        .seis .punto:nth-child(1) {
-            grid-area: 1 / 1;
-        }
-
-        .seis .punto:nth-child(2) {
-            grid-area: 2 / 1;
-        }
-
-        .seis .punto:nth-child(3) {
-            grid-area: 3 / 1;
-        }
-
-        .seis .punto:nth-child(4) {
-            grid-area: 1 / 3;
-        }
-
-        .seis .punto:nth-child(5) {
-            grid-area: 2 / 3;
-        }
-
-        .seis .punto:nth-child(6) {
-            grid-area: 3 / 3;
-        }
+        .blanco .punto { display: none; }
+        .uno .punto:nth-child(1) { grid-area: 2 / 2; }
+        .dos .punto:nth-child(1) { grid-area: 1 / 1; } .dos .punto:nth-child(2) { grid-area: 3 / 3; }
+        .tres .punto:nth-child(1) { grid-area: 1 / 1; } .tres .punto:nth-child(2) { grid-area: 2 / 2; } .tres .punto:nth-child(3) { grid-area: 3 / 3; }
+        .cuatro .punto:nth-child(1) { grid-area: 1 / 1; } .cuatro .punto:nth-child(2) { grid-area: 3 / 1; } .cuatro .punto:nth-child(3) { grid-area: 1 / 3; } .cuatro .punto:nth-child(4) { grid-area: 3 / 3; }
+        .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
+        .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
 
         /* Fichas levantadas al final */
         .wrapper-revelada {
             animation: saltarYFlotar 0.6s ease-out forwards;
             z-index: 80;
         }
-
         .ficha-revelada {
             box-shadow: 0 0 15px rgba(255, 51, 51, 0.8) !important;
             border-color: #ff3333 !important;
             animation: latirRoja 1s infinite alternate;
         }
-
         @keyframes saltarYFlotar {
-            0% {
-                transform: translateY(15px) scale(0.5);
-                opacity: 0;
-            }
-
-            60% {
-                transform: translateY(-10px) scale(1.3);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-4px) scale(1.2);
-                opacity: 1;
-            }
+            0% { transform: translateY(15px) scale(0.5); opacity: 0; }
+            60% { transform: translateY(-10px) scale(1.3); opacity: 1; }
+            100% { transform: translateY(-4px) scale(1.2); opacity: 1; }
         }
-
         @keyframes latirRoja {
-            from {
-                box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
-            }
-
-            to {
-                box-shadow: 0 0 20px rgba(255, 51, 51, 1);
-            }
+            from { box-shadow: 0 0 8px rgba(255, 51, 51, 0.5); }
+            to { box-shadow: 0 0 20px rgba(255, 51, 51, 1); }
         }
 
         #zoom-container {
-            position: absolute;
+            position: absolute; 
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100%; 
+            height: 100%; 
             z-index: 2;
             transition: transform 0.35s ease-out;
         }
 
-        .marcador-punta {
-            position: absolute;
-            width: 44px;
-            height: 44px;
-            background-color: rgba(0, 188, 212, 0.45);
-            border: 2.5px solid #fff;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            box-shadow: 0 0 14px 4px rgba(0, 188, 212, 0.85);
-            animation: latir 0.9s infinite alternate;
-            z-index: 999;
-        }
-
-        @keyframes latir {
-            from {
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            to {
-                transform: translate(-50%, -50%) scale(1.15);
-            }
-        }
+        .marcador-punta { position: absolute; width: 44px; height: 44px; background-color: rgba(0, 188, 212, 0.45); border: 2.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 14px 4px rgba(0, 188, 212, 0.85); animation: latir 0.9s infinite alternate; z-index: 999; }
+        @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.15); } }
 
         #toast-mensaje {
-            position: absolute;
-            bottom: 96px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.92);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: bold;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 120;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            white-space: nowrap;
-            max-width: 90%;
-            text-overflow: ellipsis;
-            overflow: hidden;
+            position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.92); color: white; padding: 6px 16px;
+            border-radius: 16px; font-size: 12px; font-weight: bold;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 120; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);
+            white-space: nowrap; max-width: 90%; text-overflow: ellipsis; overflow: hidden;
         }
-
-        #toast-mensaje.visible {
-            opacity: 1;
-        }
+        #toast-mensaje.visible { opacity: 1; }
 
         /* --- CARTELES (BANNERS) ÉPICOS DE VICTORIA Y SALIDA --- */
         #banner-ganador-mano {
-            position: absolute;
-            top: 36%;
-            left: 50%;
+            position: absolute; 
+            top: 36%; 
+            left: 50%; 
             transform: translate(-50%, -50%);
             display: none;
             flex-direction: column;
@@ -929,19 +579,10 @@
             animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 2px solid transparent;
         }
-
         @keyframes bounceIn {
-            0% {
-                transform: translate(-50%, -50%) scale(0.6);
-                opacity: 0;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
-
         #banner-ganador-mano .texto-titulo {
             font-size: 16px;
             font-weight: 900;
@@ -951,7 +592,6 @@
             align-items: center;
             gap: 6px;
         }
-
         #banner-ganador-mano .texto-puntos {
             font-size: 13px;
             color: #ffffff;
@@ -961,64 +601,46 @@
         /* Variaciones de colores épicos para el banner */
         #banner-ganador-mano.domino {
             border-color: #ffd700;
-            box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0,0,0,0.9);
         }
-
-        #banner-ganador-mano.domino .texto-titulo {
-            color: #ffd700;
-        }
+        #banner-ganador-mano.domino .texto-titulo { color: #ffd700; }
 
         #banner-ganador-mano.capicua {
             border-color: #FF0080;
-            box-shadow: 0 0 45px rgba(255, 0, 128, 0.8), 0 10px 30px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 45px rgba(255, 0, 128, 0.8), 0 10px 30px rgba(0,0,0,0.9);
         }
-
-        #banner-ganador-mano.capicua .texto-titulo {
-            color: #FF0080;
-            text-shadow: 0 0 12px rgba(255, 0, 128, 0.8);
-            font-size: 20px;
-        }
+        #banner-ganador-mano.capicua .texto-titulo { color: #FF0080; text-shadow: 0 0 12px rgba(255,0,128,0.8); font-size: 20px;}
 
         #banner-ganador-mano.tranque {
             border-color: #ff3333;
-            box-shadow: 0 0 45px rgba(255, 51, 51, 0.8), 0 10px 30px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 45px rgba(255, 51, 51, 0.8), 0 10px 30px rgba(0,0,0,0.9);
         }
-
-        #banner-ganador-mano.tranque .texto-titulo {
-            color: #ff3333;
-            text-shadow: 0 0 12px rgba(255, 51, 51, 0.8);
-            font-size: 20px;
-        }
+        #banner-ganador-mano.tranque .texto-titulo { color: #ff3333; text-shadow: 0 0 12px rgba(255,51,51,0.8); font-size: 20px;}
 
         #banner-ganador-mano.salida-30 {
             border-color: #FF8C00;
-            box-shadow: 0 0 45px rgba(255, 140, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 45px rgba(255, 140, 0, 0.8), 0 10px 30px rgba(0,0,0,0.9);
         }
+        #banner-ganador-mano.salida-30 .texto-titulo { color: #FF8C00; text-shadow: 0 0 12px rgba(255,140,0,0.8); font-size: 22px;}
 
-        #banner-ganador-mano.salida-30 .texto-titulo {
-            color: #FF8C00;
-            text-shadow: 0 0 12px rgba(255, 140, 0, 0.8);
-            font-size: 22px;
-        }
-
-        #btn-siguiente {
-            position: absolute;
-            top: 54%;
-            left: 50%;
+        #btn-siguiente { 
+            position: absolute; 
+            top: 54%; 
+            left: 50%; 
             transform: translate(-50%, -50%);
             display: none;
-            padding: 10px 24px;
-            background: linear-gradient(45deg, #FF8C00, #FF0080);
-            color: white;
-            border: none;
-            border-radius: 22px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            padding: 10px 24px; 
+            background: linear-gradient(45deg, #FF8C00, #FF0080); 
+            color: white; 
+            border: none; 
+            border-radius: 22px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
-            z-index: 115;
+            z-index: 115; 
             white-space: nowrap;
         }
 
@@ -1029,468 +651,138 @@
             height: 100%;
             width: 280px;
             background: #131926;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
             padding: 16px;
-            box-shadow: -10px 0 35px rgba(0, 0, 0, 0.85);
+            box-shadow: -10px 0 35px rgba(0,0,0,0.85);
             z-index: 300;
             transform: translateX(100%);
             transition: transform 0.28s ease;
         }
-
-        .panel-anotacion.abierta {
-            transform: translateX(0);
-        }
-
-        .header-libreta {
-            text-align: center;
-            margin-bottom: 12px;
-            position: relative;
-        }
-
-        .header-libreta h1 {
-            font-size: 20px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .header-libreta h1 span {
-            color: #ce1126;
-        }
-
-        .meta-puntos {
-            background: rgba(0, 188, 212, 0.15);
-            padding: 5px 14px;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--azul-rd);
-            display: inline-block;
-            cursor: pointer;
-        }
-
+        .panel-anotacion.abierta { transform: translateX(0); }
+        
+        .header-libreta { text-align: center; margin-bottom: 12px; position: relative; }
+        .header-libreta h1 { font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;}
+        .header-libreta h1 span { color: #ce1126; } 
+        .meta-puntos { background: rgba(0, 188, 212, 0.15); padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; color: var(--azul-rd); display: inline-block; cursor: pointer; }
+        
         .btn-cerrar-libreta {
-            position: absolute;
-            top: -6px;
-            right: -4px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px;
+            position: absolute; top: -6px; right: -4px; background: none; border: none;
+            color: #fff; font-size: 24px; cursor: pointer; padding: 4px 8px;
         }
 
-        .marcador-global {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0b0f19;
-            border-radius: 10px 10px 0 0;
-            padding: 10px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-bottom: none;
-        }
-
-        .equipo-score {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 42%;
-        }
-
-        .equipo-score h3 {
-            font-size: 12px;
-            color: #ccc;
-            margin-bottom: 2px;
-        }
-
-        .equipo-score .puntos {
-            font-size: 32px;
-            font-weight: 900;
-        }
-
-        .puntos.nosotros {
-            color: var(--azul-rd);
-        }
-
-        .puntos.ellos {
-            color: var(--rojo-rd);
-        }
-
-        .vs-circle {
-            width: 26px;
-            height: 26px;
-            background: #2a3143;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: #888;
-        }
+        .marcador-global { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; border-radius: 10px 10px 0 0; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.03); border-bottom: none; }
+        .equipo-score { display: flex; flex-direction: column; align-items: center; width: 42%; }
+        .equipo-score h3 { font-size: 12px; color: #ccc; margin-bottom: 2px; }
+        .equipo-score .puntos { font-size: 32px; font-weight: 900; }
+        .puntos.nosotros { color: var(--azul-rd); }
+        .puntos.ellos { color: var(--rojo-rd); }
+        .vs-circle { width: 26px; height: 26px; background: #2a3143; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: #888; }
 
         .anotacion-grid {
-            flex: 1;
-            display: flex;
-            background: #0b0f19;
-            border-radius: 0 0 10px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-top: 2px solid #2a3143;
-            overflow: hidden;
+            flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 10px 10px; 
+            border: 1px solid rgba(255,255,255,0.03); border-top: 2px solid #2a3143; overflow: hidden;
             margin-bottom: 10px;
         }
-
-        .columna-puntos {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 8px 6px;
-            overflow-y: auto;
-        }
-
-        .divisor-linea {
-            width: 2px;
-            background: #2a3143;
-            margin: 6px 0;
-            border-radius: 2px;
-        }
-
-        .columna-puntos::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .columna-puntos::-webkit-scrollbar-thumb {
-            background: #2a3143;
-            border-radius: 3px;
-        }
-
-        .punto-anotado {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            padding: 2px;
-        }
-
-        .punto-anotado.nos {
-            color: var(--azul-rd);
-        }
-
-        .punto-anotado.ellos {
-            color: var(--rojo-rd);
-        }
+        .columna-puntos { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; overflow-y: auto; }
+        .divisor-linea { width: 2px; background: #2a3143; margin: 6px 0; border-radius: 2px;}
+        .columna-puntos::-webkit-scrollbar { width: 3px; }
+        .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
+        .punto-anotado { font-size: 18px; font-weight: bold; text-align: center; padding: 2px; }
+        .punto-anotado.nos { color: var(--azul-rd); }
+        .punto-anotado.ellos { color: var(--rojo-rd); }
 
         #modal-ajustes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 15, 24, 0.88);
-            z-index: 3500;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 24, 0.88); z-index: 3500; display: flex;
+            justify-content: center; align-items: center; backdrop-filter: blur(8px);
         }
-
         .tarjeta-ajustes {
-            background: #131926;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 18px;
-            padding: 20px;
-            width: 92%;
-            max-width: 420px;
-            max-height: 94vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            background: #131926; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
+            padding: 20px; width: 92%; max-width: 420px; max-height: 94vh; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 14px;
         }
+        .tarjeta-ajustes h2 { font-size: 18px; text-align: center; color: #fff; }
+        .grupo-ajuste { display: flex; flex-direction: column; gap: 6px; }
+        .grupo-ajuste label { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .tarjeta-ajustes h2 {
-            font-size: 18px;
-            text-align: center;
-            color: #fff;
-        }
-
-        .grupo-ajuste {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .grupo-ajuste label {
-            font-size: 11px;
-            font-weight: bold;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .opciones-botones {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-
-        .opciones-colores {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
-
-        .opciones-mesa {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-
+        .opciones-botones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .opciones-colores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .opciones-mesa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        
         .btn-opcion {
-            background: #0b0f19;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            color: #fff;
-            padding: 8px 4px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
+            background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+            color: #fff; padding: 8px 4px; font-weight: bold; font-size: 12px; cursor: pointer;
             text-align: center;
         }
+        .btn-opcion.activo { background: rgba(0, 188, 212, 0.25); border-color: var(--azul-rd); color: var(--azul-rd); }
 
-        .btn-opcion.activo {
-            background: rgba(0, 188, 212, 0.25);
-            border-color: var(--azul-rd);
-            color: var(--azul-rd);
-        }
+        .btn-color { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 11px; }
+        .muestra-color { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; }
+        .muestra-blanca { background: #ffffff; }
+        .muestra-azul { background: #00bcd4; }
+        .muestra-roja { background: #ff1744; }
 
-        .btn-color {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            font-size: 11px;
-        }
-
-        .muestra-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 1px solid #fff;
-        }
-
-        .muestra-blanca {
-            background: #ffffff;
-        }
-
-        .muestra-azul {
-            background: #00bcd4;
-        }
-
-        .muestra-roja {
-            background: #ff1744;
-        }
-
-        .muestra-m-verde {
-            background: #163823;
-        }
-
-        .muestra-m-negro {
-            background: #18191a;
-        }
-
-        .muestra-m-azul {
-            background: #0f3d64;
-        }
-
-        .muestra-m-blanco {
-            background: #e0e5eb;
-        }
+        .muestra-m-verde { background: #163823; }
+        .muestra-m-negro { background: #18191a; }
+        .muestra-m-azul { background: #0f3d64; }
+        .muestra-m-blanco { background: #e0e5eb; }
 
         .btn-cerrar-ajustes {
-            background: var(--azul-rd);
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 4px;
+            background: var(--azul-rd); color: #000; border: none; padding: 10px;
+            border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; margin-top: 4px;
         }
 
-        #pantalla-barajar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.88);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .oculto {
-            display: none !important;
-        }
-
-        #pantalla-barajar h2 {
-            color: white;
-            font-size: 24px;
-            margin-top: 140px;
-            text-shadow: 2px 2px 5px #00bcd4;
-            z-index: 1100;
-        }
-
-        .zona-revuelta {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            top: 0;
-            left: 0;
-        }
-
-        .ficha-revuelta {
-            position: absolute;
-            width: 22px;
-            height: 36px;
-            border-radius: 3px;
-            border: 1px solid #1a2233;
-            animation: mezclar 1.2s infinite ease-in-out alternate;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background:
+        #pantalla-barajar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .oculto { display: none !important; }
+        #pantalla-barajar h2 { color: white; font-size: 24px; margin-top: 140px; text-shadow: 2px 2px 5px #00bcd4; z-index: 1100; }
+        .zona-revuelta { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; top:0; left:0;}
+        .ficha-revuelta { 
+            position: absolute; width: 22px; height: 36px; 
+            border-radius: 3px; border: 1px solid #1a2233; 
+            animation: mezclar 1.2s infinite ease-in-out alternate; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: 
                 linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
         }
-
         .ficha-revuelta::after {
-            content: 'RD';
-            font-size: 7px;
-            font-weight: 900;
-            color: #111111;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 0 1px;
-            border-radius: 2px;
+            content: 'RD'; font-size: 7px; font-weight: 900; color: #111111;
+            background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px;
         }
+        @keyframes mezclar { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg)); } 100% { transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg)); } }
 
-        @keyframes mezclar {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-
-            50% {
-                transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg));
-            }
-
-            100% {
-                transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg));
-            }
-        }
-
-        #modal-victoria {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 21, 34, 0.95);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .tarjeta-victoria {
-            background: #131926;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 30px 20px;
-            border-radius: 18px;
-            text-align: center;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85);
-            max-width: 320px;
-            width: 90%;
-        }
-
-        .tarjeta-victoria h1 {
-            font-size: 24px;
-            margin-bottom: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tarjeta-victoria h1 span {
-            font-size: 40px;
-        }
-
-        .tarjeta-victoria h2 {
-            font-size: 18px;
-            color: #fff;
-            margin-bottom: 20px;
-            font-weight: 400;
-        }
-
-        .btn-jugar-nuevo {
-            background: var(--azul-rd);
-            color: #000;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-        }
+        #modal-victoria { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 21, 34, 0.95); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 320px; width: 90%; }
+        .tarjeta-victoria h1 { font-size: 24px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 6px;}
+        .tarjeta-victoria h1 span { font-size: 40px; } 
+        .tarjeta-victoria h2 { font-size: 18px; color: #fff; margin-bottom: 20px; font-weight: 400;}
+        .btn-jugar-nuevo { background: var(--azul-rd); color: #000; border: none; padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase;}
     </style>
 </head>
-
 <body class="ficha-blanco mesa-verde">
     <div class="contenedor-juego">
-
+        
         <div id="pantalla-bienvenida">
             <div class="caja-bienvenida">
-                <button class="btn-config-bienvenida" onclick="toggleModalAjustes()"
-                    title="Configuración inicial">⚙️</button>
+                <button class="btn-config-bienvenida" onclick="toggleModalAjustes()" title="Configuración inicial">⚙️</button>
 
                 <svg class="bandera-svg" viewBox="0 0 900 600">
-                    <rect width="900" height="600" fill="#ce1126" />
-                    <rect width="450" height="300" fill="#002868" />
-                    <rect x="450" y="300" width="450" height="300" fill="#002868" />
-                    <rect x="375" width="150" height="600" fill="#ffffff" />
-                    <rect y="225" width="900" height="150" fill="#ffffff" />
+                    <rect width="900" height="600" fill="#ce1126"/>
+                    <rect width="450" height="300" fill="#002868"/>
+                    <rect x="450" y="300" width="450" height="300" fill="#002868"/>
+                    <rect x="375" width="150" height="600" fill="#ffffff"/>
+                    <rect y="225" width="900" height="150" fill="#ffffff"/>
                 </svg>
 
                 <h1>Dominó <span>RD</span></h1>
-                <p>Mesa oficial de dominó dominicano para 4 jugadores.<br>Capicúa (+30), Tranque y Salida obligatoria.
-                </p>
+                <p>Mesa oficial de dominó dominicano para 4 jugadores.<br>Capicúa (+30), Tranque y Salida obligatoria.</p>
 
                 <div class="resumen-config-bienvenida">
-                    <span class="tag-info-bienvenida" id="tag-meta-bienvenida" onclick="toggleModalAjustes()">🎯 Meta:
-                        200 pts</span>
+                    <span class="tag-info-bienvenida" id="tag-meta-bienvenida" onclick="toggleModalAjustes()">🎯 Meta: 200 pts</span>
                     <span class="tag-info-bienvenida" onclick="toggleModalAjustes()">🎨 Personalizar</span>
                 </div>
 
@@ -1501,11 +793,9 @@
         </div>
 
         <div class="botones-cabecera">
-            <button class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()"
-                title="Pantalla Completa">⛶</button>
+            <button class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
             <button class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
-            <button class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()"
-                title="Configuración">⚙️</button>
+            <button class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración">⚙️</button>
         </div>
 
         <div class="area-principal">
@@ -1575,8 +865,7 @@
             <div class="header-libreta">
                 <button class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
                 <h1>Dominó <span>RD</span></h1>
-                <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">
-                    Meta: 200 pts</div>
+                <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">Meta: 200 pts</div>
             </div>
 
             <div class="marcador-global">
@@ -1608,24 +897,20 @@
                         <button class="btn-opcion" id="btn-meta-50" onclick="cambiarMetaPuntos(50)">50</button>
                         <button class="btn-opcion" id="btn-meta-100" onclick="cambiarMetaPuntos(100)">100</button>
                         <button class="btn-opcion" id="btn-meta-150" onclick="cambiarMetaPuntos(150)">150</button>
-                        <button class="btn-opcion activo" id="btn-meta-200"
-                            onclick="cambiarMetaPuntos(200)">200</button>
+                        <button class="btn-opcion activo" id="btn-meta-200" onclick="cambiarMetaPuntos(200)">200</button>
                     </div>
                 </div>
 
                 <div class="grupo-ajuste">
                     <label>Color de las Fichas</label>
                     <div class="opciones-colores">
-                        <button class="btn-opcion btn-color activo" id="btn-color-blanco"
-                            onclick="cambiarColorTemaFicha('blanco')">
+                        <button class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')">
                             <span class="muestra-color muestra-blanca"></span> Blanco
                         </button>
-                        <button class="btn-opcion btn-color" id="btn-color-azul"
-                            onclick="cambiarColorTemaFicha('azul')">
+                        <button class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')">
                             <span class="muestra-color muestra-azul"></span> Azul
                         </button>
-                        <button class="btn-opcion btn-color" id="btn-color-rojo"
-                            onclick="cambiarColorTemaFicha('rojo')">
+                        <button class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')">
                             <span class="muestra-color muestra-roja"></span> Rojo
                         </button>
                     </div>
@@ -1634,8 +919,7 @@
                 <div class="grupo-ajuste">
                     <label>Color del Paño de Mesa</label>
                     <div class="opciones-mesa">
-                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde"
-                            onclick="cambiarColorMesa('verde')">
+                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')">
                             <span class="muestra-color muestra-m-verde"></span> Verde
                         </button>
                         <button class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')">
@@ -1653,30 +937,29 @@
                 <button class="btn-cerrar-ajustes" onclick="toggleModalAjustes()">Guardar y Cerrar</button>
             </div>
         </div>
-
+        
         <div id="modal-victoria" class="oculto">
             <div class="tarjeta-victoria">
                 <h1 id="titulo-victoria-color"><span>🏆</span> ¡GANADOR!</h1>
                 <h2 id="equipo-ganador-texto">Equipo Nosotros</h2>
-                <button class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de
-                    nuevo</button>
+                <button class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de nuevo</button>
             </div>
         </div>
     </div>
 
     <script>
-        let mazo = []; let jugadores = { 1: [], 2: [], 3: [], 4: [] };
+        let mazo = []; let jugadores = { 1: [], 2: [], 3: [], 4: [] }; 
         const clasesNumeros = ['blanco', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'];
 
         let puntosNosotros = 0; let puntosEllos = 0; let metaPuntos = 200;
         let temaFichaActual = 'blanco'; let temaMesaActual = 'verde';
-        let ultimoGanador = null;
+        let ultimoGanador = null; 
         let fichaCentro = null; let ramaIzquierda = []; let ramaDerecha = [];
         let extremoIzquierdo = null; let extremoDerecho = null;
-        let turnoActual = 1; let juegoTerminado = false; let pasesConsecutivos = 0;
-        let salidaObligatoria = false; let ultimoJugadorEnJugar = null;
+        let turnoActual = 1; let juegoTerminado = false; let pasesConsecutivos = 0; 
+        let salidaObligatoria = false; let ultimoJugadorEnJugar = null; 
         let esperandoSeleccionPunta = false; let fichaSeleccionada = null; let indexSeleccionado = null;
-        let jugadorSalida = 1;
+        let jugadorSalida = 1; 
         let esPrimerTurnoDespuesDeSalida = false;
 
         const nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
@@ -1685,7 +968,7 @@
 
         function generarHTMLMitad(numero) {
             let html = `<div class="mitad ${clasesNumeros[numero]}">`;
-            for (let i = 0; i < numero; i++) html += `<div class="punto"></div>`;
+            for(let i = 0; i < numero; i++) html += `<div class="punto"></div>`;
             return html + `</div>`;
         }
 
@@ -1702,7 +985,7 @@
 
         function togglePantallaCompleta() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => { });
+                document.documentElement.requestFullscreen().catch(() => {});
             } else {
                 if (document.exitFullscreen) document.exitFullscreen();
             }
@@ -1723,7 +1006,7 @@
             document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
             const tagBienvenida = document.getElementById('tag-meta-bienvenida');
             if (tagBienvenida) tagBienvenida.innerText = `🎯 Meta: ${metaPuntos} pts`;
-
+            
             [50, 100, 150, 200].forEach(pts => {
                 const b = document.getElementById(`btn-meta-${pts}`);
                 if (b) b.classList.toggle('activo', pts === nuevaMeta);
@@ -1740,7 +1023,7 @@
         function cambiarColorTemaFicha(tema) {
             temaFichaActual = tema;
             actualizarClasesBody();
-
+            
             ['blanco', 'azul', 'rojo'].forEach(col => {
                 const b = document.getElementById(`btn-color-${col}`);
                 if (b) b.classList.toggle('activo', col === tema);
@@ -1761,19 +1044,19 @@
         }
 
         function mostrarBurbuja(idJugador, mensaje, tipo, persistente = false, limpiar = true) {
-            if (limpiar) limpiarBurbujas();
+            if(limpiar) limpiarBurbujas();
             const burbuja = document.getElementById(`burbuja-j${idJugador}`);
             if (burbuja) {
                 burbuja.innerText = mensaje;
                 burbuja.className = `burbuja-estado visible ${tipo}`;
-                if (!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
+                if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
                     setTimeout(() => { burbuja.classList.remove('visible'); }, 2200);
                 }
             }
         }
 
         function limpiarBurbujas() {
-            for (let i = 1; i <= 4; i++) {
+            for(let i=1; i<=4; i++) {
                 const b = document.getElementById(`burbuja-j${i}`);
                 if (b) b.className = 'burbuja-estado';
             }
@@ -1791,12 +1074,12 @@
             const banner = document.getElementById('banner-ganador-mano');
             const txtTitulo = document.getElementById('texto-ganador-mano');
             const txtPtos = document.getElementById('texto-puntos-mano');
-
-            banner.className = clase;
+            
+            banner.className = clase; 
             txtTitulo.innerHTML = titulo;
             txtPtos.innerText = subtitulo;
             banner.style.display = 'flex';
-
+            
             if (duracionMs > 0) {
                 setTimeout(() => {
                     if (!juegoTerminado) banner.style.display = 'none';
@@ -1807,7 +1090,7 @@
         function sacudirMesa() {
             const tapete = document.getElementById('mesa-tapete');
             tapete.classList.remove('mesa-temblando');
-            void tapete.offsetWidth;
+            void tapete.offsetWidth; 
             tapete.classList.add('mesa-temblando');
             setTimeout(() => tapete.classList.remove('mesa-temblando'), 500);
         }
@@ -1826,24 +1109,24 @@
 
                 const divFicha = document.createElement('div');
                 divFicha.className = `ficha ${tipo === 'h' ? '' : 'horizontal'} ficha-revelada`;
-                divFicha.style.transform = 'scale(0.24)';
+                divFicha.style.transform = 'scale(0.24)'; 
                 divFicha.style.transformOrigin = 'top left';
-                divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none';
+                divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
                 divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
-
+                
                 wrapper.appendChild(divFicha); cont.appendChild(wrapper);
             });
         }
 
         function dibujarDorsos(idContenedor, cantidad, tipo) {
             const cont = document.getElementById(idContenedor); cont.innerHTML = '';
-            for (let i = 0; i < cantidad; i++) {
+            for(let i=0; i<cantidad; i++) {
                 const dorso = document.createElement('div'); dorso.className = `ficha-dorso ${tipo}`; cont.appendChild(dorso);
             }
         }
 
         function renderizarManos() {
-            const miMano = document.getElementById('mi-mano'); miMano.innerHTML = '';
+            const miMano = document.getElementById('mi-mano'); miMano.innerHTML = ''; 
             jugadores[1].forEach((ficha, index) => {
                 const divFicha = document.createElement('div'); divFicha.className = 'ficha';
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
@@ -1864,7 +1147,7 @@
         }
 
         function resaltarTurnoActivo() {
-            for (let i = 1; i <= 4; i++) {
+            for(let i=1; i<=4; i++) {
                 const wrap = document.getElementById(`pos-j${i}`);
                 if (wrap) wrap.classList.remove('turno-activo');
             }
@@ -1875,7 +1158,7 @@
         }
 
         function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
-            let offsetPar = prevIsDouble ? 45 : 24;
+            let offsetPar = prevIsDouble ? 45 : 24; 
             let offsetPerp = 24;
             if (prevDir === 'R' && newDir === 'D') { joint.x -= offsetPerp; joint.y += offsetPar; }
             else if (prevDir === 'R' && newDir === 'U') { joint.x -= offsetPerp; joint.y -= offsetPar; }
@@ -1892,21 +1175,21 @@
             const esDoble = ficha[0] === ficha[1];
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
             let h = (dir === 'R' || dir === 'L') ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
-
+            
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 90; h = 48; } }
-
+            
             let claseExtra = (dir === 'R' || dir === 'L') ? (esDoble ? 'vertical' : 'horizontal') : (esDoble ? 'horizontal' : 'vertical');
-
+            
             const divFicha = document.createElement('div');
             divFicha.className = `ficha ficha-mesa ${claseExtra}`;
-            divFicha.style.left = (cx - w / 2) + 'px'; divFicha.style.top = (cy - h / 2) + 'px'; divFicha.style.zIndex = zIndexLocal;
-
+            divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
+            
             let parte1 = ficha[0], parte2 = ficha[1];
             if (dir === 'L' || dir === 'U') {
                 parte1 = ficha[1];
                 parte2 = ficha[0];
             }
-
+            
             divFicha.innerHTML = `${generarHTMLMitad(parte1)}<div class="linea-divisoria"></div>${generarHTMLMitad(parte2)}`;
             contenedor.appendChild(divFicha);
         }
@@ -1916,26 +1199,26 @@
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
             let h = (dir === 'R' || dir === 'L') ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 90; h = 48; } }
-            return { minX: cx - w / 2, maxX: cx + w / 2, minY: cy - h / 2, maxY: cy + h / 2 };
+            return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
         function calcularCadenaBounds() {
             if (!fichaCentro) return null;
             let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
-
+            
             let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
             let esDoble = fichaCentro[0] === fichaCentro[1];
             let w = iniciaNosotros ? (esDoble ? 90 : 48) : (esDoble ? 48 : 90);
             let h = iniciaNosotros ? (esDoble ? 48 : 90) : (esDoble ? 90 : 48);
 
-            bounds.minX = -w / 2; bounds.maxX = w / 2;
-            bounds.minY = -h / 2; bounds.maxY = h / 2;
+            bounds.minX = -w/2; bounds.maxX = w/2;
+            bounds.minY = -h/2; bounds.maxY = h/2;
 
             function procesarRamaSim(rama, isRight) {
-                let joint = isRight
-                    ? (iniciaNosotros ? { x: 0, y: h / 2, dir: 'D' } : { x: w / 2, y: 0, dir: 'R' })
-                    : (iniciaNosotros ? { x: 0, y: -h / 2, dir: 'U' } : { x: -w / 2, y: 0, dir: 'L' });
-
+                let joint = isRight 
+                    ? (iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' })
+                    : (iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' });
+                
                 let prevIsDouble = esDoble;
                 const secuenciaDerecha = ['R', 'D', 'L', 'D', 'R', 'U', 'L', 'U'];
                 const secuenciaIzquierda = ['L', 'U', 'R', 'U', 'L', 'D', 'R', 'D'];
@@ -1945,15 +1228,15 @@
                 rama.forEach((f, idx) => {
                     let isD = f[0] === f[1];
                     let tramo = Math.floor(idx / 3);
-                    let newDir = iniciaNosotros
+                    let newDir = iniciaNosotros 
                         ? (isRight ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
                         : (isRight ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
 
                     if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
 
                     let advance = isD ? 48 : 90;
-                    let curCx = joint.x + (newDir === 'R' ? advance / 2 : (newDir === 'L' ? -advance / 2 : 0));
-                    let curCy = joint.y + (newDir === 'D' ? advance / 2 : (newDir === 'U' ? -advance / 2 : 0));
+                    let curCx = joint.x + (newDir === 'R' ? advance/2 : (newDir === 'L' ? -advance/2 : 0));
+                    let curCy = joint.y + (newDir === 'D' ? advance/2 : (newDir === 'U' ? -advance/2 : 0));
 
                     joint.x += (newDir === 'R' ? advance : (newDir === 'L' ? -advance : 0));
                     joint.y += (newDir === 'D' ? advance : (newDir === 'U' ? -advance : 0));
@@ -1980,17 +1263,17 @@
             const secuenciaVerticalIzq = ['U', 'L', 'D', 'L', 'U', 'R', 'D', 'R'];
 
             rama.forEach((ficha, idx) => {
-                const isDouble = ficha[0] === ficha[1];
+                const isDouble = ficha[0] === ficha[1]; 
                 let tramo = Math.floor(idx / 3);
-                let newDir = iniciaNosotros
+                let newDir = iniciaNosotros 
                     ? (isRightBranch ? secuenciaVerticalDer[tramo % secuenciaVerticalDer.length] : secuenciaVerticalIzq[tramo % secuenciaVerticalIzq.length])
                     : (isRightBranch ? secuenciaDerecha[tramo % secuenciaDerecha.length] : secuenciaIzquierda[tramo % secuenciaIzquierda.length]);
 
                 if (newDir !== joint.dir) aplicarGiro(joint, prevIsDouble, joint.dir, newDir);
 
-                let advance = isDouble ? 48 : 90;
-                let curCx = joint.x + (newDir === 'R' ? advance / 2 : (newDir === 'L' ? -advance / 2 : 0));
-                let curCy = joint.y + (newDir === 'D' ? advance / 2 : (newDir === 'U' ? -advance / 2 : 0));
+                let advance = isDouble ? 48 : 90; 
+                let curCx = joint.x + (newDir === 'R' ? advance/2 : (newDir === 'L' ? -advance/2 : 0));
+                let curCy = joint.y + (newDir === 'D' ? advance/2 : (newDir === 'U' ? -advance/2 : 0));
 
                 joint.x += (newDir === 'R' ? advance : (newDir === 'L' ? -advance : 0));
                 joint.y += (newDir === 'D' ? advance : (newDir === 'U' ? -advance : 0));
@@ -2000,9 +1283,9 @@
             });
 
             if (esperandoSeleccionPunta) {
-                const marcador = document.createElement('div');
+                const marcador = document.createElement('div'); 
                 marcador.className = 'marcador-punta';
-                marcador.style.left = joint.x + 'px';
+                marcador.style.left = joint.x + 'px'; 
                 marcador.style.top = joint.y + 'px';
                 marcador.onclick = () => ejecutarEleccion(!isRightBranch);
                 contenedorZoom.appendChild(marcador);
@@ -2010,7 +1293,7 @@
         }
 
         function renderizarMesa() {
-            const contenedorZoom = document.getElementById('zoom-container');
+            const contenedorZoom = document.getElementById('zoom-container'); 
             contenedorZoom.innerHTML = '';
             if (!fichaCentro) return;
 
@@ -2018,28 +1301,29 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            // --- MÁRGENES ESTRICTOS PARA EVITAR CHOQUES CON LA UI ---
-            const paddingTop = 90;
-            const paddingBottom = 150;
-            const paddingSide = 90;
+            // --- MÁRGENES MÁS AJUSTADOS PARA QUE LAS FICHAS CREZCAN MÁS ---
+            const paddingTop = 60;    
+            const paddingBottom = 110; 
+            const paddingSide = 65;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
             const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
-
+            
             const centroSeguroX = paddingSide + (areaSeguraW / 2);
             const centroSeguroY = paddingTop + (areaSeguraH / 2);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = Math.max(90, bounds.maxX - bounds.minX + 40);
-            const altoCadena = Math.max(90, bounds.maxY - bounds.minY + 40);
+            const anchoCadena = bounds.maxX - bounds.minX + 20;
+            const altoCadena = bounds.maxY - bounds.minY + 20;
             const centroCadenaX = (bounds.minX + bounds.maxX) / 2;
             const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
-            let escalaOptima = Math.min(escalaW, escalaH, 0.90);
-
-            escalaOptima = Math.max(0.20, Math.min(escalaOptima, 0.90));
+            
+            // Aumentamos el máximo a 1.40 para que inicien grandes, y mínimo de 0.35 para cadenas largas
+            let escalaOptima = Math.min(escalaW, escalaH, 1.4);
+            escalaOptima = Math.max(0.35, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
             const transY = centroSeguroY - (centroCadenaY * escalaOptima);
@@ -2055,14 +1339,14 @@
 
             const divFicha = document.createElement('div');
             divFicha.className = `ficha ficha-mesa ${claseExtraCentro}`;
-            divFicha.style.left = (-w / 2) + 'px';
-            divFicha.style.top = (-h / 2) + 'px';
+            divFicha.style.left = (-w/2) + 'px'; 
+            divFicha.style.top = (-h/2) + 'px'; 
             divFicha.style.zIndex = 10;
             divFicha.innerHTML = `${generarHTMLMitad(fichaCentro[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(fichaCentro[1])}`;
             contenedorZoom.appendChild(divFicha);
-
-            let jointDer = iniciaNosotros ? { x: 0, y: h / 2, dir: 'D' } : { x: w / 2, y: 0, dir: 'R' };
-            let jointIzq = iniciaNosotros ? { x: 0, y: -h / 2, dir: 'U' } : { x: -w / 2, y: 0, dir: 'L' };
+            
+            let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
+            let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
             renderizarRama(ramaDerecha, jointDer, true, contenedorZoom, 11, iniciaNosotros);
             renderizarRama(ramaIzquierda, jointIzq, false, contenedorZoom, 100, iniciaNosotros);
@@ -2075,7 +1359,7 @@
             item.innerText = `+${puntos}`;
             item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
 
-            if (equipoGanador === 1) { colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; }
+            if (equipoGanador === 1) { colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; } 
             else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
         }
 
@@ -2098,7 +1382,7 @@
         }
 
         function revisarPuntos() {
-            document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`;
+            document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; 
             document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
 
             if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
@@ -2113,21 +1397,20 @@
 
         function finalizarMano(ganador, porTranque = false, esCapicua = false) {
             juegoTerminado = true; limpiarBurbujas(); ocultarToast();
-
-            // Eliminar estado de paso anterior si lo hubiera
+            
             for (let i = 1; i <= 4; i++) {
                 const wrap = document.getElementById(`pos-j${i}`);
                 if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda');
             }
-
+            
             let sumaPuntosMano = 0;
-            for (let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
+            for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
 
-            let equipoGanador = 0;
+            let equipoGanador = 0; 
             let jGanadorFinal = ganador;
             let tipoVictoria = "¡DOMINÓ!";
             let claseBanner = "domino";
-
+            
             if (porTranque) {
                 let jTranco = ultimoJugadorEnJugar; let jSigue = (ultimoJugadorEnJugar % 4) + 1;
                 let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
@@ -2141,9 +1424,9 @@
             } else {
                 equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2;
                 ultimoGanador = ganador;
-
-                if (esCapicua) {
-                    sumaPuntosMano += 30;
+                
+                if (esCapicua) { 
+                    sumaPuntosMano += 30; 
                     tipoVictoria = "¡CAPICÚA! 🌟";
                     claseBanner = "capicua";
                     sacudirMesa();
@@ -2152,13 +1435,13 @@
 
             if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
             agregarRondaHistorial(equipoGanador, sumaPuntosMano);
-
+            
             const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`);
             if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
 
             mostrarBannerEspecial(
-                `🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`,
-                `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`,
+                `🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, 
+                `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, 
                 claseBanner, 0
             );
 
@@ -2169,8 +1452,8 @@
                 document.getElementById('btn-siguiente').style.display = 'none';
                 document.getElementById('banner-ganador-mano').style.display = 'none';
             }
-
-            renderizarManos();
+            
+            renderizarManos(); 
             renderizarMesa();
         }
 
@@ -2183,8 +1466,7 @@
 
             if (!puedeJugar) {
                 pasesConsecutivos++; resaltarTurnoActivo();
-
-                // Efecto visual de rojo intenso para el jugador que se va en banda
+                
                 const wrapPasador = document.getElementById(`pos-j${turnoActual}`);
                 if (wrapPasador) {
                     wrapPasador.classList.add('avatar-paso');
@@ -2192,7 +1474,7 @@
                 }
 
                 if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
-
+                
                 let txtPaso = frasesPaso[Math.floor(Math.random() * frasesPaso.length)];
 
                 if (esPrimerTurnoDespuesDeSalida) {
@@ -2200,14 +1482,14 @@
                     let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
                     if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
                     agregarRondaHistorial(equipoSalida, 30);
-
+                    
                     mostrarBannerEspecial(`🔥 ¡30 A LA SALIDA! 🔥`, `+30 Puntos para Equipo ${equipoSalida === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
-
-                    if (revisarPuntos()) return;
+                    
+                    if(revisarPuntos()) return;
                 } else {
                     mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
                 }
-
+                
                 esPrimerTurnoDespuesDeSalida = false;
                 setTimeout(avanzarTurno, 1500);
             } else {
@@ -2215,32 +1497,32 @@
                     let equipo = (turnoActual === 1 || turnoActual === 3) ? 1 : 2;
                     if (equipo === 1) puntosNosotros += 30; else puntosEllos += 30;
                     agregarRondaHistorial(equipo, 30);
-
+                    
                     mostrarBannerEspecial(`🔄 ¡VUELTA DE PASES!`, `+30 Puntos para Equipo ${equipo === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
 
                     let termino = revisarPuntos();
                     pasesConsecutivos = 0;
-                    if (termino) return;
+                    if(termino) return; 
                 }
-                pasesConsecutivos = 0;
-                esPrimerTurnoDespuesDeSalida = false;
+                pasesConsecutivos = 0; 
+                esPrimerTurnoDespuesDeSalida = false; 
                 iniciarTurnoNormal();
             }
         }
 
         function iniciarTurnoNormal() {
             resaltarTurnoActivo();
-            if (turnoActual !== 1) {
+            if (turnoActual !== 1) { 
                 let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
-                mostrarBurbuja(turnoActual, txtPensar, "pensando");
-                setTimeout(turnoIA, 1200);
+                mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
+                setTimeout(turnoIA, 1200); 
             }
             else if (salidaObligatoria && !fichaCentro) { mostrarToast("Debes salir con el Doble 6"); }
             else { mostrarToast("¡Tu turno!"); }
         }
 
         function intentarJugada(ficha, idJugador, index) {
-            if (juegoTerminado || turnoActual !== idJugador) return;
+            if (juegoTerminado || turnoActual !== idJugador) return; 
             if (salidaObligatoria && !fichaCentro) { if (ficha[0] !== 6 || ficha[1] !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
             if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); iniciarTurnoNormal(); }
 
@@ -2248,7 +1530,7 @@
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
-            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); return; }
+            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); return; } 
 
             let esCapicua = false;
             if (jugadores[idJugador].length === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) esCapicua = true;
@@ -2256,13 +1538,13 @@
             if (idJugador === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
                 esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index;
                 fichaSeleccionada.esCapicua = esCapicua;
-                renderizarManos(); renderizarMesa();
+                renderizarManos(); renderizarMesa(); 
                 mostrarToast("Toca el círculo donde colocarla");
-                return;
+                return; 
             }
 
             let ponerIzquierda = false;
-            if (fichaCentro && puedeIzq && puedeDer) ponerIzquierda = Math.random() > 0.5;
+            if (fichaCentro && puedeIzq && puedeDer) ponerIzquierda = Math.random() > 0.5; 
             else if (puedeIzq) ponerIzquierda = true;
 
             procesarJugadaFinal(ficha, idJugador, index, ponerIzquierda, esCapicua);
@@ -2276,12 +1558,12 @@
         }
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
-            let [a, b] = ficha;
-
-            if (!fichaCentro) {
+            let [a, b] = ficha; 
+            
+            if (!fichaCentro) { 
                 let max = Math.max(a, b);
                 let min = Math.min(a, b);
-
+                
                 if (idJugador === 1 || idJugador === 2) {
                     fichaCentro = [min, max];
                     extremoIzquierdo = min;
@@ -2291,8 +1573,8 @@
                     extremoIzquierdo = max;
                     extremoDerecho = min;
                 }
-                salidaObligatoria = false;
-                esPrimerTurnoDespuesDeSalida = true;
+                salidaObligatoria = false; 
+                esPrimerTurnoDespuesDeSalida = true; 
             } else if (colocarIzquierda) {
                 if (a === extremoIzquierdo) {
                     ramaIzquierda.push([a, b]);
@@ -2310,9 +1592,9 @@
                     extremoDerecho = a;
                 }
             }
-            jugadores[idJugador].splice(index, 1);
-            ultimoJugadorEnJugar = idJugador;
-
+            jugadores[idJugador].splice(index, 1); 
+            ultimoJugadorEnJugar = idJugador; 
+            
             if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
             limpiarBurbujas(); ocultarToast(); renderizarManos(); renderizarMesa(); avanzarTurno();
         }
@@ -2320,32 +1602,32 @@
         function turnoIA() {
             if (juegoTerminado) return;
             let manoIA = jugadores[turnoActual];
-
-            if (salidaObligatoria && !fichaCentro) {
-                let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6);
-                if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; }
+            
+            if (salidaObligatoria && !fichaCentro) { 
+                let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6); 
+                if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; } 
             }
-
+            
             let validas = [];
             for (let i = 0; i < manoIA.length; i++) {
                 let ficha = manoIA[i]; let [a, b] = ficha;
-                if (!fichaCentro || a === extremoDerecho || b === extremoDerecho || a === extremoIzquierdo || b === extremoIzquierdo) {
-                    let peso = (a === b) ? 10 : 0;
-                    peso += manoIA.filter(f => f[0] === a || f[1] === a).length;
-                    peso += manoIA.filter(f => f[0] === b || f[1] === b).length;
-                    validas.push({ ficha, index: i, peso });
+                if (!fichaCentro || a === extremoDerecho || b === extremoDerecho || a === extremoIzquierdo || b === extremoIzquierdo) { 
+                    let peso = (a === b) ? 10 : 0; 
+                    peso += manoIA.filter(f => f[0]===a || f[1]===a).length;
+                    peso += manoIA.filter(f => f[0]===b || f[1]===b).length;
+                    validas.push({ficha, index: i, peso}); 
                 }
             }
-
+            
             if (validas.length > 0) {
-                validas.sort((a, b) => b.peso - a.peso);
+                validas.sort((a,b) => b.peso - a.peso);
                 intentarJugada(validas[0].ficha, turnoActual, validas[0].index);
             }
         }
 
         function crearAnimacionFichas() {
             const cont = document.getElementById('fichas-animadas'); cont.innerHTML = '';
-            for (let i = 0; i < 28; i++) {
+            for(let i=0; i<28; i++) {
                 const f = document.createElement('div'); f.className = 'ficha-revuelta';
                 f.style.setProperty('--rx', (Math.random() * 260 - 130)); f.style.setProperty('--ry', (Math.random() * 260 - 130));
                 f.style.setProperty('--rrot', (Math.random() * 360)); f.style.setProperty('--rx2', (Math.random() * 260 - 130));
@@ -2363,7 +1645,7 @@
             }
 
             limpiarBurbujas(); ocultarToast();
-
+            
             document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
             document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
             document.getElementById('zoom-container').innerHTML = '';
@@ -2376,7 +1658,7 @@
         function ejecutarLogicaReparto() {
             mazo = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazo.push([i, j]);
-            for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
+            for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
             let pos = 0;
             for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
 
@@ -2391,8 +1673,8 @@
             } else {
                 turnoActual = ultimoGanador || 1; salidaObligatoria = false;
             }
-
-            jugadorSalida = turnoActual;
+            
+            jugadorSalida = turnoActual; 
 
             renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
         }
@@ -2410,5 +1692,4 @@
         });
     </script>
 </body>
-
 </html>
