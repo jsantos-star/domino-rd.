@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD act 0803</title>
+    <title>Dominó RD act 0812</title>
     <style>
         :root {
             --azul-rd: #00bcd4;
@@ -912,6 +912,7 @@
             opacity: 1;
         }
 
+        /* --- CARTELES (BANNERS) ÉPICOS DE VICTORIA Y SALIDA --- */
         #banner-ganador-mano {
             position: absolute;
             top: 36%;
@@ -957,6 +958,7 @@
             font-weight: bold;
         }
 
+        /* Variaciones de colores épicos para el banner */
         #banner-ganador-mano.domino {
             border-color: #ffd700;
             box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.9);
@@ -1520,6 +1522,7 @@
                     <button id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
                 </div>
 
+                <!-- COMPADRE (ARRIBA) -->
                 <div class="jugador-flotante" id="pos-j3">
                     <div class="avatar-wrap">
                         <div class="avatar" id="avatar-j3">👨🏽‍🦳</div>
@@ -1529,6 +1532,7 @@
                     <div class="fichas-ocultas" id="mano-j3"></div>
                 </div>
 
+                <!-- RIVAL 2 (IZQUIERDA) -->
                 <div class="jugador-flotante" id="pos-j4">
                     <div class="avatar-wrap">
                         <div class="avatar" id="avatar-j4">👩🏽</div>
@@ -1538,6 +1542,7 @@
                     <div class="fichas-ocultas v" id="mano-j4"></div>
                 </div>
 
+                <!-- RIVAL 1 (DERECHA) -->
                 <div class="jugador-flotante" id="pos-j2">
                     <div class="avatar-wrap">
                         <div class="avatar" id="avatar-j2">🧔🏾‍♂️</div>
@@ -1547,6 +1552,7 @@
                     <div class="fichas-ocultas v" id="mano-j2"></div>
                 </div>
 
+                <!-- NOSOTROS (ABAJO) -->
                 <div class="zona-nosotros-dock">
                     <div class="avatar-nosotros-pill" id="pos-j1">
                         <div class="avatar" id="avatar-j1">😎</div>
@@ -2012,21 +2018,28 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            const areaSeguraW = anchoTapete - 90;
-            const areaSeguraH = altoTapete - 120;
-            const centroSeguroX = anchoTapete / 2;
-            const centroSeguroY = (altoTapete - 35) / 2;
+            // --- MÁRGENES ESTRICTOS PARA EVITAR CHOQUES CON LA UI ---
+            const paddingTop = 90;
+            const paddingBottom = 150;
+            const paddingSide = 90;
+
+            const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
+            const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
+
+            const centroSeguroX = paddingSide + (areaSeguraW / 2);
+            const centroSeguroY = paddingTop + (areaSeguraH / 2);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = Math.max(90, bounds.maxX - bounds.minX + 35);
-            const altoCadena = Math.max(90, bounds.maxY - bounds.minY + 35);
+            const anchoCadena = Math.max(90, bounds.maxX - bounds.minX + 40);
+            const altoCadena = Math.max(90, bounds.maxY - bounds.minY + 40);
             const centroCadenaX = (bounds.minX + bounds.maxX) / 2;
             const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
-            let escalaOptima = Math.min(escalaW, escalaH, 0.95);
-            escalaOptima = Math.max(0.42, Math.min(escalaOptima, 0.92));
+            let escalaOptima = Math.min(escalaW, escalaH, 0.90);
+
+            escalaOptima = Math.max(0.20, Math.min(escalaOptima, 0.90));
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
             const transY = centroSeguroY - (centroCadenaY * escalaOptima);
@@ -2171,7 +2184,7 @@
             if (!puedeJugar) {
                 pasesConsecutivos++; resaltarTurnoActivo();
 
-                // Efecto visual súper claro para quien se fue en banda (avatar y fichas brillan y tiemblan en rojo)
+                // Efecto visual de rojo intenso para el jugador que se va en banda
                 const wrapPasador = document.getElementById(`pos-j${turnoActual}`);
                 if (wrapPasador) {
                     wrapPasador.classList.add('avatar-paso');
