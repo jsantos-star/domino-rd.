@@ -6,7 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 924</title>
+    <title>Dominó RD 1205</title>
+    <!-- Librería para el Confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -88,196 +90,62 @@
             width: 100%;
         }
 
-        /* --- PANTALLA DE BIENVENIDA --- */
+        /* --- PANTALLA DE BIENVENIDA ACTUALIZADA --- */
         #pantalla-bienvenida {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #111a2e 0%, #060911 100%);
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-            text-align: center;
-            backdrop-filter: blur(10px);
+            z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 16px; text-align: center; backdrop-filter: blur(10px);
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
-        #pantalla-bienvenida.desvanecer {
-            opacity: 0;
-            transform: scale(1.05);
-            pointer-events: none;
-        }
+        #pantalla-bienvenida.desvanecer { opacity: 0; transform: scale(1.05); pointer-events: none; }
 
         .caja-bienvenida {
-            position: relative;
-            background: rgba(19, 25, 38, 0.95);
-            border: 2px solid rgba(0, 188, 212, 0.4);
-            padding: 24px 28px;
-            border-radius: 24px;
-            max-width: 440px;
-            width: 90%;
+            position: relative; background: rgba(19, 25, 38, 0.95); border: 2px solid rgba(0, 188, 212, 0.4);
+            padding: 30px 28px; border-radius: 24px; max-width: 440px; width: 90%;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 188, 212, 0.25);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
             animation: zoomIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes zoomIn {
-            from { transform: scale(0.85); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes zoomIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .btn-config-bienvenida {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            color: #fff;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-config-bienvenida:hover {
-            background: rgba(0, 188, 212, 0.25);
-            border-color: var(--azul-rd);
-            transform: rotate(45deg);
-        }
-        .btn-config-bienvenida:active { transform: scale(0.92); }
-
-        .bandera-svg {
-            width: 58px;
-            height: 38px;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 2px;
-        }
-
-        .caja-bienvenida h1 {
-            font-size: 26px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #ffffff;
-            margin: 0;
-        }
+        .bandera-svg { width: 58px; height: 38px; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); }
+        .caja-bienvenida h1 { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; margin: 0; }
         .caja-bienvenida h1 span { color: #ce1126; }
-        .caja-bienvenida p {
-            font-size: 13px;
-            color: #b0bec5;
-            line-height: 1.4;
-        }
-
-        .resumen-config-bienvenida {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-        .tag-info-bienvenida {
-            background: rgba(0, 188, 212, 0.12);
-            border: 1px solid rgba(0, 188, 212, 0.3);
-            color: var(--azul-rd);
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .tag-info-bienvenida:hover {
-            background: rgba(0, 188, 212, 0.25);
-        }
+        .caja-bienvenida p { font-size: 13px; color: #b0bec5; line-height: 1.5; margin-bottom: 5px; padding: 0 10px; }
 
         .btn-iniciar-partida {
-            background: linear-gradient(45deg, #FF8C00, #FF0080);
-            color: white;
-            border: none;
-            padding: 13px 32px;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(255, 0, 128, 0.5);
-            transition: all 0.2s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            background: linear-gradient(45deg, #FF8C00, #FF0080); color: white; border: none; padding: 14px 32px;
+            border-radius: 30px; font-size: 15px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 8px 25px rgba(255, 0, 128, 0.5); transition: all 0.2s ease;
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-iniciar-partida:active { transform: scale(0.96); }
 
-        /* --- BOTONES DE CONTROL SUPERIOR EN MESA --- */
-        .botones-cabecera {
-            position: absolute; 
-            top: 8px; 
-            right: 12px; 
-            display: flex; 
-            gap: 8px; 
-            z-index: 150;
+        .btn-secundario {
+            background: rgba(0, 188, 212, 0.12); border: 1px solid var(--azul-rd); color: var(--azul-rd);
+            padding: 14px 20px; border-radius: 30px; font-size: 13px; font-weight: bold; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .btn-secundario:hover { background: rgba(0, 188, 212, 0.25); }
+        .btn-secundario:active { transform: scale(0.96); }
 
+        /* --- BOTONES DE CONTROL SUPERIOR EN MESA --- */
+        .botones-cabecera { position: absolute; top: 8px; right: 12px; display: flex; gap: 8px; z-index: 150; }
         .btn-flotante {
-            height: 32px;
-            background: rgba(19, 25, 38, 0.88); 
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 16px; 
-            color: #fff; 
-            font-size: 12px; 
-            display: flex;
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
-            padding: 0 10px;
-            font-weight: bold;
-            backdrop-filter: blur(5px);
+            height: 32px; background: rgba(19, 25, 38, 0.88); border: 1px solid rgba(255,255,255,0.18); border-radius: 16px; 
+            color: #fff; font-size: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6); padding: 0 10px; font-weight: bold; backdrop-filter: blur(5px);
         }
-        .btn-flotante.solo-icono {
-            width: 32px;
-            padding: 0;
-            border-radius: 50%;
-            font-size: 15px;
-        }
+        .btn-flotante.solo-icono { width: 32px; padding: 0; border-radius: 50%; font-size: 15px; }
         .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
 
-        .escenario-mesa {
-            position: relative;
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            padding: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        .escenario-mesa { position: relative; flex: 1; width: 100%; height: 100%; padding: 6px; display: flex; justify-content: center; align-items: center; }
         .zona-tapete {
-            width: 100%;
-            height: 100%;
-            background: var(--tapete-fondo);
-            border-radius: 20px; 
-            border: 6px solid var(--madera); 
+            width: 100%; height: 100%; background: var(--tapete-fondo); border-radius: 20px; border: 6px solid var(--madera); 
             box-shadow: 0 0 0 2px #002868, 0 0 0 4px #ce1126, inset 0 0 40px rgba(0,0,0,0.85); 
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
+            position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
 
         @keyframes shakeMesa { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 80% { transform: translate(1px, -1px); } 100% { transform: translate(0, 0); } }
@@ -286,89 +154,40 @@
         .marca-agua { position: absolute; font-size: 26px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 4px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .marca-agua span { font-size: 44px; margin-bottom: -6px; opacity: 0.12;}
 
-        .jugador-flotante {
-            position: absolute;
-            z-index: 40;
-            display: flex;
-            align-items: center;
-            pointer-events: none;
-        }
-
-        .avatar-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .jugador-flotante { position: absolute; z-index: 40; display: flex; align-items: center; pointer-events: none; }
+        .avatar-wrap { position: relative; display: flex; align-items: center; gap: 4px; }
+        .avatar-container { position: relative; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; }
 
         .avatar { 
-            width: 34px; 
-            height: 34px; 
-            background-color: #1e2430; 
-            border: 2px solid #555; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 15px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
+            width: 34px; height: 34px; background-color: #1e2430; border: 2px solid #555; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.6); transition: all 0.3s ease; position: relative; z-index: 15;
         }
-        .turno-activo .avatar { 
-            border-color: #00bcd4; 
-            box-shadow: 0 0 14px #00bcd4; 
-            transform: scale(1.12); 
+        
+        /* TEMPORIZADOR CIRCULAR */
+        .timer-ring {
+            position: absolute; width: 46px; height: 46px; z-index: 10; transform: rotate(-90deg);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            top: 50%; left: 50%; margin-top: -23px; margin-left: -23px;
         }
+        .turno-activo .timer-ring { opacity: 1; }
+        .timer-ring circle { fill: transparent; stroke-width: 3; stroke-linecap: round; }
+        .timer-ring .bg { stroke: rgba(255,255,255,0.15); }
+        .timer-ring .progress { stroke: #00bcd4; stroke-dasharray: 132; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
 
-        .avatar-ganador-ronda .avatar {
-            border-color: #ffd700 !important;
-            box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important;
-            animation: latirGanador 0.7s infinite alternate ease-in-out !important;
-        }
-        @keyframes latirGanador {
-            from { transform: scale(1.1); }
-            to { transform: scale(1.28); }
-        }
+        .turno-activo .avatar { border-color: #00bcd4; box-shadow: 0 0 14px #00bcd4; transform: scale(1.12); }
+        .avatar-ganador-ronda .avatar { border-color: #ffd700 !important; box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important; animation: latirGanador 0.7s infinite alternate ease-in-out !important; }
+        @keyframes latirGanador { from { transform: scale(1.1); } to { transform: scale(1.28); } }
 
-        .avatar-paso .avatar {
-            border-color: #ff3333 !important;
-            box-shadow: 0 0 22px 6px #ff3333 !important;
-            animation: vibrarPaso 0.15s infinite alternate ease-in-out !important;
-        }
-        .avatar-paso .ficha, .avatar-paso .ficha-dorso {
-            border-color: #ff3333 !important;
-            box-shadow: 0 0 10px #ff3333 !important;
-        }
-        @keyframes vibrarPaso {
-            from { transform: translateX(-3px) scale(1.05); }
-            to { transform: translateX(3px) scale(1.05); }
-        }
+        .avatar-paso .avatar { border-color: #ff3333 !important; box-shadow: 0 0 22px 6px #ff3333 !important; animation: vibrarPaso 0.15s infinite alternate ease-in-out !important; }
+        .avatar-paso .ficha, .avatar-paso .ficha-dorso { border-color: #ff3333 !important; box-shadow: 0 0 10px #ff3333 !important; }
+        @keyframes vibrarPaso { from { transform: translateX(-3px) scale(1.05); } to { transform: translateX(3px) scale(1.05); } }
 
-        .nombre-tag {
-            font-size: 10px; 
-            font-weight: bold; 
-            color: #fff; 
-            background: rgba(0,0,0,0.75); 
-            padding: 2px 6px; 
-            border-radius: 8px;
-            white-space: nowrap;
-        }
+        .nombre-tag { font-size: 10px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.75); padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
 
         .burbuja-estado {
-            position: absolute; 
-            background: rgba(0,0,0,0.92); 
-            border: 1.5px solid #fff; 
-            color: #fff;
-            padding: 3px 8px; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            font-size: 11px;
-            opacity: 0; 
-            transition: all 0.25s ease; 
-            pointer-events: none; 
-            z-index: 60; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6); 
-            white-space: nowrap;
+            position: absolute; background: rgba(0,0,0,0.92); border: 1.5px solid #fff; color: #fff;
+            padding: 3px 8px; border-radius: 10px; font-weight: bold; font-size: 11px; opacity: 0; 
+            transition: all 0.25s ease; pointer-events: none; z-index: 60; box-shadow: 0 4px 12px rgba(0,0,0,0.6); white-space: nowrap;
         }
         .burbuja-estado.visible { opacity: 1; }
         .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.92); }
@@ -376,195 +195,76 @@
         .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.92); }
         .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.92); }
 
-        #pos-j3 {
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            flex-direction: column;
-            gap: 2px;
-        }
+        #pos-j3 { top: 10px; left: 50%; transform: translateX(-50%); flex-direction: column; gap: 2px; }
         #pos-j3 .burbuja-estado { top: 115%; left: 50%; transform: translateX(-50%); }
-
-        #pos-j4 {
-            left: 12px;
-            top: 45%;
-            transform: translateY(-50%);
-            flex-direction: column;
-            gap: 4px;
-        }
+        #pos-j4 { left: 12px; top: 45%; transform: translateY(-50%); flex-direction: column; gap: 4px; }
         #pos-j4 .burbuja-estado { left: 110%; top: 50%; transform: translateY(-50%); }
-
-        #pos-j2 {
-            right: 12px;
-            top: 45%;
-            transform: translateY(-50%);
-            flex-direction: column;
-            gap: 4px;
-        }
+        #pos-j2 { right: 12px; top: 45%; transform: translateY(-50%); flex-direction: column; gap: 4px; }
         #pos-j2 .burbuja-estado { right: 110%; top: 50%; transform: translateY(-50%); }
 
         .fichas-ocultas { display: flex; gap: 2px; align-items: center; justify-content: center; }
         .fichas-ocultas.v { flex-direction: column; }
 
         .ficha-dorso { 
-            border-radius: 3px; 
-            border: 1px solid #1a2233; 
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
-            position: relative; 
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 3px; border: 1px solid #1a2233; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
             background: 
                 linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
                 conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
         }
-        .ficha-dorso::after {
-            content: 'RD';
-            font-size: 6px;
-            font-weight: 900;
-            color: #111111;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 0 1px;
-            border-radius: 2px;
-            letter-spacing: 0.3px;
-            z-index: 2;
-        }
-        .ficha-dorso.h { width: 13px; height: 24px; } 
-        .ficha-dorso.v { width: 24px; height: 13px; }
+        .ficha-dorso::after { content: 'RD'; font-size: 6px; font-weight: 900; color: #111111; background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px; letter-spacing: 0.3px; z-index: 2; }
+        .ficha-dorso.h { width: 13px; height: 24px; } .ficha-dorso.v { width: 24px; height: 13px; }
 
-        .zona-nosotros-dock {
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            z-index: 100;
-            width: 98%;
-            max-width: 820px;
-            pointer-events: none;
-        }
-
-        .avatar-nosotros-pill {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            pointer-events: auto;
-            flex-shrink: 0;
-            position: relative;
-        }
+        .zona-nosotros-dock { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 8px; z-index: 100; width: 98%; max-width: 820px; pointer-events: none; }
+        .avatar-nosotros-pill { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: auto; flex-shrink: 0; position: relative; }
         .avatar-nosotros-pill .burbuja-estado { bottom: 120%; left: 50%; transform: translateX(-50%); }
 
         .mano-jugador-activa { 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-end;
-            gap: 6px; 
-            pointer-events: auto;
-            background: rgba(7, 10, 16, 0.65);
-            padding: 4px 8px;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            max-width: 85vw;
-            overflow-x: auto;
-            transition: opacity 0.2s ease;
+            display: flex; justify-content: center; align-items: flex-end; gap: 6px; pointer-events: auto;
+            background: rgba(7, 10, 16, 0.65); padding: 4px 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 85vw; overflow-x: auto; transition: opacity 0.2s ease;
         }
-        .mano-jugador-activa:hover {
-            background: rgba(7, 10, 16, 0.85);
-        }
+        .mano-jugador-activa:hover { background: rgba(7, 10, 16, 0.85); }
 
-        /* --- FICHAS EN LA MANO (EFECTO 3D REALISTA) --- */
         .ficha {
-            width: 48px; 
-            height: 90px; 
-            background: var(--ficha-bg);
-            border-radius: 6px; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 4px;
-            cursor: pointer; 
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            flex-shrink: 0;
+            width: 48px; height: 90px; background: var(--ficha-bg); border-radius: 6px; display: flex; flex-direction: column; padding: 4px;
+            cursor: grab; transition: transform 0.15s ease, box-shadow 0.15s ease; flex-shrink: 0;
             box-shadow: 2px 4px 10px rgba(0,0,0,0.6), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
-            border: 1px solid rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.3); touch-action: none;
         }
+        .ficha:active { cursor: grabbing; }
         .ficha:hover { transform: translateY(-8px); }
         .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95), inset 2px 2px 5px rgba(255,255,255,0.8); border-color: #00bcd4; }
 
-        /* --- FICHAS EN LA MESA (EFECTO 3D REALISTA) --- */
-        .ficha-mesa { 
-            position: absolute; 
-            pointer-events: none; 
-            transition: none;
-            background: var(--ficha-bg);
-            border-radius: 6px;
-            display: flex;
-            padding: 4px;
-            box-sizing: border-box;
-            box-shadow: 3px 6px 12px rgba(0,0,0,0.75), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
-            border: 1px solid rgba(0,0,0,0.3);
-        }
-        .ficha-mesa.vertical { 
-            width: 50px !important; 
-            height: 100px !important; 
-            flex-direction: column;
-        }
-        .ficha-mesa.horizontal { 
-            width: 100px !important; 
-            height: 50px !important; 
-            flex-direction: row;
+        /* ESTILOS PARA DRAG & DROP */
+        .ficha.arrastrando {
+            position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
+            transform: scale(1.15) translateY(-15px) !important;
+            box-shadow: 0 15px 30px rgba(0, 188, 212, 0.9) !important; transition: none !important; margin: 0 !important;
         }
 
+        .zona-drop {
+            position: absolute; width: 100px; height: 100px; background: rgba(0, 255, 136, 0.15);
+            border: 3px dashed #00ff88; border-radius: 50%; transform: translate(-50%, -50%); z-index: 998;
+            box-shadow: 0 0 20px rgba(0,255,136,0.3); animation: latirZona 1s infinite alternate; pointer-events: auto;
+        }
+        .zona-drop.hover { background: rgba(0, 255, 136, 0.4); transform: translate(-50%, -50%) scale(1.2); border: 3px solid #00ff88; }
+        @keyframes latirZona { from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } }
+
+        .ficha-mesa { 
+            position: absolute; pointer-events: none; transition: none; background: var(--ficha-bg); border-radius: 6px; display: flex; padding: 4px; box-sizing: border-box;
+            box-shadow: 3px 6px 12px rgba(0,0,0,0.75), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.3);
+        }
+        .ficha-mesa.vertical { width: 50px !important; height: 100px !important; flex-direction: column; }
+        .ficha-mesa.horizontal { width: 100px !important; height: 50px !important; flex-direction: row; }
         .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 2px; align-items: center; justify-items: center; }
         
-        /* Ranura oscura hundida */
-        .linea-divisoria { 
-            background: rgba(0,0,0,0.8); 
-            height: 3px; 
-            width: 90%; 
-            margin: 0 auto; 
-            border-radius: 2px; 
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.4);
-            position: relative;
-        }
-        .ficha-mesa.horizontal .linea-divisoria { 
-            width: 3px; 
-            height: 90%; 
-            margin: auto 0; 
-            box-shadow: inset 1px 0 2px rgba(0,0,0,0.8), 1px 0 0 rgba(255,255,255,0.4);
-        }
-        
-        /* Clavito dorado central (Spinner) */
-        .linea-divisoria::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 9px;
-            height: 9px;
-            background: radial-gradient(circle, #fff700 0%, #b8860b 100%);
-            border-radius: 50%;
-            box-shadow: 1px 2px 3px rgba(0,0,0,0.7), inset -1px -1px 2px rgba(0,0,0,0.4);
-            z-index: 5;
-        }
+        .linea-divisoria { background: rgba(0,0,0,0.8); height: 3px; width: 90%; margin: 0 auto; border-radius: 2px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.4); position: relative; }
+        .ficha-mesa.horizontal .linea-divisoria { width: 3px; height: 90%; margin: auto 0; box-shadow: inset 1px 0 2px rgba(0,0,0,0.8), 1px 0 0 rgba(255,255,255,0.4); }
+        .linea-divisoria::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; background: radial-gradient(circle, #fff700 0%, #b8860b 100%); border-radius: 50%; box-shadow: 1px 2px 3px rgba(0,0,0,0.7), inset -1px -1px 2px rgba(0,0,0,0.4); z-index: 5; }
 
-        /* Puntos grabados/hundidos */
-        .punto { 
-            width: 9px; 
-            height: 9px; 
-            background-color: var(--ficha-punto); 
-            border-radius: 50%; 
-            box-shadow: inset 1px 2px 4px rgba(0,0,0,0.9), 0.5px 1px 1px rgba(255,255,255,0.5); 
-        }
-
+        .punto { width: 9px; height: 9px; background-color: var(--ficha-punto); border-radius: 50%; box-shadow: inset 1px 2px 4px rgba(0,0,0,0.9), 0.5px 1px 1px rgba(255,255,255,0.5); }
         .blanco .punto { display: none; }
         .uno .punto:nth-child(1) { grid-area: 2 / 2; }
         .dos .punto:nth-child(1) { grid-area: 1 / 1; } .dos .punto:nth-child(2) { grid-area: 3 / 3; }
@@ -573,289 +273,160 @@
         .cinco .punto:nth-child(1) { grid-area: 1 / 1; } .cinco .punto:nth-child(2) { grid-area: 3 / 1; } .cinco .punto:nth-child(3) { grid-area: 2 / 2; } .cinco .punto:nth-child(4) { grid-area: 1 / 3; } .cinco .punto:nth-child(5) { grid-area: 3 / 3; }
         .seis .punto:nth-child(1) { grid-area: 1 / 1; } .seis .punto:nth-child(2) { grid-area: 2 / 1; } .seis .punto:nth-child(3) { grid-area: 3 / 1; } .seis .punto:nth-child(4) { grid-area: 1 / 3; } .seis .punto:nth-child(5) { grid-area: 2 / 3; } .seis .punto:nth-child(6) { grid-area: 3 / 3; }
 
-        .wrapper-revelada {
-            animation: saltarYFlotar 0.6s ease-out forwards;
-            z-index: 80;
-        }
-        .ficha-revelada {
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.8) !important;
-            border-color: #ff3333 !important;
-            animation: latirRoja 1s infinite alternate;
-        }
-        @keyframes saltarYFlotar {
-            0% { transform: translateY(15px) scale(0.5); opacity: 0; }
-            60% { transform: translateY(-10px) scale(1.3); opacity: 1; }
-            100% { transform: translateY(-4px) scale(1.2); opacity: 1; }
-        }
-        @keyframes latirRoja {
-            from { box-shadow: 0 0 8px rgba(255, 51, 51, 0.5); }
-            to { box-shadow: 0 0 20px rgba(255, 51, 51, 1); }
-        }
+        .wrapper-revelada { animation: saltarYFlotar 0.6s ease-out forwards; z-index: 80; }
+        .ficha-revelada { box-shadow: 0 0 15px rgba(255, 51, 51, 0.8) !important; border-color: #ff3333 !important; animation: latirRoja 1s infinite alternate; }
+        @keyframes saltarYFlotar { 0% { transform: translateY(15px) scale(0.5); opacity: 0; } 60% { transform: translateY(-10px) scale(1.3); opacity: 1; } 100% { transform: translateY(-4px) scale(1.2); opacity: 1; } }
+        @keyframes latirRoja { from { box-shadow: 0 0 8px rgba(255, 51, 51, 0.5); } to { box-shadow: 0 0 20px rgba(255, 51, 51, 1); } }
 
-        #zoom-container {
-            position: absolute; 
-            top: 0;
-            left: 0;
-            width: 100%; 
-            height: 100%; 
-            z-index: 2;
-            transition: transform 0.28s ease-out;
-        }
+        #zoom-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; transition: transform 0.28s ease-out; }
 
         .marcador-punta { position: absolute; width: 44px; height: 44px; background-color: rgba(0, 188, 212, 0.45); border: 2.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 0 14px 4px rgba(0, 188, 212, 0.85); animation: latir 0.9s infinite alternate; z-index: 999; }
         @keyframes latir { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.15); } }
 
         #toast-mensaje {
-            position: absolute; bottom: 105px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.92); color: white; padding: 6px 16px;
-            border-radius: 16px; font-size: 12px; font-weight: bold;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-            z-index: 120; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);
-            white-space: nowrap; max-width: 90%; text-overflow: ellipsis; overflow: hidden;
+            position: absolute; bottom: 105px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.92); color: white; padding: 6px 16px;
+            border-radius: 16px; font-size: 12px; font-weight: bold; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 120; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); white-space: nowrap; max-width: 90%; text-overflow: ellipsis; overflow: hidden;
         }
         #toast-mensaje.visible { opacity: 1; }
 
-        /* --- CARTELES (BANNERS) DE VICTORIA --- */
-        #banner-ganador-mano {
-            position: absolute; 
-            top: 36%; 
-            left: 50%; 
-            transform: translate(-50%, -50%);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            background: rgba(10, 14, 23, 0.96);
-            padding: 12px 28px;
-            border-radius: 20px;
-            z-index: 110;
-            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
-        }
-        @keyframes bounceIn {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        #banner-ganador-mano .texto-titulo {
-            font-size: 16px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        #banner-ganador-mano .texto-puntos {
-            font-size: 13px;
-            color: #ffffff;
-            font-weight: bold;
-        }
-
-        #banner-ganador-mano.domino {
-            border-color: #ffd700;
-            box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0,0,0,0.9);
-        }
+        #banner-ganador-mano { position: absolute; top: 36%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; gap: 6px; background: rgba(10, 14, 23, 0.96); padding: 12px 28px; border-radius: 20px; z-index: 110; animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid transparent; }
+        @keyframes bounceIn { 0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        #banner-ganador-mano .texto-titulo { font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        #banner-ganador-mano .texto-puntos { font-size: 13px; color: #ffffff; font-weight: bold; }
+        #banner-ganador-mano.domino { border-color: #ffd700; box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 10px 30px rgba(0,0,0,0.9); }
         #banner-ganador-mano.domino .texto-titulo { color: #ffd700; }
-
-        #banner-ganador-mano.capicua {
-            border-color: #FF0080;
-            box-shadow: 0 0 45px rgba(255, 0, 128, 0.8), 0 10px 30px rgba(0,0,0,0.9);
-        }
+        #banner-ganador-mano.capicua { border-color: #FF0080; box-shadow: 0 0 45px rgba(255, 0, 128, 0.8), 0 10px 30px rgba(0,0,0,0.9); }
         #banner-ganador-mano.capicua .texto-titulo { color: #FF0080; text-shadow: 0 0 12px rgba(255,0,128,0.8); font-size: 20px;}
-
-        #banner-ganador-mano.tranque {
-            border-color: #ff3333;
-            box-shadow: 0 0 45px rgba(255, 51, 51, 0.8), 0 10px 30px rgba(0,0,0,0.9);
-        }
+        #banner-ganador-mano.tranque { border-color: #ff3333; box-shadow: 0 0 45px rgba(255, 51, 51, 0.8), 0 10px 30px rgba(0,0,0,0.9); }
         #banner-ganador-mano.tranque .texto-titulo { color: #ff3333; text-shadow: 0 0 12px rgba(255,51,51,0.8); font-size: 20px;}
-
-        #banner-ganador-mano.salida-30 {
-            border-color: #FF8C00;
-            box-shadow: 0 0 45px rgba(255, 140, 0, 0.8), 0 10px 30px rgba(0,0,0,0.9);
-        }
+        #banner-ganador-mano.salida-30 { border-color: #FF8C00; box-shadow: 0 0 45px rgba(255, 140, 0, 0.8), 0 10px 30px rgba(0,0,0,0.9); }
         #banner-ganador-mano.salida-30 .texto-titulo { color: #FF8C00; text-shadow: 0 0 12px rgba(255,140,0,0.8); font-size: 22px;}
 
-        #btn-siguiente { 
-            position: absolute; 
-            top: 54%; 
-            left: 50%; 
-            transform: translate(-50%, -50%);
-            display: none;
-            padding: 10px 24px; 
-            background: linear-gradient(45deg, #FF8C00, #FF0080); 
-            color: white; 
-            border: none; 
-            border-radius: 22px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
-            z-index: 115; 
-            white-space: nowrap;
-        }
+        #btn-siguiente { position: absolute; top: 54%; left: 50%; transform: translate(-50%, -50%); display: none; padding: 10px 24px; background: linear-gradient(45deg, #FF8C00, #FF0080); color: white; border: none; border-radius: 22px; cursor: pointer; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85); z-index: 115; white-space: nowrap; }
 
-        .panel-anotacion {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 280px;
-            background: #131926;
-            border-left: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 16px;
-            box-shadow: -10px 0 35px rgba(0,0,0,0.85);
-            z-index: 300;
-            transform: translateX(100%);
-            transition: transform 0.28s ease;
-        }
+        .panel-anotacion { position: absolute; top: 0; right: 0; height: 100%; width: 280px; background: #131926; border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 16px; box-shadow: -10px 0 35px rgba(0,0,0,0.85); z-index: 300; transform: translateX(100%); transition: transform 0.28s ease; }
         .panel-anotacion.abierta { transform: translateX(0); }
-        
         .header-libreta { text-align: center; margin-bottom: 12px; position: relative; }
         .header-libreta h1 { font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px;}
         .header-libreta h1 span { color: #ce1126; } 
         .meta-puntos { background: rgba(0, 188, 212, 0.15); padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; color: var(--azul-rd); display: inline-block; cursor: pointer; }
-        
-        .btn-cerrar-libreta {
-            position: absolute; top: -6px; right: -4px; background: none; border: none;
-            color: #fff; font-size: 24px; cursor: pointer; padding: 4px 8px;
-        }
-
+        .btn-cerrar-libreta { position: absolute; top: -6px; right: -4px; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 4px 8px; }
         .marcador-global { display: flex; justify-content: space-between; align-items: center; background: #0b0f19; border-radius: 10px 10px 0 0; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.03); border-bottom: none; }
         .equipo-score { display: flex; flex-direction: column; align-items: center; width: 42%; }
         .equipo-score h3 { font-size: 12px; color: #ccc; margin-bottom: 2px; }
         .equipo-score .puntos { font-size: 32px; font-weight: 900; }
-        .puntos.nosotros { color: var(--azul-rd); }
-        .puntos.ellos { color: var(--rojo-rd); }
+        .puntos.nosotros { color: var(--azul-rd); } .puntos.ellos { color: var(--rojo-rd); }
         .vs-circle { width: 26px; height: 26px; background: #2a3143; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: #888; }
-
-        .anotacion-grid {
-            flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 10px 10px; 
-            border: 1px solid rgba(255,255,255,0.03); border-top: 2px solid #2a3143; overflow: hidden;
-            margin-bottom: 10px;
-        }
+        .anotacion-grid { flex: 1; display: flex; background: #0b0f19; border-radius: 0 0 10px 10px; border: 1px solid rgba(255,255,255,0.03); border-top: 2px solid #2a3143; overflow: hidden; margin-bottom: 10px; }
         .columna-puntos { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; overflow-y: auto; }
         .divisor-linea { width: 2px; background: #2a3143; margin: 6px 0; border-radius: 2px;}
-        .columna-puntos::-webkit-scrollbar { width: 3px; }
-        .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
+        .columna-puntos::-webkit-scrollbar { width: 3px; } .columna-puntos::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
         .punto-anotado { font-size: 18px; font-weight: bold; text-align: center; padding: 2px; }
-        .punto-anotado.nos { color: var(--azul-rd); }
-        .punto-anotado.ellos { color: var(--rojo-rd); }
+        .punto-anotado.nos { color: var(--azul-rd); } .punto-anotado.ellos { color: var(--rojo-rd); }
 
-        /* --- MODALES: AJUSTES, AYUDA Y CREDITOS --- */
-        #modal-ajustes, #modal-ayuda, #modal-creditos {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 24, 0.88); z-index: 3500; display: flex;
-            justify-content: center; align-items: center; backdrop-filter: blur(8px);
-        }
-        .tarjeta-ajustes {
-            background: #131926; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
-            padding: 20px; width: 92%; max-width: 420px; max-height: 94vh; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 14px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.85);
-        }
+        /* --- MODALES --- */
+        #modal-ajustes, #modal-ayuda, #modal-creditos, #modal-multijugador, #modal-estadisticas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 24, 0.88); z-index: 3500; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); transition: opacity 0.3s ease; }
+        .tarjeta-ajustes { background: #131926; border: 1px solid rgba(255,255,255,0.15); border-radius: 18px; padding: 20px; width: 92%; max-width: 420px; max-height: 94vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 15px 50px rgba(0,0,0,0.85); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tarjeta-ajustes h2 { font-size: 18px; text-align: center; color: #fff; margin-bottom: 5px; }
-        
         .contenido-texto { font-size: 13px; color: #ccc; display: flex; flex-direction: column; gap: 10px; line-height: 1.4; text-align: left; }
         .contenido-texto strong { color: var(--azul-rd); }
-        
         .creditos-info { text-align: center; font-size: 14px; color: #fff; margin-top: 10px; }
         .creditos-info span { font-size: 20px; font-weight: bold; color: var(--azul-rd); display: block; margin-top: 5px; }
-
         .grupo-ajuste { display: flex; flex-direction: column; gap: 6px; margin-bottom: 5px;}
         .grupo-ajuste label { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
-
+        
         .opciones-nombres { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .opciones-nombres input { 
-            background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
-            color: #fff; padding: 8px; font-size: 12px; outline: none; text-align: center;
-        }
-        .opciones-nombres input:focus { border-color: var(--azul-rd); }
-
-        .opciones-botones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .input-group { display: flex; gap: 4px; }
+        .input-avatar { width: 42px !important; text-align: center; text-align-last: center; padding: 4px !important; font-size: 18px !important; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; }
+        .input-avatar:focus { border-color: var(--azul-rd); }
+        .input-group input[type="text"]:not(.input-avatar) { flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 8px; font-size: 12px; outline: none; text-align: center; width: 100%; }
+        .input-group input[type="text"]:not(.input-avatar):focus { border-color: var(--azul-rd); }
+        
+        .opciones-botones { display: grid; gap: 6px; }
         .opciones-colores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .opciones-mesa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        
-        .btn-opcion {
-            background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
-            color: #fff; padding: 8px 4px; font-weight: bold; font-size: 12px; cursor: pointer;
-            text-align: center;
-        }
+        .btn-opcion { background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 8px 4px; font-weight: bold; font-size: 12px; cursor: pointer; text-align: center; }
         .btn-opcion.activo { background: rgba(0, 188, 212, 0.25); border-color: var(--azul-rd); color: var(--azul-rd); }
-
         .btn-color { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 11px; }
         .muestra-color { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; }
-        .muestra-blanca { background: #ffffff; }
-        .muestra-azul { background: #00bcd4; }
-        .muestra-roja { background: #ff1744; }
+        .muestra-blanca { background: #ffffff; } .muestra-azul { background: #00bcd4; } .muestra-roja { background: #ff1744; }
+        .muestra-m-verde { background: #163823; } .muestra-m-negro { background: #18191a; } .muestra-m-azul { background: #0f3d64; } .muestra-m-blanco { background: #e0e5eb; }
+        .btn-cerrar-ajustes { background: rgba(0, 188, 212, 0.12); color: var(--azul-rd); border: 1px solid var(--azul-rd); padding: 10px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 4px; width: 100%; transition: all 0.2s ease;}
+        .btn-cerrar-ajustes:active { transform: scale(0.96); }
 
-        .muestra-m-verde { background: #163823; }
-        .muestra-m-negro { background: #18191a; }
-        .muestra-m-azul { background: #0f3d64; }
-        .muestra-m-blanco { background: #e0e5eb; }
-
-        .btn-cerrar-ajustes {
-            background: var(--azul-rd); color: #000; border: none; padding: 10px;
-            border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; margin-top: 4px; width: 100%;
-        }
+        /* NUEVO: ESTILOS DE ESTADÍSTICAS */
+        .estadisticas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: rgba(0, 188, 212, 0.1); border: 1px solid rgba(0, 188, 212, 0.3); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .stat-box span { font-size: 11px; color: #ccc; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; text-align: center; }
+        .stat-box strong { font-size: 24px; color: #fff; font-weight: 900; }
+        .stat-box.highlight { border-color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+        .stat-box.highlight strong { color: #ffd700; }
 
         #pantalla-barajar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .oculto { display: none !important; }
+        .oculto { display: none !important; opacity: 0; pointer-events: none;}
         #pantalla-barajar h2 { color: white; font-size: 24px; margin-top: 140px; text-shadow: 2px 2px 5px #00bcd4; z-index: 1100; }
         .zona-revuelta { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; top:0; left:0;}
-        .ficha-revuelta { 
-            position: absolute; width: 22px; height: 36px; 
-            border-radius: 3px; border: 1px solid #1a2233; 
-            animation: mezclar 1.2s infinite ease-in-out alternate; 
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-            background: 
-                linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
-                linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
-                conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
-        }
-        .ficha-revuelta::after {
-            content: 'RD'; font-size: 7px; font-weight: 900; color: #111111;
-            background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px;
-        }
+        .ficha-revuelta { position: absolute; width: 22px; height: 36px; border-radius: 3px; border: 1px solid #1a2233; animation: mezclar 1.2s infinite ease-in-out alternate; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)), linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)), conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg); }
+        .ficha-revuelta::after { content: 'RD'; font-size: 7px; font-weight: 900; color: #111111; background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px; }
         @keyframes mezclar { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg)); } 100% { transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg)); } }
 
         #modal-victoria { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 21, 34, 0.95); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 320px; width: 90%; }
+        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 320px; width: 90%; z-index: 5000; }
         .tarjeta-victoria h1 { font-size: 24px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 6px;}
         .tarjeta-victoria h1 span { font-size: 40px; } 
         .tarjeta-victoria h2 { font-size: 18px; color: #fff; margin-bottom: 20px; font-weight: 400;}
-        .btn-jugar-nuevo { background: var(--azul-rd); color: #000; border: none; padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase;}
+        .marcador-final { display: flex; justify-content: center; align-items: center; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .marcador-col { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        .marcador-label { font-size: 12px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .marcador-pts { font-size: 32px; font-weight: 900; color: #fff; }
+        .marcador-pts.resaltado { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); transform: scale(1.1); }
+        .marcador-div { font-size: 14px; font-weight: bold; color: #555; }
+        
+        .etiqueta-desarrollo {
+            background: rgba(255, 140, 0, 0.15); color: #FF8C00;
+            border: 1px solid #FF8C00; padding: 4px 10px; border-radius: 12px;
+            font-size: 10px; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
+        }
     </style>
 </head>
 <body class="ficha-blanco mesa-verde">
     <div class="contenedor-juego">
         
+        <!-- PANTALLA DE BIENVENIDA CALIDA -->
         <div id="pantalla-bienvenida">
             <div class="caja-bienvenida">
-                <button class="btn-config-bienvenida" onclick="toggleModalAjustes()" title="Configuración inicial">⚙️</button>
-
-                <svg class="bandera-svg" viewBox="0 0 900 600">
+                <svg class="bandera-svg" viewBox="0 0 900 600" style="width: 65px; height: 42px;">
                     <rect width="900" height="600" fill="#ce1126"/>
                     <rect width="450" height="300" fill="#002868"/>
                     <rect x="450" y="300" width="450" height="300" fill="#002868"/>
                     <rect x="375" width="150" height="600" fill="#ffffff"/>
                     <rect y="225" width="900" height="150" fill="#ffffff"/>
                 </svg>
-
                 <h1>Dominó <span>RD</span></h1>
-
-                <div class="resumen-config-bienvenida">
-                    <span class="tag-info-bienvenida" id="tag-meta-bienvenida" onclick="toggleModalAjustes()">🎯 Meta: 200 pts</span>
-                    <span class="tag-info-bienvenida" onclick="toggleModalAjustes()">🎨 Personalizar</span>
+                
+                <p>¡Bienvenido a tu mesa virtual! 🇩🇴<br>Elige cómo quieres jugar hoy:</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px;">
+                    <!-- Jugar Local vs IA -->
+                    <button class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
+                        <span>👤</span> JUGAR VS IA
+                    </button>
+                    <!-- Multijugador Fase 1 -->
+                    <button class="btn-iniciar-partida" style="background: linear-gradient(45deg, #00bcd4, #005ce6); margin-top: 0;" onclick="abrirModalMultijugador()">
+                        <span>🌐</span> MULTIJUGADOR
+                    </button>
+                    
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <button class="btn-secundario" style="flex: 1;" onclick="toggleModalAjustes()">
+                            <span>⚙️</span> AJUSTES
+                        </button>
+                        <button class="btn-secundario" style="flex: 1;" onclick="abrirEstadisticas()">
+                            <span>📊</span> RÉCORD
+                        </button>
+                    </div>
                 </div>
-
-                <button class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()">
-                    <span>🎲</span> INICIAR PARTIDA
-                </button>
             </div>
         </div>
 
@@ -877,14 +448,16 @@
                         <div class="texto-titulo" id="texto-ganador-mano">🏆 ¡Dominó!</div>
                         <div class="texto-puntos" id="texto-puntos-mano">+24 Puntos</div>
                     </div>
-
                     <button id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
                 </div>
 
                 <!-- COMPADRE (ARRIBA) -->
                 <div class="jugador-flotante" id="pos-j3">
                     <div class="avatar-wrap">
-                        <div class="avatar" id="avatar-j3">👨🏽‍🦳</div>
+                        <div class="avatar-container">
+                            <div class="avatar" id="avatar-j3">👨🏽‍🦳</div>
+                            <svg class="timer-ring"><circle class="bg" cx="23" cy="23" r="21"></circle><circle class="progress" cx="23" cy="23" r="21"></circle></svg>
+                        </div>
                         <div class="nombre-tag">Compadre</div>
                         <div class="burbuja-estado" id="burbuja-j3"></div>
                     </div>
@@ -894,7 +467,10 @@
                 <!-- RIVAL 2 (IZQUIERDA) -->
                 <div class="jugador-flotante" id="pos-j4">
                     <div class="avatar-wrap">
-                        <div class="avatar" id="avatar-j4">👩🏽</div>
+                        <div class="avatar-container">
+                            <div class="avatar" id="avatar-j4">👩🏽</div>
+                            <svg class="timer-ring"><circle class="bg" cx="23" cy="23" r="21"></circle><circle class="progress" cx="23" cy="23" r="21"></circle></svg>
+                        </div>
                         <div class="nombre-tag">Rival 2</div>
                         <div class="burbuja-estado" id="burbuja-j4"></div>
                     </div>
@@ -904,7 +480,10 @@
                 <!-- RIVAL 1 (DERECHA) -->
                 <div class="jugador-flotante" id="pos-j2">
                     <div class="avatar-wrap">
-                        <div class="avatar" id="avatar-j2">🧔🏾‍♂️</div>
+                        <div class="avatar-container">
+                            <div class="avatar" id="avatar-j2">🧔🏾‍♂️</div>
+                            <svg class="timer-ring"><circle class="bg" cx="23" cy="23" r="21"></circle><circle class="progress" cx="23" cy="23" r="21"></circle></svg>
+                        </div>
                         <div class="nombre-tag">Rival 1</div>
                         <div class="burbuja-estado" id="burbuja-j2"></div>
                     </div>
@@ -914,7 +493,10 @@
                 <!-- NOSOTROS (ABAJO) -->
                 <div class="zona-nosotros-dock">
                     <div class="avatar-nosotros-pill" id="pos-j1">
-                        <div class="avatar" id="avatar-j1">😎</div>
+                        <div class="avatar-container">
+                            <div class="avatar" id="avatar-j1">😎</div>
+                            <svg class="timer-ring"><circle class="bg" cx="23" cy="23" r="21"></circle><circle class="progress" cx="23" cy="23" r="21"></circle></svg>
+                        </div>
                         <div class="nombre-tag">Nosotros</div>
                         <div class="burbuja-estado" id="burbuja-j1"></div>
                     </div>
@@ -936,7 +518,6 @@
                 <h1>Dominó <span>RD</span></h1>
                 <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">Meta: 200 pts</div>
             </div>
-
             <div class="marcador-global">
                 <div class="equipo-score">
                     <h3>Nosotros</h3>
@@ -948,13 +529,60 @@
                     <div class="puntos ellos" id="ptos-lat-ellos">0</div>
                 </div>
             </div>
-
             <div class="anotacion-grid">
                 <div class="columna-puntos" id="historial-nosotros"></div>
                 <div class="divisor-linea"></div>
                 <div class="columna-puntos" id="historial-ellos"></div>
             </div>
         </aside>
+
+        <!-- MODAL MULTIJUGADOR (NUEVO FASE 1) -->
+        <div id="modal-multijugador" class="oculto">
+            <div class="tarjeta-ajustes">
+                <div style="text-align: center;">
+                    <h2>🌐 Multijugador en Línea</h2>
+                    <span class="etiqueta-desarrollo">🛠️ En Desarrollo</span>
+                </div>
+                <div class="contenido-texto" style="text-align: center; margin-bottom: 10px;">
+                    Juega con tus amigos conectándote a una sala virtual.
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background: rgba(0, 188, 212, 0.1); border: 1px solid rgba(0, 188, 212, 0.4); padding: 15px; border-radius: 12px; text-align: center;">
+                        <p style="font-size: 12px; margin-bottom: 10px; color: #ccc;">Crea una sala y comparte el código con tus amigos.</p>
+                        <button class="btn-iniciar-partida" style="margin: 0; background: #00bcd4; color: #000; box-shadow: none;" onclick="crearSalaMock()">
+                            ➕ CREAR SALA
+                        </button>
+                        <div id="codigo-sala-generado" style="display: none; margin-top: 15px; font-size: 24px; font-weight: 900; letter-spacing: 3px; color: #ffd700;"></div>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                        <p style="font-size: 12px; margin-bottom: 10px; color: #ccc;">¿Ya tienes un código? Únete a una sala.</p>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="input-codigo-sala" placeholder="Ej: MESA-777" style="flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 10px; font-size: 14px; text-align: center; text-transform: uppercase;">
+                            <button class="btn-iniciar-partida" style="margin: 0; width: auto; padding: 0 20px; box-shadow: none; font-size: 12px;" onclick="unirseSalaMock()">ENTRAR</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-cerrar-ajustes" style="background: #333; color: white; border: none; margin-top: 10px;" onclick="cerrarModalMultijugador()">VOLVER</button>
+            </div>
+        </div>
+
+        <!-- MODAL ESTADÍSTICAS -->
+        <div id="modal-estadisticas" class="oculto">
+            <div class="tarjeta-ajustes">
+                <h2>📊 Tus Estadísticas</h2>
+                <div class="estadisticas-grid">
+                    <div class="stat-box"><span>🏆 Victorias</span><strong id="stat-victorias">0</strong></div>
+                    <div class="stat-box"><span>💔 Derrotas</span><strong id="stat-derrotas">0</strong></div>
+                    <div class="stat-box highlight"><span>🌟 Capicúas</span><strong id="stat-capicuas">0</strong></div>
+                    <div class="stat-box"><span>💯 Puntos</span><strong id="stat-puntos">0</strong></div>
+                </div>
+                <button class="btn-cerrar-ajustes" style="margin-top: 5px;" onclick="cerrarEstadisticas()">CERRAR</button>
+                <button class="btn-cerrar-ajustes" style="background: transparent; border: 1px solid rgba(255,23,68,0.5); color: #ff1744; margin-top: 10px; font-size: 11px;" onclick="borrarEstadisticas()">BORRAR RÉCORD</button>
+            </div>
+        </div>
 
         <!-- MODAL DE AYUDA / REGLAS -->
         <div id="modal-ayuda" class="oculto">
@@ -966,6 +594,7 @@
                     <p><strong>🔒 Tranque:</strong> Ocurre cuando ningún jugador puede colocar ficha. Gana el equipo que sume menos puntos en las fichas de sus manos.</p>
                     <p><strong>🔄 Vuelta de Pases (+30 pts):</strong> Si 3 jugadores seguidos pasan, el equipo del jugador que causó los pases recibe 30 puntos extra.</p>
                     <p><strong>🔥 Pase a la Salida (+30 pts):</strong> Si sales en tu turno y el jugador que sigue después de ti no tiene esa ficha, tu equipo gana 30 puntos en el acto.</p>
+                    <p><strong>⏳ Temporizador Inteligente:</strong> Tienes 10 segundos para jugar tu turno. Si no lo haces, la IA tomará el control por ti y hará la mejor jugada posible.</p>
                 </div>
                 <button class="btn-cerrar-ajustes" onclick="toggleModalAyuda()">Entendido</button>
             </div>
@@ -981,70 +610,88 @@
                         Desarrollado y Creado por:
                         <span>Tu Nombre Aquí 😎</span> <!-- ¡CAMBIA ESTO POR TU NOMBRE! -->
                     </div>
-                    <p style="font-size: 11px; margin-top: 10px;">Versión 2.0 - IA Inteligente & Sonido 3D</p>
+                    <p style="font-size: 11px; margin-top: 10px;">Versión 7.0 - Estadísticas Locales & Bienvenida</p>
                 </div>
                 <button class="btn-cerrar-ajustes" onclick="toggleModalCreditos()">Cerrar</button>
             </div>
         </div>
 
+        <!-- MODAL DE AJUSTES -->
         <div id="modal-ajustes" class="oculto">
             <div class="tarjeta-ajustes">
                 <h2>⚙️ Configuración de Partida</h2>
+                
+                <div class="grupo-ajuste">
+                    <label>Nombres y Avatares</label>
+                    <div class="opciones-nombres">
+                        <div class="input-group">
+                            <select id="input-avatar-1" class="input-avatar" title="Elige un Avatar">
+                                <option value="😎" selected>😎</option><option value="🧔🏾‍♂️">🧔🏾‍♂️</option><option value="👨🏽‍🦳">👨🏽‍🦳</option><option value="👩🏽">👩🏽</option><option value="🧑🏽‍🦱">🧑🏽‍🦱</option><option value="👴🏾">👴🏾</option><option value="👱🏻‍♂️">👱🏻‍♂️</option><option value="👽">👽</option>
+                            </select>
+                            <input type="text" id="input-nombre-1" placeholder="Tú (Nosotros)">
+                        </div>
+                        <div class="input-group">
+                            <select id="input-avatar-2" class="input-avatar" title="Elige un Avatar">
+                                <option value="😎">😎</option><option value="🧔🏾‍♂️" selected>🧔🏾‍♂️</option><option value="👨🏽‍🦳">👨🏽‍🦳</option><option value="👩🏽">👩🏽</option><option value="🧑🏽‍🦱">🧑🏽‍🦱</option><option value="👴🏾">👴🏾</option><option value="👱🏻‍♂️">👱🏻‍♂️</option><option value="👽">👽</option>
+                            </select>
+                            <input type="text" id="input-nombre-2" placeholder="Derecha (Rival 1)">
+                        </div>
+                        <div class="input-group">
+                            <select id="input-avatar-3" class="input-avatar" title="Elige un Avatar">
+                                <option value="😎">😎</option><option value="🧔🏾‍♂️">🧔🏾‍♂️</option><option value="👨🏽‍🦳" selected>👨🏽‍🦳</option><option value="👩🏽">👩🏽</option><option value="🧑🏽‍🦱">🧑🏽‍🦱</option><option value="👴🏾">👴🏾</option><option value="👱🏻‍♂️">👱🏻‍♂️</option><option value="👽">👽</option>
+                            </select>
+                            <input type="text" id="input-nombre-3" placeholder="Frente (Compadre)">
+                        </div>
+                        <div class="input-group">
+                            <select id="input-avatar-4" class="input-avatar" title="Elige un Avatar">
+                                <option value="😎">😎</option><option value="🧔🏾‍♂️">🧔🏾‍♂️</option><option value="👨🏽‍🦳">👨🏽‍🦳</option><option value="👩🏽" selected>👩🏽</option><option value="🧑🏽‍🦱">🧑🏽‍🦱</option><option value="👴🏾">👴🏾</option><option value="👱🏻‍♂️">👱🏻‍♂️</option><option value="👽">👽</option>
+                            </select>
+                            <input type="text" id="input-nombre-4" placeholder="Izquierda (Rival 2)">
+                        </div>
+                    </div>
+                </div>
 
                 <div class="grupo-ajuste">
-                    <label>Nombres de Jugadores (Opcional)</label>
-                    <div class="opciones-nombres">
-                        <input type="text" id="input-nombre-1" placeholder="Tú (Nosotros)">
-                        <input type="text" id="input-nombre-2" placeholder="Derecha (Rival 1)">
-                        <input type="text" id="input-nombre-3" placeholder="Frente (Compadre)">
-                        <input type="text" id="input-nombre-4" placeholder="Izquierda (Rival 2)">
+                    <label>Dificultad de la IA</label>
+                    <div class="opciones-botones" style="grid-template-columns: repeat(3, 1fr);">
+                        <button class="btn-opcion" id="btn-dif-facil" onclick="cambiarDificultadIA('facil')">Fácil</button>
+                        <button class="btn-opcion activo" id="btn-dif-medio" onclick="cambiarDificultadIA('medio')">Medio</button>
+                        <button class="btn-opcion" id="btn-dif-experto" onclick="cambiarDificultadIA('experto')">Experto</button>
                     </div>
                 </div>
 
                 <div class="grupo-ajuste">
                     <label>Puntuación Meta</label>
-                    <div class="opciones-botones">
+                    <div class="opciones-botones" style="grid-template-columns: repeat(4, 1fr);">
                         <button class="btn-opcion" id="btn-meta-50" onclick="cambiarMetaPuntos(50)">50</button>
                         <button class="btn-opcion" id="btn-meta-100" onclick="cambiarMetaPuntos(100)">100</button>
                         <button class="btn-opcion" id="btn-meta-150" onclick="cambiarMetaPuntos(150)">150</button>
                         <button class="btn-opcion activo" id="btn-meta-200" onclick="cambiarMetaPuntos(200)">200</button>
                     </div>
                 </div>
-
+                
                 <div class="grupo-ajuste">
                     <label>Color de las Fichas</label>
                     <div class="opciones-colores">
-                        <button class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')">
-                            <span class="muestra-color muestra-blanca"></span> Blanco
-                        </button>
-                        <button class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')">
-                            <span class="muestra-color muestra-azul"></span> Azul
-                        </button>
-                        <button class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')">
-                            <span class="muestra-color muestra-roja"></span> Rojo
-                        </button>
+                        <button class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')"><span class="muestra-color muestra-blanca"></span> Blanco</button>
+                        <button class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')"><span class="muestra-color muestra-azul"></span> Azul</button>
+                        <button class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')"><span class="muestra-color muestra-roja"></span> Rojo</button>
                     </div>
                 </div>
-
+                
                 <div class="grupo-ajuste">
                     <label>Color del Paño de Mesa</label>
                     <div class="opciones-mesa">
-                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')">
-                            <span class="muestra-color muestra-m-verde"></span> Verde
-                        </button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')">
-                            <span class="muestra-color muestra-m-negro"></span> Negro
-                        </button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')">
-                            <span class="muestra-color muestra-m-azul"></span> Azul
-                        </button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')">
-                            <span class="muestra-color muestra-m-blanco"></span> Blanco
-                        </button>
+                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')"><span class="muestra-color muestra-m-verde"></span> Verde</button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')"><span class="muestra-color muestra-m-negro"></span> Negro</button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')"><span class="muestra-color muestra-m-azul"></span> Azul</button>
+                        <button class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')"><span class="muestra-color muestra-m-blanco"></span> Blanco</button>
                     </div>
                 </div>
 
-                <button class="btn-cerrar-ajustes" onclick="guardarAjustes()">Guardar y Cerrar</button>
+                <button class="btn-iniciar-partida" id="btn-guardar-ajustes" style="margin-top: 10px;" onclick="accionBotonAjustes()">
+                    <span>🎲</span> INICIAR PARTIDA
+                </button>
             </div>
         </div>
         
@@ -1052,6 +699,19 @@
             <div class="tarjeta-victoria">
                 <h1 id="titulo-victoria-color"><span>🏆</span> ¡GANADOR!</h1>
                 <h2 id="equipo-ganador-texto">Equipo Nosotros</h2>
+                
+                <div class="marcador-final">
+                    <div class="marcador-col">
+                        <span class="marcador-label">Nosotros</span>
+                        <span class="marcador-pts" id="pts-final-nosotros">0</span>
+                    </div>
+                    <div class="marcador-div">VS</div>
+                    <div class="marcador-col">
+                        <span class="marcador-label">Ellos</span>
+                        <span class="marcador-pts" id="pts-final-ellos">0</span>
+                    </div>
+                </div>
+
                 <button class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de nuevo</button>
             </div>
         </div>
@@ -1063,6 +723,7 @@
 
         let puntosNosotros = 0; let puntosEllos = 0; let metaPuntos = 200;
         let temaFichaActual = 'blanco'; let temaMesaActual = 'verde';
+        let dificultadIA = 'medio'; 
         let ultimoGanador = null; 
         let fichaCentro = null; let ramaIzquierda = []; let ramaDerecha = [];
         let extremoIzquierdo = null; let extremoDerecho = null;
@@ -1071,15 +732,71 @@
         let esperandoSeleccionPunta = false; let fichaSeleccionada = null; let indexSeleccionado = null;
         let jugadorSalida = 1; 
         let esPrimerTurnoDespuesDeSalida = false;
+        let juegoIniciado = false; 
+        
+        let timerTurno = null; 
 
-        // IA Inteligente: Registro de Pases
+        let puntaIzqCoords = null; let puntaDerCoords = null;
+        let isDragging = false; let dragStartX = 0, dragStartY = 0;
+        let dragTile = null; let dragTileData = null; let dragTileIndex = -1;
+
         let historialPases = { 1: [], 2: [], 3: [], 4: [] };
 
         let nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
+        let avataresJugadores = { 1: "😎", 2: "🧔🏾‍♂️", 3: "👨🏽‍🦳", 4: "👩🏽" };
+        
+        // NUEVO: Variable de Estadísticas
+        let estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
+        
         const frasesPensando = ["A ver...", "Pensando...", "Mmm...", "Esa pinta..."];
         const frasesPaso = ["¡Paso en banda!", "¡Pasó! ❌", "No llevo...", "Toque, jefe."];
 
-        // --- MOTOR DE SONIDO (WEB AUDIO API) ---
+        /* --- SISTEMA DE ESTADÍSTICAS LOCALSTORAGE --- */
+        function inicializarEstadisticas() {
+            let data = localStorage.getItem('dominoRDEstadisticas');
+            if (data) {
+                estadisticas = JSON.parse(data);
+            }
+        }
+
+        function guardarEstadisticasLocal() {
+            localStorage.setItem('dominoRDEstadisticas', JSON.stringify(estadisticas));
+        }
+
+        function abrirEstadisticas() {
+            document.getElementById('stat-victorias').innerText = estadisticas.victorias;
+            document.getElementById('stat-derrotas').innerText = estadisticas.derrotas;
+            document.getElementById('stat-capicuas').innerText = estadisticas.capicuas;
+            document.getElementById('stat-puntos').innerText = estadisticas.puntosTotales;
+            document.getElementById('modal-estadisticas').classList.remove('oculto');
+        }
+
+        function cerrarEstadisticas() {
+            document.getElementById('modal-estadisticas').classList.add('oculto');
+        }
+
+        function borrarEstadisticas() {
+            if(confirm("¿Seguro que deseas borrar tu récord histórico de victorias y puntos?")) {
+                estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
+                guardarEstadisticasLocal();
+                abrirEstadisticas();
+                mostrarToast("Estadísticas borradas 🗑️");
+            }
+        }
+        /* ------------------------------------------- */
+
+        function lanzarConfeti(duracionEnSegundos = 2) {
+            let duration = duracionEnSegundos * 1000;
+            let animationEnd = Date.now() + duration;
+            let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 4500, colors: ['#002868', '#ce1126', '#ffffff'] };
+            let interval = setInterval(function() {
+                let timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                let particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1088,60 +805,39 @@
 
         function playSonido(tipo) {
             if (!audioCtx) return;
-            const t = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
 
             if (tipo === 'ficha') { 
-                // "Toc" de madera al jugar
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, t);
-                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-                gain.gain.setValueAtTime(1, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-                osc.start(t);
-                osc.stop(t + 0.05);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+                gain.gain.setValueAtTime(1, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05); osc.start(t); osc.stop(t + 0.05);
             } else if (tipo === 'paso') { 
-                // Sonido grave de "No llevo"
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(150, t);
-                osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
-                gain.gain.setValueAtTime(0.5, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.2);
-                osc.start(t);
-                osc.stop(t + 0.2);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
+                gain.gain.setValueAtTime(0.5, t); gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
             } else if (tipo === 'victoria') { 
-                // Timbre feliz al ganar
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(440, t);
-                osc.frequency.setValueAtTime(554.37, t + 0.1); 
-                osc.frequency.setValueAtTime(659.25, t + 0.2); 
-                osc.frequency.setValueAtTime(880, t + 0.3); 
-                gain.gain.setValueAtTime(0.2, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.6);
-                osc.start(t);
-                osc.stop(t + 0.6);
+                osc.type = 'square'; osc.frequency.setValueAtTime(440, t); osc.frequency.setValueAtTime(554.37, t + 0.1); 
+                osc.frequency.setValueAtTime(659.25, t + 0.2); osc.frequency.setValueAtTime(880, t + 0.3); 
+                gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.6); osc.start(t); osc.stop(t + 0.6);
+            } else if (tipo === 'tick') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, t);
+                gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); osc.start(t); osc.stop(t + 0.1);
+            } else if (tipo === 'timeout') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, t);
+                gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3); osc.start(t); osc.stop(t + 0.3);
             }
         }
 
         function playSonidoBarajar() {
-            if(!audioCtx) return;
-            let t = audioCtx.currentTime;
+            if(!audioCtx) return; let t = audioCtx.currentTime;
             for(let i=0; i<15; i++) {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
+                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
                 osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(500 + Math.random()*200, t + (i*0.06));
+                osc.type = 'sine'; osc.frequency.setValueAtTime(500 + Math.random()*200, t + (i*0.06));
                 osc.frequency.exponentialRampToValueAtTime(100, t + (i*0.06) + 0.03);
-                gain.gain.setValueAtTime(0.3, t + (i*0.06));
-                gain.gain.exponentialRampToValueAtTime(0.01, t + (i*0.06) + 0.03);
+                gain.gain.setValueAtTime(0.3, t + (i*0.06)); gain.gain.exponentialRampToValueAtTime(0.01, t + (i*0.06) + 0.03);
                 osc.start(t + (i*0.06)); osc.stop(t + (i*0.06) + 0.03);
             }
         }
-        // ----------------------------------------
 
         function generarHTMLMitad(numero) {
             let html = `<div class="mitad ${clasesNumeros[numero]}">`;
@@ -1152,193 +848,268 @@
         function sumarMano(mano) { return mano.reduce((sum, f) => sum + f[0] + f[1], 0); }
 
         function comenzarDesdeBienvenida() {
-            initAudio(); // Inicia el motor de audio al primer toque del usuario
-            const bienvenida = document.getElementById('pantalla-bienvenida');
-            bienvenida.classList.add('desvanecer');
-            setTimeout(() => {
-                bienvenida.style.display = 'none';
-                iniciarManoConAnimacion();
-            }, 400);
+            guardarAjustesVariables(); 
+            initAudio(); 
+            juegoIniciado = true;
+            
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado", err)); }
+                }).catch(err => console.log("Fullscreen error:", err));
+            }
+
+            const bienvenida = document.getElementById('pantalla-bienvenida'); bienvenida.classList.add('desvanecer');
+            const modalAjustes = document.getElementById('modal-ajustes'); modalAjustes.classList.add('oculto');
+            
+            setTimeout(() => { bienvenida.style.display = 'none'; iniciarManoConAnimacion(); }, 400);
         }
 
         function togglePantallaCompleta() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado por el navegador:", err));
-                    }
+                    if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado por el navegador:", err)); }
                 }).catch(() => {});
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                    if (screen.orientation && screen.orientation.unlock) {
-                        screen.orientation.unlock();
-                    }
-                }
+                if (document.exitFullscreen) { document.exitFullscreen(); if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }
             }
         }
 
-        function toggleLibreta() {
-            const panel = document.getElementById('panel-anotacion');
-            panel.classList.toggle('abierta');
-        }
+        function toggleLibreta() { document.getElementById('panel-anotacion').classList.toggle('abierta'); }
+        function toggleModalAyuda() { document.getElementById('modal-ayuda').classList.toggle('oculto'); }
+        function toggleModalCreditos() { document.getElementById('modal-creditos').classList.toggle('oculto'); }
 
-        function toggleModalAjustes() {
+        function toggleModalAjustes() { 
             const modal = document.getElementById('modal-ajustes');
-            modal.classList.toggle('oculto');
+            modal.classList.toggle('oculto'); 
+            
+            const btnAjustes = document.getElementById('btn-guardar-ajustes');
+            if (juegoIniciado) {
+                btnAjustes.innerHTML = '<span>💾</span> GUARDAR Y CERRAR';
+                btnAjustes.className = 'btn-cerrar-ajustes'; 
+                btnAjustes.style = "margin-top: 10px;";
+            } else {
+                btnAjustes.innerHTML = '<span>🎲</span> INICIAR PARTIDA';
+                btnAjustes.className = 'btn-iniciar-partida'; 
+            }
         }
 
-        function toggleModalAyuda() {
-            const modal = document.getElementById('modal-ayuda');
-            modal.classList.toggle('oculto');
+        function abrirModalMultijugador() {
+            document.getElementById('modal-multijugador').classList.remove('oculto');
+        }
+        
+        function cerrarModalMultijugador() {
+            document.getElementById('modal-multijugador').classList.add('oculto');
+            document.getElementById('codigo-sala-generado').style.display = 'none';
+        }
+        
+        function crearSalaMock() {
+            const codigo = "MESA-" + Math.floor(100 + Math.random() * 900);
+            const display = document.getElementById('codigo-sala-generado');
+            display.innerText = codigo;
+            display.style.display = 'block';
+            mostrarToast("Sala creada. Esperando jugadores...");
+        }
+        
+        function unirseSalaMock() {
+            const val = document.getElementById('input-codigo-sala').value.trim();
+            if(val.length < 4) {
+                mostrarToast("Ingresa un código válido");
+                return;
+            }
+            mostrarToast("Conectando a " + val.toUpperCase() + "...");
         }
 
-        function toggleModalCreditos() {
-            const modal = document.getElementById('modal-creditos');
-            modal.classList.toggle('oculto');
+        function cambiarDificultadIA(nivel) {
+            dificultadIA = nivel;
+            ['facil', 'medio', 'experto'].forEach(d => {
+                const b = document.getElementById(`btn-dif-${d}`);
+                if (b) b.classList.toggle('activo', d === nivel);
+            });
         }
 
-        function guardarAjustes() {
-            const n1 = document.getElementById('input-nombre-1').value.trim();
-            const n2 = document.getElementById('input-nombre-2').value.trim();
-            const n3 = document.getElementById('input-nombre-3').value.trim();
-            const n4 = document.getElementById('input-nombre-4').value.trim();
+        function guardarAjustesVariables() {
+            const n1 = document.getElementById('input-nombre-1').value.trim(); const n2 = document.getElementById('input-nombre-2').value.trim();
+            const n3 = document.getElementById('input-nombre-3').value.trim(); const n4 = document.getElementById('input-nombre-4').value.trim();
+            nombresJugadores[1] = n1 !== "" ? n1 : "Nosotros"; nombresJugadores[2] = n2 !== "" ? n2 : "Rival 1";
+            nombresJugadores[3] = n3 !== "" ? n3 : "Compadre"; nombresJugadores[4] = n4 !== "" ? n4 : "Rival 2";
+            
+            const a1 = document.getElementById('input-avatar-1').value.trim() || "😎"; const a2 = document.getElementById('input-avatar-2').value.trim() || "🧔🏾‍♂️";
+            const a3 = document.getElementById('input-avatar-3').value.trim() || "👨🏽‍🦳"; const a4 = document.getElementById('input-avatar-4').value.trim() || "👩🏽";
+            avataresJugadores[1] = a1; avataresJugadores[2] = a2; avataresJugadores[3] = a3; avataresJugadores[4] = a4;
 
-            nombresJugadores[1] = n1 !== "" ? n1 : "Nosotros";
-            nombresJugadores[2] = n2 !== "" ? n2 : "Rival 1";
-            nombresJugadores[3] = n3 !== "" ? n3 : "Compadre";
-            nombresJugadores[4] = n4 !== "" ? n4 : "Rival 2";
+            document.querySelector('#pos-j1 .nombre-tag').innerText = nombresJugadores[1]; document.querySelector('#pos-j2 .nombre-tag').innerText = nombresJugadores[2];
+            document.querySelector('#pos-j3 .nombre-tag').innerText = nombresJugadores[3]; document.querySelector('#pos-j4 .nombre-tag').innerText = nombresJugadores[4];
+            
+            document.getElementById('avatar-j1').innerText = avataresJugadores[1]; document.getElementById('avatar-j2').innerText = avataresJugadores[2];
+            document.getElementById('avatar-j3').innerText = avataresJugadores[3]; document.getElementById('avatar-j4').innerText = avataresJugadores[4];
+        }
 
-            document.querySelector('#pos-j1 .nombre-tag').innerText = nombresJugadores[1];
-            document.querySelector('#pos-j2 .nombre-tag').innerText = nombresJugadores[2];
-            document.querySelector('#pos-j3 .nombre-tag').innerText = nombresJugadores[3];
-            document.querySelector('#pos-j4 .nombre-tag').innerText = nombresJugadores[4];
-
-            toggleModalAjustes();
-            mostrarToast("Ajustes guardados");
+        function accionBotonAjustes() {
+            guardarAjustesVariables();
+            if (!juegoIniciado) {
+                comenzarDesdeBienvenida(); 
+            } else {
+                toggleModalAjustes(); 
+                mostrarToast("Ajustes guardados");
+            }
         }
 
         function cambiarMetaPuntos(nuevaMeta) {
             metaPuntos = nuevaMeta;
             document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
-            const tagBienvenida = document.getElementById('tag-meta-bienvenida');
-            if (tagBienvenida) tagBienvenida.innerText = `🎯 Meta: ${metaPuntos} pts`;
-            
-            [50, 100, 150, 200].forEach(pts => {
-                const b = document.getElementById(`btn-meta-${pts}`);
-                if (b) b.classList.toggle('activo', pts === nuevaMeta);
-            });
-
+            [50, 100, 150, 200].forEach(pts => { const b = document.getElementById(`btn-meta-${pts}`); if (b) b.classList.toggle('activo', pts === nuevaMeta); });
             revisarPuntos();
         }
 
-        function actualizarClasesBody() {
-            document.body.className = `ficha-${temaFichaActual} mesa-${temaMesaActual}`;
-        }
+        function actualizarClasesBody() { document.body.className = `ficha-${temaFichaActual} mesa-${temaMesaActual}`; }
 
         function cambiarColorTemaFicha(tema) {
-            temaFichaActual = tema;
-            actualizarClasesBody();
-            
-            ['blanco', 'azul', 'rojo'].forEach(col => {
-                const b = document.getElementById(`btn-color-${col}`);
-                if (b) b.classList.toggle('activo', col === tema);
-            });
-
-            renderizarManos();
-            renderizarMesa();
+            temaFichaActual = tema; actualizarClasesBody();
+            ['blanco', 'azul', 'rojo'].forEach(col => { const b = document.getElementById(`btn-color-${col}`); if (b) b.classList.toggle('activo', col === tema); });
+            renderizarManos(); renderizarMesa();
         }
 
         function cambiarColorMesa(tema) {
-            temaMesaActual = tema;
-            actualizarClasesBody();
-
-            ['verde', 'negro', 'azul', 'blanco'].forEach(m => {
-                const b = document.getElementById(`btn-mesa-${m}`);
-                if (b) b.classList.toggle('activo', m === tema);
-            });
+            temaMesaActual = tema; actualizarClasesBody();
+            ['verde', 'negro', 'azul', 'blanco'].forEach(m => { const b = document.getElementById(`btn-mesa-${m}`); if (b) b.classList.toggle('activo', m === tema); });
         }
 
         function mostrarBurbuja(idJugador, mensaje, tipo, persistente = false, limpiar = true) {
             if(limpiar) limpiarBurbujas();
             const burbuja = document.getElementById(`burbuja-j${idJugador}`);
             if (burbuja) {
-                burbuja.innerText = mensaje;
-                burbuja.className = `burbuja-estado visible ${tipo}`;
+                burbuja.innerText = mensaje; burbuja.className = `burbuja-estado visible ${tipo}`;
                 if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
                     setTimeout(() => { burbuja.classList.remove('visible'); }, 2200);
                 }
             }
         }
 
-        function limpiarBurbujas() {
-            for(let i=1; i<=4; i++) {
-                const b = document.getElementById(`burbuja-j${i}`);
-                if (b) b.className = 'burbuja-estado';
-            }
-        }
-
-        function mostrarToast(mensaje) {
-            const toast = document.getElementById('toast-mensaje');
-            toast.innerText = mensaje; toast.classList.add('visible');
-            setTimeout(() => { toast.classList.remove('visible'); }, 2400);
-        }
-
+        function limpiarBurbujas() { for(let i=1; i<=4; i++) { const b = document.getElementById(`burbuja-j${i}`); if (b) b.className = 'burbuja-estado'; } }
+        function mostrarToast(mensaje) { const toast = document.getElementById('toast-mensaje'); toast.innerText = mensaje; toast.classList.add('visible'); setTimeout(() => { toast.classList.remove('visible'); }, 2400); }
         function ocultarToast() { document.getElementById('toast-mensaje').classList.remove('visible'); }
 
         function mostrarBannerEspecial(titulo, subtitulo, clase, duracionMs = 0) {
             playSonido('victoria');
-            const banner = document.getElementById('banner-ganador-mano');
-            const txtTitulo = document.getElementById('texto-ganador-mano');
-            const txtPtos = document.getElementById('texto-puntos-mano');
-            
-            banner.className = clase; 
-            txtTitulo.innerHTML = titulo;
-            txtPtos.innerText = subtitulo;
-            banner.style.display = 'flex';
-            
-            if (duracionMs > 0) {
-                setTimeout(() => {
-                    if (!juegoTerminado) banner.style.display = 'none';
-                }, duracionMs);
-            }
+            const banner = document.getElementById('banner-ganador-mano'); const txtTitulo = document.getElementById('texto-ganador-mano'); const txtPtos = document.getElementById('texto-puntos-mano');
+            banner.className = clase; txtTitulo.innerHTML = titulo; txtPtos.innerText = subtitulo; banner.style.display = 'flex';
+            if (duracionMs > 0) { setTimeout(() => { if (!juegoTerminado) banner.style.display = 'none'; }, duracionMs); }
         }
 
         function sacudirMesa() {
-            const tapete = document.getElementById('mesa-tapete');
-            tapete.classList.remove('mesa-temblando');
-            void tapete.offsetWidth; 
-            tapete.classList.add('mesa-temblando');
-            setTimeout(() => tapete.classList.remove('mesa-temblando'), 500);
+            const tapete = document.getElementById('mesa-tapete'); tapete.classList.remove('mesa-temblando');
+            void tapete.offsetWidth; tapete.classList.add('mesa-temblando'); setTimeout(() => tapete.classList.remove('mesa-temblando'), 500);
         }
 
         function dibujarFichasReveladas(idContenedor, mano, tipo) {
             const cont = document.getElementById(idContenedor); cont.innerHTML = '';
-            const w = tipo === 'h' ? '12px' : '22px';
-            const h = tipo === 'h' ? '22px' : '12px';
-
+            const w = tipo === 'h' ? '12px' : '22px'; const h = tipo === 'h' ? '22px' : '12px';
             mano.forEach((ficha, index) => {
-                const wrapper = document.createElement('div');
-                wrapper.style.width = w; wrapper.style.height = h;
-                wrapper.style.position = 'relative';
-                wrapper.className = 'wrapper-revelada';
-                wrapper.style.animationDelay = `${index * 0.08}s`;
-
-                const divFicha = document.createElement('div');
-                divFicha.className = `ficha-mesa ${tipo === 'h' ? 'horizontal' : 'vertical'} ficha-revelada`;
-                divFicha.style.transform = 'scale(0.24)'; 
-                divFicha.style.transformOrigin = 'top left';
-                divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
+                const wrapper = document.createElement('div'); wrapper.style.width = w; wrapper.style.height = h; wrapper.style.position = 'relative'; wrapper.className = 'wrapper-revelada'; wrapper.style.animationDelay = `${index * 0.08}s`;
+                const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${tipo === 'h' ? 'horizontal' : 'vertical'} ficha-revelada`; divFicha.style.transform = 'scale(0.24)';  divFicha.style.transformOrigin = 'top left'; divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
                 divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
-                
                 wrapper.appendChild(divFicha); cont.appendChild(wrapper);
             });
         }
 
-        function dibujarDorsos(idContenedor, cantidad, tipo) {
-            const cont = document.getElementById(idContenedor); cont.innerHTML = '';
-            for(let i=0; i<cantidad; i++) {
-                const dorso = document.createElement('div'); dorso.className = `ficha-dorso ${tipo}`; cont.appendChild(dorso);
+        function dibujarDorsos(idContenedor, cantidad, tipo) { const cont = document.getElementById(idContenedor); cont.innerHTML = ''; for(let i=0; i<cantidad; i++) { const dorso = document.createElement('div'); dorso.className = `ficha-dorso ${tipo}`; cont.appendChild(dorso); } }
+
+        /* --- SISTEMA DRAG & DROP --- */
+        function iniciarArrastre(e, ficha, index, element) {
+            if (juegoTerminado || turnoActual !== 1 || esperandoSeleccionPunta) return;
+            
+            let [a, b] = ficha;
+            let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
+            let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
+            
+            if (salidaObligatoria && !fichaCentro && (a !== 6 || b !== 6)) {
+                puedeIzq = false; puedeDer = false;
+            }
+
+            e.preventDefault(); isDragging = true; dragStartX = e.clientX; dragStartY = e.clientY;
+            dragTileData = ficha; dragTileIndex = index;
+            
+            dragTile = element.cloneNode(true);
+            dragTile.classList.add('arrastrando');
+            document.body.appendChild(dragTile);
+            
+            const rect = element.getBoundingClientRect();
+            dragTile.style.left = rect.left + 'px'; dragTile.style.top = rect.top + 'px';
+            dragTile.style.width = rect.width + 'px'; dragTile.style.height = rect.height + 'px';
+            
+            element.style.opacity = '0.2'; 
+            crearZonasDrop(puedeIzq, puedeDer);
+            
+            document.onpointermove = moverArrastre;
+            document.onpointerup = finalizarArrastre;
+        }
+
+        function moverArrastre(e) {
+            if (!isDragging) return;
+            dragTile.style.left = (e.clientX - 24) + 'px';
+            dragTile.style.top = (e.clientY - 45) + 'px';
+            
+            document.querySelectorAll('.zona-drop').forEach(z => z.classList.remove('hover'));
+            let elemAbaixo = document.elementFromPoint(e.clientX, e.clientY);
+            if (elemAbaixo && elemAbaixo.classList.contains('zona-drop')) { elemAbaixo.classList.add('hover'); }
+        }
+
+        function finalizarArrastre(e) {
+            if (!isDragging) return;
+            isDragging = false; document.onpointermove = null; document.onpointerup = null;
+            
+            let draggedDist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
+            let elemAbaixo = document.elementFromPoint(e.clientX, e.clientY);
+            
+            let soltadoEnIzq = elemAbaixo && elemAbaixo.classList.contains('izq');
+            let soltadoEnDer = elemAbaixo && elemAbaixo.classList.contains('der');
+            let soltadoEnCentro = elemAbaixo && elemAbaixo.classList.contains('centro');
+
+            dragTile.remove(); dragTile = null;
+            document.querySelectorAll('.zona-drop').forEach(z => z.remove());
+            
+            let miManoEl = document.getElementById('mi-mano');
+            if (miManoEl && miManoEl.children[dragTileIndex]) { miManoEl.children[dragTileIndex].style.opacity = '1'; }
+
+            if (juegoTerminado || turnoActual !== 1) return;
+
+            let [a, b] = dragTileData;
+            let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
+            let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
+
+            if (draggedDist < 10) { intentarJugada(dragTileData, 1, dragTileIndex); return; }
+
+            if (!fichaCentro) {
+                if (soltadoEnCentro || (elemAbaixo && elemAbaixo.closest('#mesa-tapete'))) {
+                    if (salidaObligatoria && (a !== 6 || b !== 6)) { mostrarToast("Debes salir con el doble 6."); return; }
+                    procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, false);
+                }
+            } else {
+                let esCapicua = (jugadores[1].length === 1 && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho);
+                if (soltadoEnIzq && puedeIzq) { procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua); } 
+                else if (soltadoEnDer && puedeDer) { procesarJugadaFinal(dragTileData, 1, dragTileIndex, false, esCapicua); } 
+                else if (elemAbaixo && elemAbaixo.closest('#mesa-tapete')) {
+                    if (puedeIzq && !puedeDer) procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua);
+                    else if (puedeDer && !puedeIzq) procesarJugadaFinal(dragTileData, 1, dragTileIndex, false, esCapicua);
+                    else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
+                        intentarJugada(dragTileData, 1, dragTileIndex); 
+                    } 
+                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) {
+                        procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua);
+                    }
+                }
+            }
+        }
+
+        function crearZonasDrop(puedeIzq, puedeDer) {
+            if(!puedeIzq && !puedeDer) return;
+            const zoomContainer = document.getElementById('zoom-container'); if (!zoomContainer) return;
+            if (!fichaCentro) {
+                const zona = document.createElement('div'); zona.className = 'zona-drop centro';
+                zona.style.left = '0px'; zona.style.top = '0px'; zoomContainer.appendChild(zona);
+            } else {
+                if (puedeIzq && puntaIzqCoords) { const zonaIzq = document.createElement('div'); zonaIzq.className = 'zona-drop izq'; zonaIzq.style.left = puntaIzqCoords.x + 'px'; zonaIzq.style.top = puntaIzqCoords.y + 'px'; zoomContainer.appendChild(zonaIzq); }
+                if (puedeDer && puntaDerCoords) { const zonaDer = document.createElement('div'); zonaDer.className = 'zona-drop der'; zonaDer.style.left = puntaDerCoords.x + 'px'; zonaDer.style.top = puntaDerCoords.y + 'px'; zoomContainer.appendChild(zonaDer); }
             }
         }
 
@@ -1348,36 +1119,26 @@
                 const divFicha = document.createElement('div'); divFicha.className = 'ficha';
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
                 divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
-                divFicha.onclick = () => intentarJugada(ficha, 1, index);
+                
+                divFicha.onpointerdown = (e) => iniciarArrastre(e, ficha, index, divFicha);
+                
                 miMano.appendChild(divFicha);
             });
 
             if (juegoTerminado) {
-                dibujarFichasReveladas('mano-j2', jugadores[2], 'v');
-                dibujarFichasReveladas('mano-j3', jugadores[3], 'h');
-                dibujarFichasReveladas('mano-j4', jugadores[4], 'v');
+                dibujarFichasReveladas('mano-j2', jugadores[2], 'v'); dibujarFichasReveladas('mano-j3', jugadores[3], 'h'); dibujarFichasReveladas('mano-j4', jugadores[4], 'v');
             } else {
-                dibujarDorsos('mano-j2', jugadores[2].length, 'v');
-                dibujarDorsos('mano-j3', jugadores[3].length, 'h');
-                dibujarDorsos('mano-j4', jugadores[4].length, 'v');
+                dibujarDorsos('mano-j2', jugadores[2].length, 'v'); dibujarDorsos('mano-j3', jugadores[3].length, 'h'); dibujarDorsos('mano-j4', jugadores[4].length, 'v');
             }
         }
 
         function resaltarTurnoActivo() {
-            for(let i=1; i<=4; i++) {
-                const wrap = document.getElementById(`pos-j${i}`);
-                if (wrap) wrap.classList.remove('turno-activo');
-            }
-            if (!juegoTerminado && !esperandoSeleccionPunta) {
-                const wrapAct = document.getElementById(`pos-j${turnoActual}`);
-                if (wrapAct) wrapAct.classList.add('turno-activo');
-            }
+            for(let i=1; i<=4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('turno-activo'); }
+            if (!juegoTerminado && !esperandoSeleccionPunta) { const wrapAct = document.getElementById(`pos-j${turnoActual}`); if (wrapAct) wrapAct.classList.add('turno-activo'); }
         }
 
         function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
-            let backAlongPrev = 25; 
-            let outPerp = prevIsDouble ? 50 : 25; 
-
+            let backAlongPrev = 25; let outPerp = prevIsDouble ? 50 : 25; 
             if (prevDir === 'R' && newDir === 'D') { joint.x -= backAlongPrev; joint.y += outPerp; }
             else if (prevDir === 'R' && newDir === 'U') { joint.x -= backAlongPrev; joint.y -= outPerp; }
             else if (prevDir === 'L' && newDir === 'D') { joint.x += backAlongPrev; joint.y += outPerp; }
@@ -1393,79 +1154,45 @@
             const esDoble = ficha[0] === ficha[1];
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
-            
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
-            
             let claseExtra = (dir === 'R' || dir === 'L') ? (esDoble ? 'vertical' : 'horizontal') : (esDoble ? 'horizontal' : 'vertical');
             
-            const divFicha = document.createElement('div');
-            divFicha.className = `ficha-mesa ${claseExtra}`;
-            divFicha.style.left = (cx - w/2) + 'px'; 
-            divFicha.style.top = (cy - h/2) + 'px'; 
-            divFicha.style.zIndex = zIndexLocal; 
+            const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${claseExtra}`;
+            divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
             
             let parte1 = ficha[0], parte2 = ficha[1];
-            if (dir === 'L' || dir === 'U') {
-                parte1 = ficha[1];
-                parte2 = ficha[0];
-            }
-            
+            if (dir === 'L' || dir === 'U') { parte1 = ficha[1]; parte2 = ficha[0]; }
             divFicha.innerHTML = `${generarHTMLMitad(parte1)}<div class="linea-divisoria"></div>${generarHTMLMitad(parte2)}`;
             contenedor.appendChild(divFicha);
         }
 
         function simularFichaBounds(ficha, cx, cy, dir) {
             const esDoble = ficha[0] === ficha[1];
-            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
-            let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
+            let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50); let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
-                // Sale hacia arriba/abajo: 1 ficha vertical, 8 horizontales, 2 verticales, 8 horizontales
-                if (isRightBranch) {
-                    return { dirs: ['D', 'R', 'D', 'L'], counts: [1, 8, 2, 8] };
-                } else {
-                    return { dirs: ['U', 'L', 'U', 'R'], counts: [1, 8, 2, 8] };
-                }
+                if (isRightBranch) return { dirs: ['D', 'R', 'D', 'L'], counts: [1, 8, 2, 8] };
+                else return { dirs: ['U', 'L', 'U', 'R'], counts: [1, 8, 2, 8] };
             } else {
-                // Sale hacia los lados: 6 horizontales, 2 verticales, 6 horizontales, 2 verticales
-                if (isRightBranch) {
-                    return { dirs: ['R', 'D', 'L', 'D'], counts: [6, 2, 6, 2] };
-                } else {
-                    return { dirs: ['L', 'U', 'R', 'U'], counts: [6, 2, 6, 2] };
-                }
+                if (isRightBranch) return { dirs: ['R', 'D', 'L', 'D'], counts: [6, 2, 6, 2] };
+                else return { dirs: ['L', 'U', 'R', 'U'], counts: [6, 2, 6, 2] };
             }
         }
 
         function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
             let plan = getBranchPlan(iniciaNosotros, isRightBranch);
-            let prevIsDouble = fichaCentro[0] === fichaCentro[1];
-            let currentDir = joint.dir;
-            
-            let stepIndex = 0;
-            let countInStep = 0;
+            let prevIsDouble = fichaCentro[0] === fichaCentro[1]; let currentDir = joint.dir;
+            let stepIndex = 0; let countInStep = 0;
 
             rama.forEach((ficha, idx) => {
                 let isD = ficha[0] === ficha[1];
-                
-                // Retrasar el giro si la ficha actual es un doble
-                if (countInStep >= plan.counts[stepIndex]) {
-                    if (!isD) {
-                        stepIndex = (stepIndex + 1) % plan.dirs.length;
-                        countInStep = 0;
-                    }
-                }
-
+                if (countInStep >= plan.counts[stepIndex]) { if (!isD) { stepIndex = (stepIndex + 1) % plan.dirs.length; countInStep = 0; } }
                 let targetDir = plan.dirs[stepIndex];
-
-                if (targetDir !== currentDir) {
-                    aplicarGiro(joint, prevIsDouble, currentDir, targetDir);
-                    currentDir = targetDir;
-                }
-
+                if (targetDir !== currentDir) { aplicarGiro(joint, prevIsDouble, currentDir, targetDir); currentDir = targetDir; }
                 let advance = isD ? 50 : 100;
                 let curCx = joint.x + (currentDir === 'R' ? advance / 2 : (currentDir === 'L' ? -advance / 2 : 0));
                 let curCy = joint.y + (currentDir === 'D' ? advance / 2 : (currentDir === 'U' ? -advance / 2 : 0));
@@ -1474,91 +1201,55 @@
                 joint.y += (currentDir === 'D' ? advance : (currentDir === 'U' ? -advance : 0));
 
                 callbackFicha(ficha, curCx, curCy, currentDir);
-                prevIsDouble = isD;
-                countInStep++;
+                prevIsDouble = isD; countInStep++;
             });
             joint.dir = currentDir;
         }
 
         function calcularCadenaBounds() {
-            if (!fichaCentro) return null;
-            let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
-            
-            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
-            let esDoble = fichaCentro[0] === fichaCentro[1];
-            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
-            let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
-
-            bounds.minX = -w/2; bounds.maxX = w/2;
-            bounds.minY = -h/2; bounds.maxY = h/2;
-
+            if (!fichaCentro) return null; let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = fichaCentro[0] === fichaCentro[1];
+            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100); let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
+            bounds.minX = -w/2; bounds.maxX = w/2; bounds.minY = -h/2; bounds.maxY = h/2;
             let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
             let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
             const calcBounds = (f, cx, cy, dir) => {
                 let b = simularFichaBounds(f, cx, cy, dir);
-                bounds.minX = Math.min(bounds.minX, b.minX);
-                bounds.maxX = Math.max(bounds.maxX, b.maxX);
-                bounds.minY = Math.min(bounds.minY, b.minY);
-                bounds.maxY = Math.max(bounds.maxY, b.maxY);
+                bounds.minX = Math.min(bounds.minX, b.minX); bounds.maxX = Math.max(bounds.maxX, b.maxX);
+                bounds.minY = Math.min(bounds.minY, b.minY); bounds.maxY = Math.max(bounds.maxY, b.maxY);
             };
 
-            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, calcBounds);
-            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, calcBounds);
+            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, calcBounds); trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, calcBounds);
             return bounds;
         }
 
         function renderizarMesa() {
-            const contenedorZoom = document.getElementById('zoom-container'); 
-            contenedorZoom.innerHTML = '';
+            const contenedorZoom = document.getElementById('zoom-container'); contenedorZoom.innerHTML = '';
             if (!fichaCentro) return;
 
-            const tapete = document.getElementById('mesa-tapete');
-            const anchoTapete = tapete.clientWidth;
-            const altoTapete = tapete.clientHeight;
-
+            const tapete = document.getElementById('mesa-tapete'); const anchoTapete = tapete.clientWidth; const altoTapete = tapete.clientHeight;
             const esPantallaPequeña = window.innerHeight < 500 || window.innerWidth < 800;
-            
-            const paddingTop = esPantallaPequeña ? 60 : 120;    
-            const paddingBottom = esPantallaPequeña ? 130 : 200; 
-            const paddingSide = esPantallaPequeña ? 50 : 100;   
+            const paddingTop = esPantallaPequeña ? 60 : 120; const paddingBottom = esPantallaPequeña ? 130 : 200; const paddingSide = esPantallaPequeña ? 50 : 100;   
 
-            let areaSeguraW = Math.max(50, anchoTapete - (paddingSide * 2));
-            let areaSeguraH = Math.max(50, altoTapete - paddingTop - paddingBottom);
-            
-            const centroSeguroX = paddingSide + (areaSeguraW / 2);
-            const centroSeguroY = paddingTop + (areaSeguraH / 2);
+            let areaSeguraW = Math.max(50, anchoTapete - (paddingSide * 2)); let areaSeguraH = Math.max(50, altoTapete - paddingTop - paddingBottom);
+            const centroSeguroX = paddingSide + (areaSeguraW / 2); const centroSeguroY = paddingTop + (areaSeguraH / 2);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = (bounds.maxX - bounds.minX) + 40;
-            const altoCadena = (bounds.maxY - bounds.minY) + 40;
-            const centroCadenaX = (bounds.minX + bounds.maxX) / 2;
-            const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
+            const anchoCadena = (bounds.maxX - bounds.minX) + 40; const altoCadena = (bounds.maxY - bounds.minY) + 40;
+            const centroCadenaX = (bounds.minX + bounds.maxX) / 2; const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
-            let escalaW = areaSeguraW / anchoCadena;
-            let escalaH = areaSeguraH / altoCadena;
-            
-            let escalaOptima = Math.min(escalaW, escalaH, 1.3);
-            let zoomMinimo = esPantallaPequeña ? 0.45 : 0.35;
-            escalaOptima = Math.max(zoomMinimo, escalaOptima);
+            let escalaW = areaSeguraW / anchoCadena; let escalaH = areaSeguraH / altoCadena;
+            let escalaOptima = Math.min(escalaW, escalaH, 1.3); let zoomMinimo = esPantallaPequeña ? 0.45 : 0.35; escalaOptima = Math.max(zoomMinimo, escalaOptima);
 
-            const transX = centroSeguroX - (centroCadenaX * escalaOptima);
-            const transY = centroSeguroY - (centroCadenaY * escalaOptima);
+            const transX = centroSeguroX - (centroCadenaX * escalaOptima); const transY = centroSeguroY - (centroCadenaY * escalaOptima);
+            contenedorZoom.style.transform = `translate(${transX}px, ${transY}px) scale(${escalaOptima})`; contenedorZoom.style.transformOrigin = '0 0';
 
-            contenedorZoom.style.transform = `translate(${transX}px, ${transY}px) scale(${escalaOptima})`;
-            contenedorZoom.style.transformOrigin = '0 0';
-
-            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3);
-            let esDoble = fichaCentro[0] === fichaCentro[1];
-            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
-            let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
+            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = fichaCentro[0] === fichaCentro[1];
+            let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100); let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let claseExtraCentro = (w > h) ? 'horizontal' : 'vertical';
 
-            const divFicha = document.createElement('div');
-            divFicha.className = `ficha-mesa ${claseExtraCentro}`;
-            divFicha.style.left = (-w/2) + 'px'; 
-            divFicha.style.top = (-h/2) + 'px'; 
-            divFicha.style.zIndex = 10;
+            const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${claseExtraCentro}`; divFicha.style.left = (-w/2) + 'px'; divFicha.style.top = (-h/2) + 'px'; divFicha.style.zIndex = 10;
             divFicha.innerHTML = `${generarHTMLMitad(fichaCentro[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(fichaCentro[1])}`;
             contenedorZoom.appendChild(divFicha);
             
@@ -1566,52 +1257,52 @@
             let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
             let zIndexG = 11;
-            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, (f, cx, cy, dir) => {
-                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
-            });
-            
+            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, (f, cx, cy, dir) => { drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++); });
             zIndexG = 100;
-            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, (f, cx, cy, dir) => {
-                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
-            });
+            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, (f, cx, cy, dir) => { drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++); });
+
+            puntaIzqCoords = { x: jointIzq.x, y: jointIzq.y }; puntaDerCoords = { x: jointDer.x, y: jointDer.y };
 
             if (esperandoSeleccionPunta) {
-                const marcadorDer = document.createElement('div'); 
-                marcadorDer.className = 'marcador-punta';
-                marcadorDer.style.left = jointDer.x + 'px'; 
-                marcadorDer.style.top = jointDer.y + 'px';
-                marcadorDer.onclick = () => ejecutarEleccion(false);
-                contenedorZoom.appendChild(marcadorDer);
-                
-                const marcadorIzq = document.createElement('div'); 
-                marcadorIzq.className = 'marcador-punta';
-                marcadorIzq.style.left = jointIzq.x + 'px'; 
-                marcadorIzq.style.top = jointIzq.y + 'px';
-                marcadorIzq.onclick = () => ejecutarEleccion(true);
-                contenedorZoom.appendChild(marcadorIzq);
+                const marcadorDer = document.createElement('div'); marcadorDer.className = 'marcador-punta'; marcadorDer.style.left = jointDer.x + 'px'; marcadorDer.style.top = jointDer.y + 'px'; marcadorDer.onclick = () => ejecutarEleccion(false); contenedorZoom.appendChild(marcadorDer);
+                const marcadorIzq = document.createElement('div'); marcadorIzq.className = 'marcador-punta'; marcadorIzq.style.left = jointIzq.x + 'px'; marcadorIzq.style.top = jointIzq.y + 'px'; marcadorIzq.onclick = () => ejecutarEleccion(true); contenedorZoom.appendChild(marcadorIzq);
             }
         }
 
         function agregarRondaHistorial(equipoGanador, puntos) {
-            const colNosotros = document.getElementById('historial-nosotros');
-            const colEllos = document.getElementById('historial-ellos');
-            const item = document.createElement('div');
-            item.innerText = `+${puntos}`;
-            item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
-
+            const colNosotros = document.getElementById('historial-nosotros'); const colEllos = document.getElementById('historial-ellos');
+            const item = document.createElement('div'); item.innerText = `+${puntos}`; item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
             if (equipoGanador === 1) { colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; } 
             else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
         }
 
         function mostrarModalVictoria(ganadorEquipo) {
             playSonido('victoria');
-            const modal = document.getElementById('modal-victoria');
-            const texto = document.getElementById('equipo-ganador-texto');
+            const modal = document.getElementById('modal-victoria'); 
+            const texto = document.getElementById('equipo-ganador-texto'); 
             const titulo = document.getElementById('titulo-victoria-color');
-            texto.innerText = ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos';
-            texto.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
+            const ptsNosotrosEl = document.getElementById('pts-final-nosotros'); const ptsEllosEl = document.getElementById('pts-final-ellos');
+
+            texto.innerText = ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos'; 
+            texto.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744'; 
             titulo.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
+            
+            ptsNosotrosEl.innerText = puntosNosotros; ptsEllosEl.innerText = puntosEllos;
+
+            // ACTUALIZACIÓN DE ESTADÍSTICAS GLOBALES
+            if (ganadorEquipo === 1) { 
+                ptsNosotrosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); 
+                estadisticas.victorias++;
+            } 
+            else { 
+                ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); 
+                estadisticas.derrotas++;
+            }
+            estadisticas.puntosTotales += puntosNosotros;
+            guardarEstadisticasLocal();
+
             modal.classList.remove('oculto');
+            if (ganadorEquipo === 1) lanzarConfeti(4);
         }
 
         function reiniciarPartidaCompleta() {
@@ -1623,13 +1314,10 @@
         }
 
         function revisarPuntos() {
-            document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; 
-            document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
-
+            document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
             if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
-                juegoTerminado = true;
-                document.getElementById('btn-siguiente').style.display = 'none';
-                document.getElementById('banner-ganador-mano').style.display = 'none';
+                juegoTerminado = true; detenerTemporizador();
+                document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
                 mostrarModalVictoria(puntosNosotros >= metaPuntos ? 1 : 2);
                 return true;
             }
@@ -1637,86 +1325,116 @@
         }
 
         function finalizarMano(ganador, porTranque = false, esCapicua = false) {
-            juegoTerminado = true; limpiarBurbujas(); ocultarToast();
+            juegoTerminado = true; limpiarBurbujas(); ocultarToast(); detenerTemporizador();
+            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda'); }
             
-            for (let i = 1; i <= 4; i++) {
-                const wrap = document.getElementById(`pos-j${i}`);
-                if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda');
-            }
-            
-            let sumaPuntosMano = 0;
-            for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
-
-            let equipoGanador = 0; 
-            let jGanadorFinal = ganador;
-            let tipoVictoria = "¡DOMINÓ!";
-            let claseBanner = "domino";
+            let sumaPuntosMano = 0; for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
+            let equipoGanador = 0; let jGanadorFinal = ganador; let tipoVictoria = "¡DOMINÓ!"; let claseBanner = "domino";
             
             if (porTranque) {
                 let jTranco = ultimoJugadorEnJugar; let jSigue = (ultimoJugadorEnJugar % 4) + 1;
                 let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
-
-                jGanadorFinal = (ptsTranco <= ptsSigue) ? jTranco : jSigue;
-                equipoGanador = (jGanadorFinal === 1 || jGanadorFinal === 3) ? 1 : 2;
-                ultimoGanador = jGanadorFinal;
-                tipoVictoria = "¡TRANQUE! 🔒";
-                claseBanner = "tranque";
-                sacudirMesa();
+                jGanadorFinal = (ptsTranco <= ptsSigue) ? jTranco : jSigue; equipoGanador = (jGanadorFinal === 1 || jGanadorFinal === 3) ? 1 : 2; ultimoGanador = jGanadorFinal;
+                tipoVictoria = "¡TRANQUE! 🔒"; claseBanner = "tranque"; sacudirMesa();
             } else {
-                equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2;
-                ultimoGanador = ganador;
-                
+                equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2; ultimoGanador = ganador;
                 if (esCapicua) { 
-                    sumaPuntosMano += 30; 
-                    tipoVictoria = "¡CAPICÚA! 🌟";
-                    claseBanner = "capicua";
-                    sacudirMesa();
+                    sumaPuntosMano += 30; tipoVictoria = "¡CAPICÚA! 🌟"; claseBanner = "capicua"; sacudirMesa(); 
+                    
+                    // REGISTRO DE CAPICÚA EN ESTADÍSTICAS
+                    if(equipoGanador === 1) { estadisticas.capicuas++; guardarEstadisticasLocal(); }
                 }
             }
 
             if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
             agregarRondaHistorial(equipoGanador, sumaPuntosMano);
-            
-            const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`);
-            if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
+            const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`); if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
 
-            mostrarBannerEspecial(
-                `🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, 
-                `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, 
-                claseBanner, 0
-            );
+            mostrarBannerEspecial(`🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, claseBanner, 0);
+            
+            if (equipoGanador === 1) lanzarConfeti(1.5);
 
             document.getElementById('btn-siguiente').style.display = 'block';
-
             let termino = revisarPuntos();
-            if (termino) {
-                document.getElementById('btn-siguiente').style.display = 'none';
-                document.getElementById('banner-ganador-mano').style.display = 'none';
-            }
+            if (termino) { document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none'; }
             
-            renderizarManos(); 
-            renderizarMesa();
+            renderizarManos(); renderizarMesa();
+        }
+
+        function iniciarTemporizador(segundos) {
+            detenerTemporizador();
+            let tiempoRestante = segundos;
+            const progressCircle = document.querySelector(`#pos-j1 .timer-ring .progress`);
+            
+            if(progressCircle) {
+                progressCircle.style.transition = 'none'; progressCircle.style.strokeDashoffset = '0'; progressCircle.style.stroke = '#00bcd4';
+                void progressCircle.offsetWidth; progressCircle.style.transition = 'stroke-dashoffset 1s linear, stroke 0.3s';
+            }
+
+            timerTurno = setInterval(() => {
+                tiempoRestante--;
+                if(progressCircle) {
+                    const offset = 132 - (tiempoRestante / segundos) * 132; progressCircle.style.strokeDashoffset = offset;
+                    if(tiempoRestante <= 3) progressCircle.style.stroke = '#ff1744'; 
+                }
+                if (tiempoRestante > 0 && tiempoRestante <= 3) { playSonido('tick'); }
+                if (tiempoRestante <= 0) { detenerTemporizador(); playSonido('timeout'); jugadaAutomaticaHumano(); }
+            }, 1000);
+        }
+
+        function detenerTemporizador() {
+            if (timerTurno) { clearInterval(timerTurno); timerTurno = null; }
+            const progressCircle = document.querySelector(`#pos-j1 .timer-ring .progress`);
+            if(progressCircle) { progressCircle.style.strokeDashoffset = '0'; progressCircle.style.stroke = '#00bcd4'; }
+        }
+
+        function jugadaAutomaticaHumano() {
+            if (juegoTerminado || turnoActual !== 1) return;
+            detenerTemporizador(); 
+            if(esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; }
+
+            let mano = jugadores[1]; let validas = [];
+            
+            if (salidaObligatoria && !fichaCentro) {
+                let idx = mano.findIndex(f => f[0] === 6 && f[1] === 6);
+                if (idx !== -1) validas.push({ ficha: mano[idx], index: idx, esIzquierda: true, peso: 100 });
+            } else {
+                for (let i = 0; i < mano.length; i++) {
+                    let ficha = mano[i]; let [a, b] = ficha;
+                    let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
+                    let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
+
+                    if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, mano); jugada.index = i; validas.push(jugada); }
+                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, mano); jugada.index = i; validas.push(jugada); }
+                }
+            }
+
+            if (validas.length > 0) {
+                validas.sort((a,b) => b.peso - a.peso); let mejorJugada = validas[0];
+                mostrarToast("⏳ ¡Tiempo agotado! Jugada automática.");
+                let esCapicua = false;
+                if (mano.length === 1 && fichaCentro && extremoIzquierdo !== extremoDerecho) {
+                    let [a,b] = mejorJugada.ficha;
+                    if ((a === extremoIzquierdo || b === extremoIzquierdo) && (a === extremoDerecho || b === extremoDerecho)) esCapicua = true;
+                }
+                procesarJugadaFinal(mejorJugada.ficha, 1, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
+            }
         }
 
         function avanzarTurno() {
             if (juegoTerminado) return;
+            detenerTemporizador();
             turnoActual = turnoActual === 4 ? 1 : turnoActual + 1;
             if (!fichaCentro) { iniciarTurnoNormal(); return; }
 
             let puedeJugar = jugadores[turnoActual].some(ficha => ficha[0] === extremoIzquierdo || ficha[1] === extremoIzquierdo || ficha[0] === extremoDerecho || ficha[1] === extremoDerecho);
 
             if (!puedeJugar) {
-                // Registrar el pase para la IA Avanzada
                 historialPases[turnoActual].push(extremoIzquierdo, extremoDerecho);
-
-                pasesConsecutivos++; resaltarTurnoActivo();
-                playSonido('paso'); // Sonido de pase
+                pasesConsecutivos++; resaltarTurnoActivo(); playSonido('paso'); 
                 
                 const wrapPasador = document.getElementById(`pos-j${turnoActual}`);
-                if (wrapPasador) {
-                    wrapPasador.classList.add('avatar-paso');
-                    setTimeout(() => wrapPasador.classList.remove('avatar-paso'), 2200);
-                }
+                if (wrapPasador) { wrapPasador.classList.add('avatar-paso'); setTimeout(() => wrapPasador.classList.remove('avatar-paso'), 2200); }
 
                 if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
                 
@@ -1727,100 +1445,87 @@
                     let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
                     if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
                     agregarRondaHistorial(equipoSalida, 30);
-                    
                     mostrarBannerEspecial(`🔥 ¡30 A LA SALIDA! 🔥`, `+30 Puntos para Equipo ${equipoSalida === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
-                    
                     if(revisarPuntos()) return;
                 } else {
                     mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
                 }
                 
-                esPrimerTurnoDespuesDeSalida = false;
-                setTimeout(avanzarTurno, 1500);
+                esPrimerTurnoDespuesDeSalida = false; setTimeout(avanzarTurno, 1500);
             } else {
                 if (pasesConsecutivos === 3 && fichaCentro) {
                     let equipo = (turnoActual === 1 || turnoActual === 3) ? 1 : 2;
                     if (equipo === 1) puntosNosotros += 30; else puntosEllos += 30;
                     agregarRondaHistorial(equipo, 30);
-                    
                     mostrarBannerEspecial(`🔄 ¡VUELTA DE PASES!`, `+30 Puntos para Equipo ${equipo === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
-
-                    let termino = revisarPuntos();
-                    pasesConsecutivos = 0;
-                    if(termino) return; 
+                    let termino = revisarPuntos(); pasesConsecutivos = 0; if(termino) return; 
                 }
-                pasesConsecutivos = 0; 
-                esPrimerTurnoDespuesDeSalida = false; 
-                iniciarTurnoNormal();
+                pasesConsecutivos = 0; esPrimerTurnoDespuesDeSalida = false; iniciarTurnoNormal();
             }
         }
 
         function iniciarTurnoNormal() {
             resaltarTurnoActivo();
+            detenerTemporizador();
             if (turnoActual !== 1) { 
                 let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
                 mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
                 setTimeout(turnoIA, 1400); 
             }
-            else if (salidaObligatoria && !fichaCentro) { mostrarToast("Debes salir con el Doble 6"); }
-            else { mostrarToast("¡Tu turno!"); }
+            else {
+                if (salidaObligatoria && !fichaCentro) mostrarToast("Debes salir con el Doble 6");
+                else mostrarToast("¡Tu turno!"); 
+                iniciarTemporizador(10); 
+            }
         }
 
         function intentarJugada(ficha, idJugador, index, preferirIzquierda = null) {
             if (juegoTerminado || turnoActual !== idJugador) return; 
             if (salidaObligatoria && !fichaCentro) { if (ficha[0] !== 6 || ficha[1] !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
+            
+            detenerTemporizador();
             if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); iniciarTurnoNormal(); }
 
             let [a, b] = ficha;
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
-            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); return; } 
+            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); iniciarTemporizador(10); return; } 
 
             let esCapicua = false;
             if (jugadores[idJugador].length === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) esCapicua = true;
 
-            // Si es humano y puede ir en ambos lados, preguntar (Aro verde)
             if (idJugador === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
-                esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index;
-                fichaSeleccionada.esCapicua = esCapicua;
+                esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index; fichaSeleccionada.esCapicua = esCapicua;
                 renderizarManos(); renderizarMesa(); 
                 mostrarToast("Toca el aro verde donde colocarla");
+                iniciarTemporizador(10); 
                 return; 
             }
 
             let ponerIzquierda = false;
-            if (fichaCentro && puedeIzq && puedeDer) {
-                // Si la IA tiene preferencia, la usa. Si no, al azar.
-                ponerIzquierda = preferirIzquierda !== null ? preferirIzquierda : Math.random() > 0.5; 
-            }
+            if (fichaCentro && puedeIzq && puedeDer) { ponerIzquierda = preferirIzquierda !== null ? preferirIzquierda : Math.random() > 0.5; }
             else if (puedeIzq) ponerIzquierda = true;
 
             procesarJugadaFinal(ficha, idJugador, index, ponerIzquierda, esCapicua);
         }
 
         function ejecutarEleccion(esIzquierda) {
-            esperandoSeleccionPunta = false; ocultarToast();
+            esperandoSeleccionPunta = false; ocultarToast(); detenerTemporizador();
             let esCapicua = fichaSeleccionada.esCapicua || false;
             procesarJugadaFinal(fichaSeleccionada, 1, indexSeleccionado, esIzquierda, esCapicua);
             fichaSeleccionada = null; indexSeleccionado = null;
         }
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
-            playSonido('ficha'); // Sonido de madera al poner la ficha
+            playSonido('ficha'); 
             let [a, b] = ficha; 
             
             if (!fichaCentro) { 
-                let max = Math.max(a, b);
-                let min = Math.min(a, b);
-                
-                if (idJugador === 1 || idJugador === 2) {
-                    fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max;
-                } else {
-                    fichaCentro = [max, min]; extremoIzquierdo = max; extremoDerecho = min;
-                }
-                salidaObligatoria = false; 
-                esPrimerTurnoDespuesDeSalida = true; 
+                let max = Math.max(a, b); let min = Math.min(a, b);
+                if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
+                else { fichaCentro = [max, min]; extremoIzquierdo = max; extremoDerecho = min; }
+                salidaObligatoria = false; esPrimerTurnoDespuesDeSalida = true; 
             } else if (colocarIzquierda) {
                 if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } 
                 else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
@@ -1828,36 +1533,42 @@
                 if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } 
                 else { ramaDerecha.push([b, a]); extremoDerecho = a; }
             }
-            jugadores[idJugador].splice(index, 1); 
-            ultimoJugadorEnJugar = idJugador; 
+            jugadores[idJugador].splice(index, 1); ultimoJugadorEnJugar = idJugador; 
             
             if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
             limpiarBurbujas(); ocultarToast(); renderizarManos(); renderizarMesa(); avanzarTurno();
         }
 
-        // --- IA AVANZADA ---
         function evaluarJugadaIA(ficha, extremoActual, esIzquierda, manoIA) {
-            let [a, b] = ficha;
-            let nuevoExtremo = (a === extremoActual) ? b : a;
-            
+            let [a, b] = ficha; let nuevoExtremo = (a === extremoActual) ? b : a;
             let compadre = (turnoActual === 2) ? 4 : ((turnoActual === 4) ? 2 : 1);
             let rivalSiguiente = (turnoActual === 4) ? 1 : turnoActual + 1;
-            
-            let faltasCompadre = historialPases[compadre];
-            let faltasRival = historialPases[rivalSiguiente];
+            let faltasCompadre = historialPases[compadre]; let faltasRival = historialPases[rivalSiguiente];
 
-            let peso = a + b; // Prioridad a salir de fichas altas
+            let peso = a + b; if (a === b) peso += 15; 
 
-            if (a === b) peso += 15; // Jugar dobles rápido
+            if (dificultadIA === 'facil') {
+                peso += Math.random() * 20;
+                return { ficha: ficha, peso: peso, esIzquierda: esIzquierda };
+            }
 
-            // IA Inteligente: Si dejamos una ficha que el rival pasó, ¡es excelente!
             if (faltasRival.includes(nuevoExtremo)) peso += 50;
-
-            // IA Inteligente: Si dejamos una ficha que mi compañero (compadre) pasó, ¡es malísimo!
             if (faltasCompadre.includes(nuevoExtremo)) peso -= 40;
+            
+            let misFichasPalo = manoIA.filter(f => f[0] === nuevoExtremo || f[1] === nuevoExtremo).length;
+            peso += misFichasPalo * 5; 
 
-            // Conservar nuestras pintas fuertes
-            peso += manoIA.filter(f => f[0] === nuevoExtremo || f[1] === nuevoExtremo).length * 5;
+            if (dificultadIA === 'experto') {
+                let conteoMesa = 0;
+                if (fichaCentro) {
+                    if (fichaCentro[0] === nuevoExtremo || fichaCentro[1] === nuevoExtremo) conteoMesa++;
+                    ramaIzquierda.forEach(f => { if (f[0] === nuevoExtremo || f[1] === nuevoExtremo) conteoMesa++; });
+                    ramaDerecha.forEach(f => { if (f[0] === nuevoExtremo || f[1] === nuevoExtremo) conteoMesa++; });
+                }
+                let totalVisibles = conteoMesa + misFichasPalo;
+                if (totalVisibles === 7) peso += 100;
+                else if (totalVisibles === 6) peso += 30; 
+            }
 
             return { ficha: ficha, peso: peso, esIzquierda: esIzquierda };
         }
@@ -1865,35 +1576,20 @@
         function turnoIA() {
             if (juegoTerminado) return;
             let manoIA = jugadores[turnoActual];
-            
-            if (salidaObligatoria && !fichaCentro) { 
-                let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6); 
-                if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; } 
-            }
+            if (salidaObligatoria && !fichaCentro) { let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6); if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; } }
             
             let validas = [];
             for (let i = 0; i < manoIA.length; i++) {
                 let ficha = manoIA[i]; let [a, b] = ficha;
-                
                 let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
                 let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
-                if (puedeIzq) {
-                    let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, manoIA);
-                    jugada.index = i;
-                    validas.push(jugada);
-                }
-                if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) {
-                    let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA);
-                    jugada.index = i;
-                    validas.push(jugada);
-                }
+                if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, manoIA); jugada.index = i; validas.push(jugada); }
+                if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
             }
             
             if (validas.length > 0) {
-                // Ordenar por mejor peso y jugar
-                validas.sort((a,b) => b.peso - a.peso);
-                let mejorJugada = validas[0];
+                validas.sort((a,b) => b.peso - a.peso); let mejorJugada = validas[0];
                 intentarJugada(mejorJugada.ficha, turnoActual, mejorJugada.index, mejorJugada.esIzquierda);
             }
         }
@@ -1910,22 +1606,16 @@
         }
 
         function iniciarManoConAnimacion() {
-            document.getElementById('btn-siguiente').style.display = 'none';
-            document.getElementById('banner-ganador-mano').style.display = 'none';
-            for (let i = 1; i <= 4; i++) {
-                const wrap = document.getElementById(`pos-j${i}`);
-                if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso');
-            }
+            document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
+            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso'); }
 
-            limpiarBurbujas(); ocultarToast();
-            
+            limpiarBurbujas(); ocultarToast(); detenerTemporizador();
             document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
             document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
             document.getElementById('zoom-container').innerHTML = '';
 
             const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
-            crearAnimacionFichas();
-            playSonidoBarajar(); // Sonido de fichas barajándose
+            crearAnimacionFichas(); playSonidoBarajar(); 
             setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2000);
         }
 
@@ -1933,40 +1623,24 @@
             mazo = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazo.push([i, j]);
             for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
-            let pos = 0;
-            for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
+            let pos = 0; for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
 
-            fichaCentro = null; ramaIzquierda = []; ramaDerecha = [];
-            extremoIzquierdo = null; extremoDerecho = null;
-            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null;
-            esPrimerTurnoDespuesDeSalida = false;
-            
-            // Reiniciar memoria de la IA en cada mano
+            fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
+            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
             historialPases = { 1: [], 2: [], 3: [], 4: [] };
 
             let primerJuego = (puntosNosotros === 0 && puntosEllos === 0);
-            if (primerJuego) {
-                for (let i = 1; i <= 4; i++) { if (jugadores[i].some(f => f[0] === 6 && f[1] === 6)) { turnoActual = i; salidaObligatoria = true; break; } }
-            } else {
-                turnoActual = ultimoGanador || 1; salidaObligatoria = false;
-            }
+            if (primerJuego) { for (let i = 1; i <= 4; i++) { if (jugadores[i].some(f => f[0] === 6 && f[1] === 6)) { turnoActual = i; salidaObligatoria = true; break; } } } 
+            else { turnoActual = ultimoGanador || 1; salidaObligatoria = false; }
             
-            jugadorSalida = turnoActual; 
-
-            renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
+            jugadorSalida = turnoActual; renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
         }
 
-        window.addEventListener('resize', () => {
-            renderizarManos();
-            renderizarMesa();
-        });
-
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                renderizarManos();
-                renderizarMesa();
-            }, 200);
-        });
+        window.addEventListener('resize', () => { renderizarManos(); renderizarMesa(); });
+        window.addEventListener('orientationchange', () => { setTimeout(() => { renderizarManos(); renderizarMesa(); }, 200); });
+        
+        // INICIALIZACIÓN DE ESTADÍSTICAS AL CARGAR LA PÁGINA
+        inicializarEstadisticas();
     </script>
 </body>
 </html>
