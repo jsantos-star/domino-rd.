@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 833</title>
+    <title>Dominó RD 855 </title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -1218,6 +1218,7 @@
             }
         }
 
+        // --- CÁLCULO EXACTO DE GIROS EN 90° ---
         function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
             let backAlongPrev = 25; 
             let outPerp = prevIsDouble ? 50 : 25; 
@@ -1266,22 +1267,24 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
+        // --- LÓGICA DE GIROS AJUSTADA (6 LARGAS, 2 CORTAS) PARA BALANCE PERFECTO ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
                 if (isRightBranch) {
-                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 8, 2, 8] };
+                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 6, 2, 6] };
                 } else {
-                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 8, 2, 8] };
+                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 6, 2, 6] };
                 }
             } else {
                 if (isRightBranch) {
-                    return { dirs: ['R', 'D', 'L', 'D'], counts: [8, 2, 8, 2] };
+                    return { dirs: ['R', 'D', 'L', 'D'], counts: [6, 2, 6, 2] };
                 } else {
-                    return { dirs: ['L', 'U', 'R', 'U'], counts: [8, 2, 8, 2] };
+                    return { dirs: ['L', 'U', 'R', 'U'], counts: [6, 2, 6, 2] };
                 }
             }
         }
 
+        // --- DIBUJADO DE RAMAS CON RETRASO DE GIRO SI ES DOBLE ---
         function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
             let plan = getBranchPlan(iniciaNosotros, isRightBranch);
             let prevIsDouble = fichaCentro[0] === fichaCentro[1];
@@ -1293,6 +1296,7 @@
             rama.forEach((ficha, idx) => {
                 let isD = ficha[0] === ficha[1];
                 
+                // Retrasar el giro si la ficha actual es un doble
                 if (countInStep >= plan.counts[stepIndex]) {
                     if (!isD) {
                         stepIndex = (stepIndex + 1) % plan.dirs.length;
