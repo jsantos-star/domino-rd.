@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 758</title>
+    <title>Dominó RD 821</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -1267,26 +1267,23 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- NUEVA LÓGICA DE GIROS CON 2 FICHAS PARA SEPARACIÓN ---
+        // --- EXTENSIÓN DE GIROS HORIZONTALES ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
                 if (isRightBranch) {
-                    // Culebra: 2 fichas bajando, dobla derecha para 4, 2 abajo, 4 izquierda.
-                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 4, 2, 4] };
+                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 8, 2, 8] };
                 } else {
-                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 4, 2, 4] };
+                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 8, 2, 8] };
                 }
             } else {
                 if (isRightBranch) {
-                    // Culebra: Arranca 4 derecha, baja 2, 4 izquierda, baja 2.
-                    return { dirs: ['R', 'D', 'L', 'D'], counts: [4, 2, 4, 2] };
+                    return { dirs: ['R', 'D', 'L', 'D'], counts: [8, 2, 8, 2] };
                 } else {
-                    return { dirs: ['L', 'U', 'R', 'U'], counts: [4, 2, 4, 2] };
+                    return { dirs: ['L', 'U', 'R', 'U'], counts: [8, 2, 8, 2] };
                 }
             }
         }
 
-        // --- DIBUJADO DE RAMAS CON RETRASO DE GIRO SI ES DOBLE ---
         function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
             let plan = getBranchPlan(iniciaNosotros, isRightBranch);
             let prevIsDouble = fichaCentro[0] === fichaCentro[1];
@@ -1363,9 +1360,10 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            const paddingTop = 75;    
-            const paddingBottom = 190; 
-            const paddingSide = 75;   
+            // AUMENTO DE MÁRGENES DE SEGURIDAD
+            const paddingTop = 140;    
+            const paddingBottom = 220; 
+            const paddingSide = 120;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
             const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
@@ -1382,8 +1380,8 @@
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            let escalaOptima = Math.min(escalaW, escalaH, 1.35);
-            escalaOptima = Math.max(0.35, escalaOptima);
+            let escalaOptima = Math.min(escalaW, escalaH, 1.2);
+            escalaOptima = Math.max(0.15, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
             const transY = centroSeguroY - (centroCadenaY * escalaOptima);
