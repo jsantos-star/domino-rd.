@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 810</title>
+    <title>Dominó RD 758</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -1267,16 +1267,18 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- LÓGICA DE GIROS (4 LARGAS, 2 CORTAS) PARA EVITAR CHOQUES ---
+        // --- NUEVA LÓGICA DE GIROS CON 2 FICHAS PARA SEPARACIÓN ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
                 if (isRightBranch) {
+                    // Culebra: 2 fichas bajando, dobla derecha para 4, 2 abajo, 4 izquierda.
                     return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 4, 2, 4] };
                 } else {
                     return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 4, 2, 4] };
                 }
             } else {
                 if (isRightBranch) {
+                    // Culebra: Arranca 4 derecha, baja 2, 4 izquierda, baja 2.
                     return { dirs: ['R', 'D', 'L', 'D'], counts: [4, 2, 4, 2] };
                 } else {
                     return { dirs: ['L', 'U', 'R', 'U'], counts: [4, 2, 4, 2] };
@@ -1296,7 +1298,6 @@
             rama.forEach((ficha, idx) => {
                 let isD = ficha[0] === ficha[1];
                 
-                // Retrasar el giro si la ficha actual es un doble
                 if (countInStep >= plan.counts[stepIndex]) {
                     if (!isD) {
                         stepIndex = (stepIndex + 1) % plan.dirs.length;
@@ -1362,10 +1363,9 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            // Ajuste robusto de márgenes para que no pise a los jugadores
-            const paddingTop = 140;    
-            const paddingBottom = 220; 
-            const paddingSide = 120;   
+            const paddingTop = 75;    
+            const paddingBottom = 190; 
+            const paddingSide = 75;   
 
             const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
             const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
@@ -1382,9 +1382,8 @@
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            // Más libertad para hacer zoom out si la culebra crece
-            let escalaOptima = Math.min(escalaW, escalaH, 1.2);
-            escalaOptima = Math.max(0.15, escalaOptima);
+            let escalaOptima = Math.min(escalaW, escalaH, 1.35);
+            escalaOptima = Math.max(0.35, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
             const transY = centroSeguroY - (centroCadenaY * escalaOptima);
