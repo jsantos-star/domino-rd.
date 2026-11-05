@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 635</title>
+    <title>Dominó RD 659</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -1462,7 +1462,7 @@
                 }
             } else {
                 if (window.esMultijugador && turnoActual !== 1) { mostrarBurbuja(turnoActual, "Pensando...", "pensando"); return; }
-                pasesConsecutivos = 0; esPrimerTurnoDespuesDeSalida = false; iniciarTurnoNormal();
+                iniciarTurnoNormal();
             }
         }
 
@@ -1526,11 +1526,17 @@
                 if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
                 else { fichaCentro = [max, min]; extremoIzquierdo = max; extremoDerecho = min; }
                 salidaObligatoria = false; esPrimerTurnoDespuesDeSalida = true; 
-            } else if (colocarIzquierda) {
-                if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
             } else {
-                if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } else { ramaDerecha.push([b, a]); extremoDerecho = a; }
+                if (colocarIzquierda) {
+                    if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
+                } else {
+                    if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } else { ramaDerecha.push([b, a]); extremoDerecho = a; }
+                }
+                esPrimerTurnoDespuesDeSalida = false;
             }
+            
+            pasesConsecutivos = 0; // <--- AQUÍ SE SOLUCIONA EL ERROR DEL FALSO TRANQUE
+
             jugadores[idJugador].splice(index, 1); ultimoJugadorEnJugar = idJugador; 
             
             if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
