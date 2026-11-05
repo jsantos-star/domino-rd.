@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 821</title>
+    <title>Dominó RD 833</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -1218,7 +1218,6 @@
             }
         }
 
-        // --- CÁLCULO EXACTO DE GIROS EN 90° ---
         function aplicarGiro(joint, prevIsDouble, prevDir, newDir) {
             let backAlongPrev = 25; 
             let outPerp = prevIsDouble ? 50 : 25; 
@@ -1267,7 +1266,6 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- EXTENSIÓN DE GIROS HORIZONTALES ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
                 if (isRightBranch) {
@@ -1360,13 +1358,15 @@
             const anchoTapete = tapete.clientWidth;
             const altoTapete = tapete.clientHeight;
 
-            // AUMENTO DE MÁRGENES DE SEGURIDAD
-            const paddingTop = 140;    
-            const paddingBottom = 220; 
-            const paddingSide = 120;   
+            // SMART ZOOM: Detectamos si es una pantalla de móvil para no robar espacio
+            const esPantallaPequeña = window.innerHeight < 500 || window.innerWidth < 800;
+            
+            const paddingTop = esPantallaPequeña ? 60 : 120;    
+            const paddingBottom = esPantallaPequeña ? 130 : 200; 
+            const paddingSide = esPantallaPequeña ? 50 : 100;   
 
-            const areaSeguraW = Math.max(100, anchoTapete - (paddingSide * 2));
-            const areaSeguraH = Math.max(100, altoTapete - paddingTop - paddingBottom);
+            let areaSeguraW = Math.max(50, anchoTapete - (paddingSide * 2));
+            let areaSeguraH = Math.max(50, altoTapete - paddingTop - paddingBottom);
             
             const centroSeguroX = paddingSide + (areaSeguraW / 2);
             const centroSeguroY = paddingTop + (areaSeguraH / 2);
@@ -1380,8 +1380,10 @@
             let escalaW = areaSeguraW / anchoCadena;
             let escalaH = areaSeguraH / altoCadena;
             
-            let escalaOptima = Math.min(escalaW, escalaH, 1.2);
-            escalaOptima = Math.max(0.15, escalaOptima);
+            // Limitamos cuánto puede alejarse para que nunca se vean minúsculas
+            let escalaOptima = Math.min(escalaW, escalaH, 1.3);
+            let zoomMinimo = esPantallaPequeña ? 0.45 : 0.35;
+            escalaOptima = Math.max(zoomMinimo, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima);
             const transY = centroSeguroY - (centroCadenaY * escalaOptima);
