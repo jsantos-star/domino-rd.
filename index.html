@@ -6,9 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 453</title>
+    <title>Dominó RD 635</title>
     <!-- Librería para el Confeti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -444,7 +444,7 @@
                         <!-- Aquí se inyectarán los jugadores desde Firebase -->
                     </div>
 
-                    <button type="button" id="btn-empezar-red" class="btn-iniciar-partida" style="display: none; background: #00ff88; color: #000; box-shadow: 0 5px 15px rgba(0,255,136,0.4);" onclick="window.iniciarPartidaRed()">
+                    <button type="button" id="btn-empezar-red" class="btn-iniciar-partida" style="display: none; background: #00ff88; color: #000; box-shadow: 0 5px 15px rgba(0,255,136,0.4); transition: opacity 0.3s;" onclick="window.iniciarPartidaRed()">
                         🚀 EMPEZAR PARTIDA
                     </button>
                 </div>
@@ -639,7 +639,7 @@
             </div>
         </div>
 
-        <!-- MODAL DE AJUSTES -->
+        <!-- MODAL DE AJUSTES (SOLO PARA GUARDAR) -->
         <div id="modal-ajustes" class="oculto">
             <div class="tarjeta-ajustes">
                 <h2>⚙️ Configuración (Local)</h2>
@@ -712,8 +712,8 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-iniciar-partida" id="btn-guardar-ajustes" style="margin-top: 10px;" onclick="accionBotonAjustes()">
-                    <span>🎲</span> INICIAR PARTIDA
+                <button type="button" class="btn-cerrar-ajustes" id="btn-guardar-ajustes" style="margin-top: 10px; background: rgba(0, 188, 212, 0.2); border: 1px solid var(--azul-rd); color: white;" onclick="accionBotonAjustes()">
+                    <span>💾</span> GUARDAR Y CERRAR
                 </button>
             </div>
         </div>
@@ -817,11 +817,11 @@
             }, 2000);
         };
 
-        window.despacharJugada = function(ficha, index, colocarIzquierda, esCapicua) {
+        window.despacharJugada = function(ficha, idJugador, index, colocarIzquierda, esCapicua) {
             if (window.esMultijugador) {
                 window.enviarJugadaFirebase(ficha, colocarIzquierda, esCapicua);
             } else {
-                procesarJugadaFinal(ficha, 1, index, colocarIzquierda, esCapicua);
+                procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua);
             }
         };
 
@@ -962,10 +962,8 @@
         function toggleModalAyuda() { document.getElementById('modal-ayuda').classList.toggle('oculto'); }
         function toggleModalCreditos() { document.getElementById('modal-creditos').classList.toggle('oculto'); }
         function toggleModalAjustes() { 
-            const modal = document.getElementById('modal-ajustes'); modal.classList.toggle('oculto'); 
-            const btnAjustes = document.getElementById('btn-guardar-ajustes');
-            if (juegoIniciado) { btnAjustes.innerHTML = '<span>💾</span> GUARDAR Y CERRAR'; btnAjustes.className = 'btn-cerrar-ajustes'; btnAjustes.style = "margin-top: 10px;"; } 
-            else { btnAjustes.innerHTML = '<span>🎲</span> INICIAR PARTIDA'; btnAjustes.className = 'btn-iniciar-partida'; }
+            const modal = document.getElementById('modal-ajustes'); 
+            modal.classList.toggle('oculto'); 
         }
         function abrirModalMultijugador() { document.getElementById('modal-multijugador').classList.remove('oculto'); }
 
@@ -993,7 +991,11 @@
             document.getElementById('avatar-j3').innerText = avataresJugadores[3]; document.getElementById('avatar-j4').innerText = avataresJugadores[4];
         }
 
-        function accionBotonAjustes() { guardarAjustesVariables(); if (!juegoIniciado) { comenzarDesdeBienvenida(); } else { toggleModalAjustes(); mostrarToast("Ajustes guardados"); } }
+        function accionBotonAjustes() { 
+            guardarAjustesVariables(); 
+            toggleModalAjustes(); 
+            mostrarToast("Ajustes guardados");
+        }
 
         function cambiarMetaPuntos(nuevaMeta) {
             metaPuntos = nuevaMeta; document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
@@ -1102,17 +1104,17 @@
             if (!fichaCentro) {
                 if (soltadoEnCentro || (elemAbaixo && elemAbaixo.closest('#mesa-tapete'))) {
                     if (salidaObligatoria && (a !== 6 || b !== 6)) { mostrarToast("Debes salir con el doble 6."); return; }
-                    window.despacharJugada(dragTileData, dragTileIndex, true, false);
+                    window.despacharJugada(dragTileData, 1, dragTileIndex, true, false);
                 }
             } else {
                 let esCapicua = (jugadores[1].length === 1 && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho);
-                if (soltadoEnIzq && puedeIzq) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
-                else if (soltadoEnDer && puedeDer) window.despacharJugada(dragTileData, dragTileIndex, false, esCapicua);
+                if (soltadoEnIzq && puedeIzq) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
+                else if (soltadoEnDer && puedeDer) window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua);
                 else if (elemAbaixo && elemAbaixo.closest('#mesa-tapete')) {
-                    if (puedeIzq && !puedeDer) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
-                    else if (puedeDer && !puedeIzq) window.despacharJugada(dragTileData, dragTileIndex, false, esCapicua);
+                    if (puedeIzq && !puedeDer) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
+                    else if (puedeDer && !puedeIzq) window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua);
                     else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) intentarJugada(dragTileData, 1, dragTileIndex); 
-                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
+                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
                 }
             }
         }
@@ -1401,7 +1403,7 @@
                     let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
                     if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, mano); jugada.index = i; validas.push(jugada); }
-                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
+                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, mano); jugada.index = i; validas.push(jugada); }
                 }
             }
 
@@ -1413,7 +1415,7 @@
                     let [a,b] = mejorJugada.ficha;
                     if ((a === extremoIzquierdo || b === extremoIzquierdo) && (a === extremoDerecho || b === extremoDerecho)) esCapicua = true;
                 }
-                window.despacharJugada(mejorJugada.ficha, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
+                window.despacharJugada(mejorJugada.ficha, 1, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
             } else {
                 if (window.esMultijugador && window.enviarPaseFirebase) window.enviarPaseFirebase();
             }
@@ -1506,13 +1508,13 @@
             if (fichaCentro && puedeIzq && puedeDer) { ponerIzquierda = preferirIzquierda !== null ? preferirIzquierda : Math.random() > 0.5; }
             else if (puedeIzq) ponerIzquierda = true;
 
-            window.despacharJugada(ficha, index, ponerIzquierda, esCapicua);
+            window.despacharJugada(ficha, idJugador, index, ponerIzquierda, esCapicua);
         }
 
         function ejecutarEleccion(esIzquierda) {
             esperandoSeleccionPunta = false; ocultarToast(); detenerTemporizador();
             let esCapicua = fichaSeleccionada.esCapicua || false;
-            window.despacharJugada(fichaSeleccionada, indexSeleccionado, esIzquierda, esCapicua);
+            window.despacharJugada(fichaSeleccionada, 1, indexSeleccionado, esIzquierda, esCapicua);
             fichaSeleccionada = null; indexSeleccionado = null;
         }
 
@@ -1655,6 +1657,7 @@
         window.esMultijugador = false;
         window.ultimaManoJugada = 0; // Controla qué número de partida vamos
         let ultimoTimestampAccion = 0;
+        window.jugadoresConectados = 0; // NUEVO: Rastrea los jugadores
 
         window.crearSalaReal = async function() {
             try {
@@ -1723,6 +1726,12 @@
         window.iniciarPartidaRed = async function() {
             if (window.miPuesto !== 1) return; 
             
+            // NUEVO: Verificamos si están los 4 jugadores conectados antes de dejar iniciar
+            if (window.jugadoresConectados < 4) {
+                window.mostrarToast("Faltan jugadores. La mesa debe estar llena.");
+                return;
+            }
+            
             let mazoLocal = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazoLocal.push([i, j]);
             for (let i = mazoLocal.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazoLocal[i], mazoLocal[j]] = [mazoLocal[j], mazoLocal[i]]; }
@@ -1780,11 +1789,18 @@
                         }
                     }
                     document.getElementById('lobby-jugadores').innerHTML = htmlJugadores;
+                    window.jugadoresConectados = contadorJugadores; // Actualiza el conteo global
 
                     if (window.miPuesto === 1) {
                         document.getElementById('btn-empezar-red').style.display = 'block';
-                        if (contadorJugadores === 4) document.getElementById('lobby-mensaje').innerText = "¡Mesa llena! Presiona empezar.";
-                        else document.getElementById('lobby-mensaje').innerText = "Esperando jugadores...";
+                        // NUEVO: El botón reacciona si falta gente
+                        if (contadorJugadores === 4) {
+                            document.getElementById('lobby-mensaje').innerText = "¡Mesa llena! Presiona empezar.";
+                            document.getElementById('btn-empezar-red').style.opacity = '1';
+                        } else {
+                            document.getElementById('lobby-mensaje').innerText = "Esperando jugadores (" + contadorJugadores + "/4)...";
+                            document.getElementById('btn-empezar-red').style.opacity = '0.5';
+                        }
                     } else {
                         document.getElementById('lobby-mensaje').innerText = "Esperando a que el creador inicie la partida...";
                     }
