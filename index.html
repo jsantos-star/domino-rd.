@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 454</title>
+    <title>Dominó RD 758</title>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -1267,48 +1267,45 @@
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
         }
 
-        // --- NUEVA LÓGICA DE GIROS (3 Fichas rectas, doble 2, doble 2) ---
+        // --- NUEVA LÓGICA DE GIROS CON 2 FICHAS PARA SEPARACIÓN ---
         function getBranchPlan(iniciaNosotros, isRightBranch) {
             if (iniciaNosotros) {
-                // Si la ficha inicial está horizontal, los lados largos están arriba/abajo
                 if (isRightBranch) {
-                    // Empieza hacia abajo (3 fichas), dobla derecha (2), sube (2), derecha (2)
-                    return { dirs: ['D', 'R', 'U', 'R'], counts: [3, 2, 2, 2] };
+                    // Culebra: 2 fichas bajando, dobla derecha para 4, 2 abajo, 4 izquierda.
+                    return { dirs: ['D', 'R', 'D', 'L'], counts: [2, 4, 2, 4] };
                 } else {
-                    // Empieza hacia arriba (3 fichas), dobla izquierda (2), baja (2), izquierda (2)
-                    return { dirs: ['U', 'L', 'D', 'L'], counts: [3, 2, 2, 2] };
+                    return { dirs: ['U', 'L', 'U', 'R'], counts: [2, 4, 2, 4] };
                 }
             } else {
-                // Si la ficha inicial está vertical, los lados largos están derecha/izquierda
                 if (isRightBranch) {
-                    // Empieza hacia derecha (3 fichas), dobla abajo (2), izquierda (2), abajo (2)
-                    return { dirs: ['R', 'D', 'L', 'D'], counts: [3, 2, 2, 2] };
+                    // Culebra: Arranca 4 derecha, baja 2, 4 izquierda, baja 2.
+                    return { dirs: ['R', 'D', 'L', 'D'], counts: [4, 2, 4, 2] };
                 } else {
-                    // Empieza hacia izquierda (3 fichas), dobla arriba (2), derecha (2), arriba (2)
-                    return { dirs: ['L', 'U', 'R', 'U'], counts: [3, 2, 2, 2] };
+                    return { dirs: ['L', 'U', 'R', 'U'], counts: [4, 2, 4, 2] };
                 }
             }
         }
 
+        // --- DIBUJADO DE RAMAS CON RETRASO DE GIRO SI ES DOBLE ---
         function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
             let plan = getBranchPlan(iniciaNosotros, isRightBranch);
             let prevIsDouble = fichaCentro[0] === fichaCentro[1];
             let currentDir = joint.dir;
-            let cycleLen = plan.counts.reduce((a, b) => a + b, 0);
+            
+            let stepIndex = 0;
+            let countInStep = 0;
 
             rama.forEach((ficha, idx) => {
                 let isD = ficha[0] === ficha[1];
-                let modIdx = idx % cycleLen;
-                let acc = 0;
-                let targetDir = plan.dirs[0];
-
-                for (let k = 0; k < plan.counts.length; k++) {
-                    acc += plan.counts[k];
-                    if (modIdx < acc) {
-                        targetDir = plan.dirs[k];
-                        break;
+                
+                if (countInStep >= plan.counts[stepIndex]) {
+                    if (!isD) {
+                        stepIndex = (stepIndex + 1) % plan.dirs.length;
+                        countInStep = 0;
                     }
                 }
+
+                let targetDir = plan.dirs[stepIndex];
 
                 if (targetDir !== currentDir) {
                     aplicarGiro(joint, prevIsDouble, currentDir, targetDir);
@@ -1324,6 +1321,7 @@
 
                 callbackFicha(ficha, curCx, curCy, currentDir);
                 prevIsDouble = isD;
+                countInStep++;
             });
             joint.dir = currentDir;
         }
