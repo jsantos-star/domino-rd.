@@ -6,9 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 1205</title>
+    <title>Dominó RD 453</title>
     <!-- Librería para el Confeti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --azul-rd: #00bcd4; 
@@ -394,7 +394,7 @@
 <body class="ficha-blanco mesa-verde">
     <div class="contenedor-juego">
         
-        <!-- PANTALLA DE BIENVENIDA CALIDA -->
+        <!-- PANTALLA DE BIENVENIDA -->
         <div id="pantalla-bienvenida">
             <div class="caja-bienvenida">
                 <svg class="bandera-svg" viewBox="0 0 900 600" style="width: 65px; height: 42px;">
@@ -406,36 +406,58 @@
                 </svg>
                 <h1>Dominó <span>RD</span></h1>
                 
-                <p>¡Bienvenido a tu mesa virtual! 🇩🇴<br>Elige cómo quieres jugar hoy:</p>
-                
-                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px;">
-                    <!-- Jugar Local vs IA -->
-                    <button class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
-                        <span>👤</span> JUGAR VS IA
-                    </button>
-                    <!-- Multijugador Fase 1 -->
-                    <button class="btn-iniciar-partida" style="background: linear-gradient(45deg, #00bcd4, #005ce6); margin-top: 0;" onclick="abrirModalMultijugador()">
-                        <span>🌐</span> MULTIJUGADOR
-                    </button>
-                    
-                    <div style="display: flex; gap: 10px; width: 100%;">
-                        <button class="btn-secundario" style="flex: 1;" onclick="toggleModalAjustes()">
-                            <span>⚙️</span> AJUSTES
+                <!-- CONTENEDOR 1: MENÚ PRINCIPAL -->
+                <div id="ui-menu-principal" style="width: 100%;">
+                    <p>¡Bienvenido a tu mesa virtual! 🇩🇴<br>Elige cómo quieres jugar hoy:</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px;">
+                        <button type="button" class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
+                            <span>👤</span> JUGAR VS IA
                         </button>
-                        <button class="btn-secundario" style="flex: 1;" onclick="abrirEstadisticas()">
-                            <span>📊</span> RÉCORD
+                        <button type="button" class="btn-iniciar-partida" style="background: linear-gradient(45deg, #00bcd4, #005ce6); margin-top: 0;" onclick="abrirModalMultijugador()">
+                            <span>🌐</span> MULTIJUGADOR
                         </button>
+                        
+                        <div style="display: flex; gap: 10px; width: 100%;">
+                            <button type="button" class="btn-secundario" style="flex: 1;" onclick="toggleModalAjustes()">
+                                <span>⚙️</span> AJUSTES
+                            </button>
+                            <button type="button" class="btn-secundario" style="flex: 1;" onclick="abrirEstadisticas()">
+                                <span>📊</span> RÉCORD
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- CONTENEDOR 2: SALA DE ESPERA CON BOTON DE COMPARTIR -->
+                <div id="ui-sala-espera" style="display: none; width: 100%; flex-direction: column; align-items: center;">
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; margin-bottom: 5px;">
+                        <h2 style="color: #00bcd4; margin: 0;">Sala: <span id="lobby-codigo" style="color: #ffd700; letter-spacing: 2px;">---</span></h2>
+                        <button type="button" onclick="window.compartirCodigoSala()" style="background: rgba(0, 188, 212, 0.2); border: 1px solid var(--azul-rd); color: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: all 0.2s;" onactive="this.style.transform='scale(0.95)'">
+                            <span>🔗</span> Copiar
+                        </button>
+                    </div>
+                    
+                    <p id="lobby-mensaje" style="font-size: 13px; color: #ccc; margin-bottom: 15px;">Esperando a que se unan los demás...</p>
+                    
+                    <div id="lobby-jugadores" style="text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); font-size: 14px; line-height: 1.8; width: 100%;">
+                        <!-- Aquí se inyectarán los jugadores desde Firebase -->
+                    </div>
+
+                    <button type="button" id="btn-empezar-red" class="btn-iniciar-partida" style="display: none; background: #00ff88; color: #000; box-shadow: 0 5px 15px rgba(0,255,136,0.4);" onclick="window.iniciarPartidaRed()">
+                        🚀 EMPEZAR PARTIDA
+                    </button>
+                </div>
+
             </div>
         </div>
 
         <div class="botones-cabecera">
-            <button class="btn-flotante solo-icono" onclick="toggleModalCreditos()" title="Créditos">ℹ️</button>
-            <button class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
-            <button class="btn-flotante solo-icono" onclick="toggleModalAyuda()" title="Reglas del Juego">❔</button>
-            <button class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
-            <button class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración">⚙️</button>
+            <button type="button" class="btn-flotante solo-icono" onclick="toggleModalCreditos()" title="Créditos">ℹ️</button>
+            <button type="button" class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
+            <button type="button" class="btn-flotante solo-icono" onclick="toggleModalAyuda()" title="Reglas del Juego">❔</button>
+            <button type="button" class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
+            <button type="button" class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración">⚙️</button>
         </div>
 
         <div class="area-principal">
@@ -448,7 +470,7 @@
                         <div class="texto-titulo" id="texto-ganador-mano">🏆 ¡Dominó!</div>
                         <div class="texto-puntos" id="texto-puntos-mano">+24 Puntos</div>
                     </div>
-                    <button id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
+                    <button type="button" id="btn-siguiente" onclick="iniciarManoConAnimacion()">Siguiente Mano</button>
                 </div>
 
                 <!-- COMPADRE (ARRIBA) -->
@@ -514,7 +536,7 @@
 
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
-                <button class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
+                <button type="button" class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
                 <h1>Dominó <span>RD</span></h1>
                 <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">Meta: 200 pts</div>
             </div>
@@ -536,36 +558,37 @@
             </div>
         </aside>
 
-        <!-- MODAL MULTIJUGADOR (NUEVO FASE 1) -->
+        <!-- MODAL MULTIJUGADOR ACTUALIZADO -->
         <div id="modal-multijugador" class="oculto">
             <div class="tarjeta-ajustes">
                 <div style="text-align: center;">
-                    <h2>🌐 Multijugador en Línea</h2>
-                    <span class="etiqueta-desarrollo">🛠️ En Desarrollo</span>
-                </div>
-                <div class="contenido-texto" style="text-align: center; margin-bottom: 10px;">
-                    Juega con tus amigos conectándote a una sala virtual.
+                    <h2>🌐 Multijugador</h2>
+                    <span class="etiqueta-desarrollo">Conectado a Firebase 🟢</span>
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <div style="background: rgba(0, 188, 212, 0.1); border: 1px solid rgba(0, 188, 212, 0.4); padding: 15px; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 12px; margin-bottom: 10px; color: #ccc;">Crea una sala y comparte el código con tus amigos.</p>
-                        <button class="btn-iniciar-partida" style="margin: 0; background: #00bcd4; color: #000; box-shadow: none;" onclick="crearSalaMock()">
-                            ➕ CREAR SALA
-                        </button>
-                        <div id="codigo-sala-generado" style="display: none; margin-top: 15px; font-size: 24px; font-weight: 900; letter-spacing: 3px; color: #ffd700;"></div>
-                    </div>
-
-                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
-                        <p style="font-size: 12px; margin-bottom: 10px; color: #ccc;">¿Ya tienes un código? Únete a una sala.</p>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="input-codigo-sala" placeholder="Ej: MESA-777" style="flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 10px; font-size: 14px; text-align: center; text-transform: uppercase;">
-                            <button class="btn-iniciar-partida" style="margin: 0; width: auto; padding: 0 20px; box-shadow: none; font-size: 12px;" onclick="unirseSalaMock()">ENTRAR</button>
-                        </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
+                    <p style="font-size: 12px; margin-bottom: 8px; color: #ccc;">Tu Perfil para esta mesa:</p>
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <select id="input-avatar-red" class="input-avatar" style="width: 55px!important;">
+                            <option value="😎" selected>😎</option><option value="🧔🏾‍♂️">🧔🏾‍♂️</option><option value="👩🏽">👩🏽</option>
+                            <option value="👨🏽‍🦳">👨🏽‍🦳</option><option value="🧑🏽‍🦱">🧑🏽‍🦱</option><option value="👴🏾">👴🏾</option><option value="👱🏻‍♂️">👱🏻‍♂️</option><option value="👽">👽</option>
+                        </select>
+                        <input type="text" id="input-nombre-red" placeholder="Escribe tu Nombre..." style="background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 10px; font-size: 14px; flex: 1;">
                     </div>
                 </div>
 
-                <button class="btn-cerrar-ajustes" style="background: #333; color: white; border: none; margin-top: 10px;" onclick="cerrarModalMultijugador()">VOLVER</button>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button type="button" class="btn-iniciar-partida" style="margin: 0; background: #00bcd4; color: #000; box-shadow: none;" onclick="window.crearSalaReal()">
+                        ➕ CREAR SALA NUEVA
+                    </button>
+                    
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="input-codigo-sala" placeholder="CÓDIGO DE SALA" style="flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 10px; font-size: 14px; text-align: center; text-transform: uppercase;">
+                        <button type="button" class="btn-iniciar-partida" style="margin: 0; width: auto; padding: 0 20px; box-shadow: none; font-size: 12px;" onclick="window.unirseSalaReal()">ENTRAR</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-cerrar-ajustes" style="background: #333; color: white; border: none; margin-top: 10px;" onclick="window.cerrarModalMultijugador()">VOLVER</button>
             </div>
         </div>
 
@@ -579,8 +602,8 @@
                     <div class="stat-box highlight"><span>🌟 Capicúas</span><strong id="stat-capicuas">0</strong></div>
                     <div class="stat-box"><span>💯 Puntos</span><strong id="stat-puntos">0</strong></div>
                 </div>
-                <button class="btn-cerrar-ajustes" style="margin-top: 5px;" onclick="cerrarEstadisticas()">CERRAR</button>
-                <button class="btn-cerrar-ajustes" style="background: transparent; border: 1px solid rgba(255,23,68,0.5); color: #ff1744; margin-top: 10px; font-size: 11px;" onclick="borrarEstadisticas()">BORRAR RÉCORD</button>
+                <button type="button" class="btn-cerrar-ajustes" style="margin-top: 5px;" onclick="cerrarEstadisticas()">CERRAR</button>
+                <button type="button" class="btn-cerrar-ajustes" style="background: transparent; border: 1px solid rgba(255,23,68,0.5); color: #ff1744; margin-top: 10px; font-size: 11px;" onclick="borrarEstadisticas()">BORRAR RÉCORD</button>
             </div>
         </div>
 
@@ -596,7 +619,7 @@
                     <p><strong>🔥 Pase a la Salida (+30 pts):</strong> Si sales en tu turno y el jugador que sigue después de ti no tiene esa ficha, tu equipo gana 30 puntos en el acto.</p>
                     <p><strong>⏳ Temporizador Inteligente:</strong> Tienes 10 segundos para jugar tu turno. Si no lo haces, la IA tomará el control por ti y hará la mejor jugada posible.</p>
                 </div>
-                <button class="btn-cerrar-ajustes" onclick="toggleModalAyuda()">Entendido</button>
+                <button type="button" class="btn-cerrar-ajustes" onclick="toggleModalAyuda()">Entendido</button>
             </div>
         </div>
 
@@ -608,21 +631,21 @@
                     <p>Mesa oficial virtual de Dominó Dominicano con sistema de puntuación clásico (Capicúa, Tranque y Pases).</p>
                     <div class="creditos-info">
                         Desarrollado y Creado por:
-                        <span>Tu Nombre Aquí 😎</span> <!-- ¡CAMBIA ESTO POR TU NOMBRE! -->
+                        <span>Tu Nombre Aquí 😎</span>
                     </div>
-                    <p style="font-size: 11px; margin-top: 10px;">Versión 7.0 - Estadísticas Locales & Bienvenida</p>
+                    <p style="font-size: 11px; margin-top: 10px;">Versión 9.2 - Sincronización y Función Compartir Sala</p>
                 </div>
-                <button class="btn-cerrar-ajustes" onclick="toggleModalCreditos()">Cerrar</button>
+                <button type="button" class="btn-cerrar-ajustes" onclick="toggleModalCreditos()">Cerrar</button>
             </div>
         </div>
 
         <!-- MODAL DE AJUSTES -->
         <div id="modal-ajustes" class="oculto">
             <div class="tarjeta-ajustes">
-                <h2>⚙️ Configuración de Partida</h2>
+                <h2>⚙️ Configuración (Local)</h2>
                 
                 <div class="grupo-ajuste">
-                    <label>Nombres y Avatares</label>
+                    <label>Nombres y Avatares (Modo vs IA)</label>
                     <div class="opciones-nombres">
                         <div class="input-group">
                             <select id="input-avatar-1" class="input-avatar" title="Elige un Avatar">
@@ -654,42 +677,42 @@
                 <div class="grupo-ajuste">
                     <label>Dificultad de la IA</label>
                     <div class="opciones-botones" style="grid-template-columns: repeat(3, 1fr);">
-                        <button class="btn-opcion" id="btn-dif-facil" onclick="cambiarDificultadIA('facil')">Fácil</button>
-                        <button class="btn-opcion activo" id="btn-dif-medio" onclick="cambiarDificultadIA('medio')">Medio</button>
-                        <button class="btn-opcion" id="btn-dif-experto" onclick="cambiarDificultadIA('experto')">Experto</button>
+                        <button type="button" class="btn-opcion" id="btn-dif-facil" onclick="cambiarDificultadIA('facil')">Fácil</button>
+                        <button type="button" class="btn-opcion activo" id="btn-dif-medio" onclick="cambiarDificultadIA('medio')">Medio</button>
+                        <button type="button" class="btn-opcion" id="btn-dif-experto" onclick="cambiarDificultadIA('experto')">Experto</button>
                     </div>
                 </div>
 
                 <div class="grupo-ajuste">
                     <label>Puntuación Meta</label>
                     <div class="opciones-botones" style="grid-template-columns: repeat(4, 1fr);">
-                        <button class="btn-opcion" id="btn-meta-50" onclick="cambiarMetaPuntos(50)">50</button>
-                        <button class="btn-opcion" id="btn-meta-100" onclick="cambiarMetaPuntos(100)">100</button>
-                        <button class="btn-opcion" id="btn-meta-150" onclick="cambiarMetaPuntos(150)">150</button>
-                        <button class="btn-opcion activo" id="btn-meta-200" onclick="cambiarMetaPuntos(200)">200</button>
+                        <button type="button" class="btn-opcion" id="btn-meta-50" onclick="cambiarMetaPuntos(50)">50</button>
+                        <button type="button" class="btn-opcion" id="btn-meta-100" onclick="cambiarMetaPuntos(100)">100</button>
+                        <button type="button" class="btn-opcion" id="btn-meta-150" onclick="cambiarMetaPuntos(150)">150</button>
+                        <button type="button" class="btn-opcion activo" id="btn-meta-200" onclick="cambiarMetaPuntos(200)">200</button>
                     </div>
                 </div>
                 
                 <div class="grupo-ajuste">
                     <label>Color de las Fichas</label>
                     <div class="opciones-colores">
-                        <button class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')"><span class="muestra-color muestra-blanca"></span> Blanco</button>
-                        <button class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')"><span class="muestra-color muestra-azul"></span> Azul</button>
-                        <button class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')"><span class="muestra-color muestra-roja"></span> Rojo</button>
+                        <button type="button" class="btn-opcion btn-color activo" id="btn-color-blanco" onclick="cambiarColorTemaFicha('blanco')"><span class="muestra-color muestra-blanca"></span> Blanco</button>
+                        <button type="button" class="btn-opcion btn-color" id="btn-color-azul" onclick="cambiarColorTemaFicha('azul')"><span class="muestra-color muestra-azul"></span> Azul</button>
+                        <button type="button" class="btn-opcion btn-color" id="btn-color-rojo" onclick="cambiarColorTemaFicha('rojo')"><span class="muestra-color muestra-roja"></span> Rojo</button>
                     </div>
                 </div>
                 
                 <div class="grupo-ajuste">
                     <label>Color del Paño de Mesa</label>
                     <div class="opciones-mesa">
-                        <button class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')"><span class="muestra-color muestra-m-verde"></span> Verde</button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')"><span class="muestra-color muestra-m-negro"></span> Negro</button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')"><span class="muestra-color muestra-m-azul"></span> Azul</button>
-                        <button class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')"><span class="muestra-color muestra-m-blanco"></span> Blanco</button>
+                        <button type="button" class="btn-opcion btn-color activo" id="btn-mesa-verde" onclick="cambiarColorMesa('verde')"><span class="muestra-color muestra-m-verde"></span> Verde</button>
+                        <button type="button" class="btn-opcion btn-color" id="btn-mesa-negro" onclick="cambiarColorMesa('negro')"><span class="muestra-color muestra-m-negro"></span> Negro</button>
+                        <button type="button" class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')"><span class="muestra-color muestra-m-azul"></span> Azul</button>
+                        <button type="button" class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')"><span class="muestra-color muestra-m-blanco"></span> Blanco</button>
                     </div>
                 </div>
 
-                <button class="btn-iniciar-partida" id="btn-guardar-ajustes" style="margin-top: 10px;" onclick="accionBotonAjustes()">
+                <button type="button" class="btn-iniciar-partida" id="btn-guardar-ajustes" style="margin-top: 10px;" onclick="accionBotonAjustes()">
                     <span>🎲</span> INICIAR PARTIDA
                 </button>
             </div>
@@ -712,11 +735,12 @@
                     </div>
                 </div>
 
-                <button class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de nuevo</button>
+                <button type="button" class="btn-jugar-nuevo" onclick="reiniciarPartidaCompleta()"><span>🔄</span> Jugar de nuevo</button>
             </div>
         </div>
     </div>
 
+    <!-- SCRIPT 1: LÓGICA GLOBAL DEL JUEGO -->
     <script>
         let mazo = []; let jugadores = { 1: [], 2: [], 3: [], 4: [] }; 
         const clasesNumeros = ['blanco', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'];
@@ -745,24 +769,108 @@
         let nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
         let avataresJugadores = { 1: "😎", 2: "🧔🏾‍♂️", 3: "👨🏽‍🦳", 4: "👩🏽" };
         
-        // NUEVO: Variable de Estadísticas
-        let estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
+        // --- PUENTE HACIA FIREBASE ---
+        window.getConfiguracionJuego = () => ({ metaPuntos: metaPuntos });
+        window.mostrarToast = mostrarToast;
+        window.cerrarModalMultijugador = function() { document.getElementById('modal-multijugador').classList.add('oculto'); };
+        window.getJuegoIniciado = () => juegoIniciado;
+        window.setJuegoIniciado = (val) => { juegoIniciado = val; };
+        window.nombresJugadores = nombresJugadores;
+        window.avataresJugadores = avataresJugadores;
+        window.jugadores = jugadores; 
+        window.renderizarManos = renderizarManos;
+        window.renderizarMesa = renderizarMesa;
+        window.resaltarTurnoActivo = resaltarTurnoActivo;
+        window.esPrimerJuego = () => (puntosNosotros === 0 && puntosEllos === 0);
+        window.getUltimoGanadorRed = () => ultimoGanador;
+        window.actualizarUIAvatares = actualizarUIAvatares;
         
+        // RECIBIR REPARTO DESDE FIREBASE
+        window.iniciarManoMultijugadorDesdeFirebase = function(partidaDB) {
+            document.getElementById('btn-siguiente').style.display = 'none'; 
+            document.getElementById('banner-ganador-mano').style.display = 'none';
+            
+            const overlay = document.getElementById('pantalla-barajar'); 
+            overlay.classList.remove('oculto');
+            crearAnimacionFichas(); playSonidoBarajar();
+            
+            setTimeout(() => { 
+                overlay.classList.add('oculto');
+                for (let i = 1; i <= 4; i++) {
+                    let offset = i - window.miPuesto;
+                    if (offset < 0) offset += 4;
+                    let posicionPantalla = offset + 1; 
+                    window.jugadores[posicionPantalla] = partidaDB.manos[i] || [];
+                }
+
+                let offsetTurno = partidaDB.turnoActual - window.miPuesto;
+                if (offsetTurno < 0) offsetTurno += 4;
+                turnoActual = offsetTurno + 1;
+                salidaObligatoria = partidaDB.salidaObligatoria;
+                
+                fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
+                juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
+                historialPases = { 1: [], 2: [], 3: [], 4: [] };
+                jugadorSalida = turnoActual; 
+                
+                renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
+            }, 2000);
+        };
+
+        window.despacharJugada = function(ficha, index, colocarIzquierda, esCapicua) {
+            if (window.esMultijugador) {
+                window.enviarJugadaFirebase(ficha, colocarIzquierda, esCapicua);
+            } else {
+                procesarJugadaFinal(ficha, 1, index, colocarIzquierda, esCapicua);
+            }
+        };
+
+        window.procesarJugadaFinalLocal = function(ficha, idJugador, index, colocarIzquierda, esCapicua) {
+            procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua);
+        };
+
+        // NUEVA FUNCIÓN: COMPARTIR SALA
+        window.compartirCodigoSala = function() {
+            const codigo = document.getElementById('lobby-codigo').innerText;
+            if (!codigo || codigo === '---') return;
+            
+            const texto = `¡Únete a mi mesa de Dominó RD! 🇩🇴\nCódigo de sala: ${codigo}`;
+            
+            if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
+                navigator.share({
+                    title: 'Dominó RD - Partida Multijugador',
+                    text: texto
+                }).catch((err) => {
+                    copiarAlPortapapeles(codigo);
+                });
+            } else {
+                copiarAlPortapapeles(codigo);
+            }
+        };
+
+        function copiarAlPortapapeles(texto) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    mostrarToast("¡Código copiado al portapapeles! 📋");
+                }).catch(() => mostrarToast("Error al copiar"));
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = texto;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("Copy");
+                textArea.remove();
+                mostrarToast("¡Código copiado al portapapeles! 📋");
+            }
+        }
+        // ----------------------------------------
+
+        let estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
         const frasesPensando = ["A ver...", "Pensando...", "Mmm...", "Esa pinta..."];
         const frasesPaso = ["¡Paso en banda!", "¡Pasó! ❌", "No llevo...", "Toque, jefe."];
 
-        /* --- SISTEMA DE ESTADÍSTICAS LOCALSTORAGE --- */
-        function inicializarEstadisticas() {
-            let data = localStorage.getItem('dominoRDEstadisticas');
-            if (data) {
-                estadisticas = JSON.parse(data);
-            }
-        }
-
-        function guardarEstadisticasLocal() {
-            localStorage.setItem('dominoRDEstadisticas', JSON.stringify(estadisticas));
-        }
-
+        function inicializarEstadisticas() { let data = localStorage.getItem('dominoRDEstadisticas'); if (data) { estadisticas = JSON.parse(data); } }
+        function guardarEstadisticasLocal() { localStorage.setItem('dominoRDEstadisticas', JSON.stringify(estadisticas)); }
         function abrirEstadisticas() {
             document.getElementById('stat-victorias').innerText = estadisticas.victorias;
             document.getElementById('stat-derrotas').innerText = estadisticas.derrotas;
@@ -770,24 +878,16 @@
             document.getElementById('stat-puntos').innerText = estadisticas.puntosTotales;
             document.getElementById('modal-estadisticas').classList.remove('oculto');
         }
-
-        function cerrarEstadisticas() {
-            document.getElementById('modal-estadisticas').classList.add('oculto');
-        }
-
+        function cerrarEstadisticas() { document.getElementById('modal-estadisticas').classList.add('oculto'); }
         function borrarEstadisticas() {
-            if(confirm("¿Seguro que deseas borrar tu récord histórico de victorias y puntos?")) {
+            if(confirm("¿Seguro que deseas borrar tu récord histórico?")) {
                 estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
-                guardarEstadisticasLocal();
-                abrirEstadisticas();
-                mostrarToast("Estadísticas borradas 🗑️");
+                guardarEstadisticasLocal(); abrirEstadisticas(); mostrarToast("Estadísticas borradas 🗑️");
             }
         }
-        /* ------------------------------------------- */
 
         function lanzarConfeti(duracionEnSegundos = 2) {
-            let duration = duracionEnSegundos * 1000;
-            let animationEnd = Date.now() + duration;
+            let duration = duracionEnSegundos * 1000; let animationEnd = Date.now() + duration;
             let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 4500, colors: ['#002868', '#ce1126', '#ffffff'] };
             let interval = setInterval(function() {
                 let timeLeft = animationEnd - Date.now();
@@ -798,16 +898,12 @@
         }
 
         let audioCtx = null;
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
 
         function playSonido(tipo) {
             if (!audioCtx) return;
             const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
-
             if (tipo === 'ficha') { 
                 osc.type = 'sine'; osc.frequency.setValueAtTime(600, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
                 gain.gain.setValueAtTime(1, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05); osc.start(t); osc.stop(t + 0.05);
@@ -839,36 +935,24 @@
             }
         }
 
-        function generarHTMLMitad(numero) {
-            let html = `<div class="mitad ${clasesNumeros[numero]}">`;
-            for(let i = 0; i < numero; i++) html += `<div class="punto"></div>`;
-            return html + `</div>`;
-        }
-
+        function generarHTMLMitad(numero) { let html = `<div class="mitad ${clasesNumeros[numero]}">`; for(let i = 0; i < numero; i++) html += `<div class="punto"></div>`; return html + `</div>`; }
         function sumarMano(mano) { return mano.reduce((sum, f) => sum + f[0] + f[1], 0); }
 
         function comenzarDesdeBienvenida() {
-            guardarAjustesVariables(); 
-            initAudio(); 
-            juegoIniciado = true;
-            
+            guardarAjustesVariables(); initAudio(); juegoIniciado = true; window.esMultijugador = false;
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
                     if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado", err)); }
-                }).catch(err => console.log("Fullscreen error:", err));
+                }).catch(() => {});
             }
-
             const bienvenida = document.getElementById('pantalla-bienvenida'); bienvenida.classList.add('desvanecer');
             const modalAjustes = document.getElementById('modal-ajustes'); modalAjustes.classList.add('oculto');
-            
             setTimeout(() => { bienvenida.style.display = 'none'; iniciarManoConAnimacion(); }, 400);
         }
 
         function togglePantallaCompleta() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().then(() => {
-                    if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado por el navegador:", err)); }
-                }).catch(() => {});
+                document.documentElement.requestFullscreen().then(() => { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }).catch(() => {});
             } else {
                 if (document.exitFullscreen) { document.exitFullscreen(); if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }
             }
@@ -877,114 +961,58 @@
         function toggleLibreta() { document.getElementById('panel-anotacion').classList.toggle('abierta'); }
         function toggleModalAyuda() { document.getElementById('modal-ayuda').classList.toggle('oculto'); }
         function toggleModalCreditos() { document.getElementById('modal-creditos').classList.toggle('oculto'); }
-
         function toggleModalAjustes() { 
-            const modal = document.getElementById('modal-ajustes');
-            modal.classList.toggle('oculto'); 
-            
+            const modal = document.getElementById('modal-ajustes'); modal.classList.toggle('oculto'); 
             const btnAjustes = document.getElementById('btn-guardar-ajustes');
-            if (juegoIniciado) {
-                btnAjustes.innerHTML = '<span>💾</span> GUARDAR Y CERRAR';
-                btnAjustes.className = 'btn-cerrar-ajustes'; 
-                btnAjustes.style = "margin-top: 10px;";
-            } else {
-                btnAjustes.innerHTML = '<span>🎲</span> INICIAR PARTIDA';
-                btnAjustes.className = 'btn-iniciar-partida'; 
-            }
+            if (juegoIniciado) { btnAjustes.innerHTML = '<span>💾</span> GUARDAR Y CERRAR'; btnAjustes.className = 'btn-cerrar-ajustes'; btnAjustes.style = "margin-top: 10px;"; } 
+            else { btnAjustes.innerHTML = '<span>🎲</span> INICIAR PARTIDA'; btnAjustes.className = 'btn-iniciar-partida'; }
         }
-
-        function abrirModalMultijugador() {
-            document.getElementById('modal-multijugador').classList.remove('oculto');
-        }
-        
-        function cerrarModalMultijugador() {
-            document.getElementById('modal-multijugador').classList.add('oculto');
-            document.getElementById('codigo-sala-generado').style.display = 'none';
-        }
-        
-        function crearSalaMock() {
-            const codigo = "MESA-" + Math.floor(100 + Math.random() * 900);
-            const display = document.getElementById('codigo-sala-generado');
-            display.innerText = codigo;
-            display.style.display = 'block';
-            mostrarToast("Sala creada. Esperando jugadores...");
-        }
-        
-        function unirseSalaMock() {
-            const val = document.getElementById('input-codigo-sala').value.trim();
-            if(val.length < 4) {
-                mostrarToast("Ingresa un código válido");
-                return;
-            }
-            mostrarToast("Conectando a " + val.toUpperCase() + "...");
-        }
+        function abrirModalMultijugador() { document.getElementById('modal-multijugador').classList.remove('oculto'); }
 
         function cambiarDificultadIA(nivel) {
             dificultadIA = nivel;
-            ['facil', 'medio', 'experto'].forEach(d => {
-                const b = document.getElementById(`btn-dif-${d}`);
-                if (b) b.classList.toggle('activo', d === nivel);
-            });
+            ['facil', 'medio', 'experto'].forEach(d => { const b = document.getElementById(`btn-dif-${d}`); if (b) b.classList.toggle('activo', d === nivel); });
         }
 
         function guardarAjustesVariables() {
+            if (window.esMultijugador) return; 
             const n1 = document.getElementById('input-nombre-1').value.trim(); const n2 = document.getElementById('input-nombre-2').value.trim();
             const n3 = document.getElementById('input-nombre-3').value.trim(); const n4 = document.getElementById('input-nombre-4').value.trim();
             nombresJugadores[1] = n1 !== "" ? n1 : "Nosotros"; nombresJugadores[2] = n2 !== "" ? n2 : "Rival 1";
             nombresJugadores[3] = n3 !== "" ? n3 : "Compadre"; nombresJugadores[4] = n4 !== "" ? n4 : "Rival 2";
-            
             const a1 = document.getElementById('input-avatar-1').value.trim() || "😎"; const a2 = document.getElementById('input-avatar-2').value.trim() || "🧔🏾‍♂️";
             const a3 = document.getElementById('input-avatar-3').value.trim() || "👨🏽‍🦳"; const a4 = document.getElementById('input-avatar-4').value.trim() || "👩🏽";
             avataresJugadores[1] = a1; avataresJugadores[2] = a2; avataresJugadores[3] = a3; avataresJugadores[4] = a4;
+            actualizarUIAvatares();
+        }
 
+        function actualizarUIAvatares() {
             document.querySelector('#pos-j1 .nombre-tag').innerText = nombresJugadores[1]; document.querySelector('#pos-j2 .nombre-tag').innerText = nombresJugadores[2];
             document.querySelector('#pos-j3 .nombre-tag').innerText = nombresJugadores[3]; document.querySelector('#pos-j4 .nombre-tag').innerText = nombresJugadores[4];
-            
             document.getElementById('avatar-j1').innerText = avataresJugadores[1]; document.getElementById('avatar-j2').innerText = avataresJugadores[2];
             document.getElementById('avatar-j3').innerText = avataresJugadores[3]; document.getElementById('avatar-j4').innerText = avataresJugadores[4];
         }
 
-        function accionBotonAjustes() {
-            guardarAjustesVariables();
-            if (!juegoIniciado) {
-                comenzarDesdeBienvenida(); 
-            } else {
-                toggleModalAjustes(); 
-                mostrarToast("Ajustes guardados");
-            }
-        }
+        function accionBotonAjustes() { guardarAjustesVariables(); if (!juegoIniciado) { comenzarDesdeBienvenida(); } else { toggleModalAjustes(); mostrarToast("Ajustes guardados"); } }
 
         function cambiarMetaPuntos(nuevaMeta) {
-            metaPuntos = nuevaMeta;
-            document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
+            metaPuntos = nuevaMeta; document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
             [50, 100, 150, 200].forEach(pts => { const b = document.getElementById(`btn-meta-${pts}`); if (b) b.classList.toggle('activo', pts === nuevaMeta); });
             revisarPuntos();
         }
 
         function actualizarClasesBody() { document.body.className = `ficha-${temaFichaActual} mesa-${temaMesaActual}`; }
-
-        function cambiarColorTemaFicha(tema) {
-            temaFichaActual = tema; actualizarClasesBody();
-            ['blanco', 'azul', 'rojo'].forEach(col => { const b = document.getElementById(`btn-color-${col}`); if (b) b.classList.toggle('activo', col === tema); });
-            renderizarManos(); renderizarMesa();
-        }
-
-        function cambiarColorMesa(tema) {
-            temaMesaActual = tema; actualizarClasesBody();
-            ['verde', 'negro', 'azul', 'blanco'].forEach(m => { const b = document.getElementById(`btn-mesa-${m}`); if (b) b.classList.toggle('activo', m === tema); });
-        }
+        function cambiarColorTemaFicha(tema) { temaFichaActual = tema; actualizarClasesBody(); ['blanco', 'azul', 'rojo'].forEach(col => { const b = document.getElementById(`btn-color-${col}`); if (b) b.classList.toggle('activo', col === tema); }); renderizarManos(); renderizarMesa(); }
+        function cambiarColorMesa(tema) { temaMesaActual = tema; actualizarClasesBody(); ['verde', 'negro', 'azul', 'blanco'].forEach(m => { const b = document.getElementById(`btn-mesa-${m}`); if (b) b.classList.toggle('activo', m === tema); }); }
 
         function mostrarBurbuja(idJugador, mensaje, tipo, persistente = false, limpiar = true) {
             if(limpiar) limpiarBurbujas();
             const burbuja = document.getElementById(`burbuja-j${idJugador}`);
             if (burbuja) {
                 burbuja.innerText = mensaje; burbuja.className = `burbuja-estado visible ${tipo}`;
-                if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) {
-                    setTimeout(() => { burbuja.classList.remove('visible'); }, 2200);
-                }
+                if(!persistente && (tipo === 'paso' || tipo === 'capicua' || tipo === 'ganador')) { setTimeout(() => { burbuja.classList.remove('visible'); }, 2200); }
             }
         }
-
         function limpiarBurbujas() { for(let i=1; i<=4; i++) { const b = document.getElementById(`burbuja-j${i}`); if (b) b.className = 'burbuja-estado'; } }
         function mostrarToast(mensaje) { const toast = document.getElementById('toast-mensaje'); toast.innerText = mensaje; toast.classList.add('visible'); setTimeout(() => { toast.classList.remove('visible'); }, 2400); }
         function ocultarToast() { document.getElementById('toast-mensaje').classList.remove('visible'); }
@@ -996,10 +1024,7 @@
             if (duracionMs > 0) { setTimeout(() => { if (!juegoTerminado) banner.style.display = 'none'; }, duracionMs); }
         }
 
-        function sacudirMesa() {
-            const tapete = document.getElementById('mesa-tapete'); tapete.classList.remove('mesa-temblando');
-            void tapete.offsetWidth; tapete.classList.add('mesa-temblando'); setTimeout(() => tapete.classList.remove('mesa-temblando'), 500);
-        }
+        function sacudirMesa() { const tapete = document.getElementById('mesa-tapete'); tapete.classList.remove('mesa-temblando'); void tapete.offsetWidth; tapete.classList.add('mesa-temblando'); setTimeout(() => tapete.classList.remove('mesa-temblando'), 500); }
 
         function dibujarFichasReveladas(idContenedor, mano, tipo) {
             const cont = document.getElementById(idContenedor); cont.innerHTML = '';
@@ -1017,14 +1042,10 @@
         /* --- SISTEMA DRAG & DROP --- */
         function iniciarArrastre(e, ficha, index, element) {
             if (juegoTerminado || turnoActual !== 1 || esperandoSeleccionPunta) return;
-            
             let [a, b] = ficha;
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
-            
-            if (salidaObligatoria && !fichaCentro && (a !== 6 || b !== 6)) {
-                puedeIzq = false; puedeDer = false;
-            }
+            if (salidaObligatoria && !fichaCentro && (a !== 6 || b !== 6)) { puedeIzq = false; puedeDer = false; }
 
             e.preventDefault(); isDragging = true; dragStartX = e.clientX; dragStartY = e.clientY;
             dragTileData = ficha; dragTileIndex = index;
@@ -1048,7 +1069,6 @@
             if (!isDragging) return;
             dragTile.style.left = (e.clientX - 24) + 'px';
             dragTile.style.top = (e.clientY - 45) + 'px';
-            
             document.querySelectorAll('.zona-drop').forEach(z => z.classList.remove('hover'));
             let elemAbaixo = document.elementFromPoint(e.clientX, e.clientY);
             if (elemAbaixo && elemAbaixo.classList.contains('zona-drop')) { elemAbaixo.classList.add('hover'); }
@@ -1082,21 +1102,17 @@
             if (!fichaCentro) {
                 if (soltadoEnCentro || (elemAbaixo && elemAbaixo.closest('#mesa-tapete'))) {
                     if (salidaObligatoria && (a !== 6 || b !== 6)) { mostrarToast("Debes salir con el doble 6."); return; }
-                    procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, false);
+                    window.despacharJugada(dragTileData, dragTileIndex, true, false);
                 }
             } else {
                 let esCapicua = (jugadores[1].length === 1 && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho);
-                if (soltadoEnIzq && puedeIzq) { procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua); } 
-                else if (soltadoEnDer && puedeDer) { procesarJugadaFinal(dragTileData, 1, dragTileIndex, false, esCapicua); } 
+                if (soltadoEnIzq && puedeIzq) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
+                else if (soltadoEnDer && puedeDer) window.despacharJugada(dragTileData, dragTileIndex, false, esCapicua);
                 else if (elemAbaixo && elemAbaixo.closest('#mesa-tapete')) {
-                    if (puedeIzq && !puedeDer) procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua);
-                    else if (puedeDer && !puedeIzq) procesarJugadaFinal(dragTileData, 1, dragTileIndex, false, esCapicua);
-                    else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
-                        intentarJugada(dragTileData, 1, dragTileIndex); 
-                    } 
-                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) {
-                        procesarJugadaFinal(dragTileData, 1, dragTileIndex, true, esCapicua);
-                    }
+                    if (puedeIzq && !puedeDer) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
+                    else if (puedeDer && !puedeIzq) window.despacharJugada(dragTileData, dragTileIndex, false, esCapicua);
+                    else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) intentarJugada(dragTileData, 1, dragTileIndex); 
+                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) window.despacharJugada(dragTileData, dragTileIndex, true, esCapicua);
                 }
             }
         }
@@ -1105,8 +1121,7 @@
             if(!puedeIzq && !puedeDer) return;
             const zoomContainer = document.getElementById('zoom-container'); if (!zoomContainer) return;
             if (!fichaCentro) {
-                const zona = document.createElement('div'); zona.className = 'zona-drop centro';
-                zona.style.left = '0px'; zona.style.top = '0px'; zoomContainer.appendChild(zona);
+                const zona = document.createElement('div'); zona.className = 'zona-drop centro'; zona.style.left = '0px'; zona.style.top = '0px'; zoomContainer.appendChild(zona);
             } else {
                 if (puedeIzq && puntaIzqCoords) { const zonaIzq = document.createElement('div'); zonaIzq.className = 'zona-drop izq'; zonaIzq.style.left = puntaIzqCoords.x + 'px'; zonaIzq.style.top = puntaIzqCoords.y + 'px'; zoomContainer.appendChild(zonaIzq); }
                 if (puedeDer && puntaDerCoords) { const zonaDer = document.createElement('div'); zonaDer.className = 'zona-drop der'; zonaDer.style.left = puntaDerCoords.x + 'px'; zonaDer.style.top = puntaDerCoords.y + 'px'; zoomContainer.appendChild(zonaDer); }
@@ -1119,9 +1134,7 @@
                 const divFicha = document.createElement('div'); divFicha.className = 'ficha';
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
                 divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
-                
                 divFicha.onpointerdown = (e) => iniciarArrastre(e, ficha, index, divFicha);
-                
                 miMano.appendChild(divFicha);
             });
 
@@ -1286,21 +1299,11 @@
             texto.innerText = ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos'; 
             texto.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744'; 
             titulo.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
-            
             ptsNosotrosEl.innerText = puntosNosotros; ptsEllosEl.innerText = puntosEllos;
 
-            // ACTUALIZACIÓN DE ESTADÍSTICAS GLOBALES
-            if (ganadorEquipo === 1) { 
-                ptsNosotrosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); 
-                estadisticas.victorias++;
-            } 
-            else { 
-                ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); 
-                estadisticas.derrotas++;
-            }
-            estadisticas.puntosTotales += puntosNosotros;
-            guardarEstadisticasLocal();
-
+            if (ganadorEquipo === 1) { ptsNosotrosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); estadisticas.victorias++; } 
+            else { ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
+            estadisticas.puntosTotales += puntosNosotros; guardarEstadisticasLocal();
             modal.classList.remove('oculto');
             if (ganadorEquipo === 1) lanzarConfeti(4);
         }
@@ -1338,26 +1341,26 @@
                 tipoVictoria = "¡TRANQUE! 🔒"; claseBanner = "tranque"; sacudirMesa();
             } else {
                 equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2; ultimoGanador = ganador;
-                if (esCapicua) { 
-                    sumaPuntosMano += 30; tipoVictoria = "¡CAPICÚA! 🌟"; claseBanner = "capicua"; sacudirMesa(); 
-                    
-                    // REGISTRO DE CAPICÚA EN ESTADÍSTICAS
-                    if(equipoGanador === 1) { estadisticas.capicuas++; guardarEstadisticasLocal(); }
-                }
+                if (esCapicua) { sumaPuntosMano += 30; tipoVictoria = "¡CAPICÚA! 🌟"; claseBanner = "capicua"; sacudirMesa(); if(equipoGanador === 1) { estadisticas.capicuas++; guardarEstadisticasLocal(); } }
             }
 
             if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
             agregarRondaHistorial(equipoGanador, sumaPuntosMano);
             const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`); if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
-
             mostrarBannerEspecial(`🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, claseBanner, 0);
-            
             if (equipoGanador === 1) lanzarConfeti(1.5);
 
-            document.getElementById('btn-siguiente').style.display = 'block';
             let termino = revisarPuntos();
-            if (termino) { document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none'; }
-            
+            if (termino) { 
+                document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none'; 
+            } else {
+                if (window.esMultijugador) {
+                    if (window.miPuesto === 1) document.getElementById('btn-siguiente').style.display = 'block';
+                    else { document.getElementById('btn-siguiente').style.display = 'none'; mostrarToast("Esperando al anfitrión..."); }
+                } else {
+                    document.getElementById('btn-siguiente').style.display = 'block';
+                }
+            }
             renderizarManos(); renderizarMesa();
         }
 
@@ -1365,18 +1368,11 @@
             detenerTemporizador();
             let tiempoRestante = segundos;
             const progressCircle = document.querySelector(`#pos-j1 .timer-ring .progress`);
-            
-            if(progressCircle) {
-                progressCircle.style.transition = 'none'; progressCircle.style.strokeDashoffset = '0'; progressCircle.style.stroke = '#00bcd4';
-                void progressCircle.offsetWidth; progressCircle.style.transition = 'stroke-dashoffset 1s linear, stroke 0.3s';
-            }
+            if(progressCircle) { progressCircle.style.transition = 'none'; progressCircle.style.strokeDashoffset = '0'; progressCircle.style.stroke = '#00bcd4'; void progressCircle.offsetWidth; progressCircle.style.transition = 'stroke-dashoffset 1s linear, stroke 0.3s'; }
 
             timerTurno = setInterval(() => {
                 tiempoRestante--;
-                if(progressCircle) {
-                    const offset = 132 - (tiempoRestante / segundos) * 132; progressCircle.style.strokeDashoffset = offset;
-                    if(tiempoRestante <= 3) progressCircle.style.stroke = '#ff1744'; 
-                }
+                if(progressCircle) { const offset = 132 - (tiempoRestante / segundos) * 132; progressCircle.style.strokeDashoffset = offset; if(tiempoRestante <= 3) progressCircle.style.stroke = '#ff1744';  }
                 if (tiempoRestante > 0 && tiempoRestante <= 3) { playSonido('tick'); }
                 if (tiempoRestante <= 0) { detenerTemporizador(); playSonido('timeout'); jugadaAutomaticaHumano(); }
             }, 1000);
@@ -1405,7 +1401,7 @@
                     let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
                     if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, mano); jugada.index = i; validas.push(jugada); }
-                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, mano); jugada.index = i; validas.push(jugada); }
+                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
                 }
             }
 
@@ -1417,8 +1413,33 @@
                     let [a,b] = mejorJugada.ficha;
                     if ((a === extremoIzquierdo || b === extremoIzquierdo) && (a === extremoDerecho || b === extremoDerecho)) esCapicua = true;
                 }
-                procesarJugadaFinal(mejorJugada.ficha, 1, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
+                window.despacharJugada(mejorJugada.ficha, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
+            } else {
+                if (window.esMultijugador && window.enviarPaseFirebase) window.enviarPaseFirebase();
             }
+        }
+
+        window.ejecutarPase = function(idJugador) {
+            historialPases[idJugador].push(extremoIzquierdo, extremoDerecho);
+            pasesConsecutivos++; resaltarTurnoActivo(); playSonido('paso'); 
+
+            const wrapPasador = document.getElementById(`pos-j${idJugador}`);
+            if (wrapPasador) { wrapPasador.classList.add('avatar-paso'); setTimeout(() => wrapPasador.classList.remove('avatar-paso'), 2200); }
+
+            if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
+            
+            let txtPaso = frasesPaso[Math.floor(Math.random() * frasesPaso.length)];
+            if (esPrimerTurnoDespuesDeSalida) {
+                mostrarBurbuja(idJugador, txtPaso, "paso", false, true);
+                let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
+                if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
+                agregarRondaHistorial(equipoSalida, 30);
+                mostrarBannerEspecial(`🔥 ¡30 A LA SALIDA! 🔥`, `+30 Puntos`, 'salida-30', 2500);
+                if(revisarPuntos()) return;
+            } else {
+                mostrarBurbuja(idJugador, txtPaso, "paso", false, true);
+            }
+            esPrimerTurnoDespuesDeSalida = false; setTimeout(avanzarTurno, 1500);
         }
 
         function avanzarTurno() {
@@ -1430,36 +1451,15 @@
             let puedeJugar = jugadores[turnoActual].some(ficha => ficha[0] === extremoIzquierdo || ficha[1] === extremoIzquierdo || ficha[0] === extremoDerecho || ficha[1] === extremoDerecho);
 
             if (!puedeJugar) {
-                historialPases[turnoActual].push(extremoIzquierdo, extremoDerecho);
-                pasesConsecutivos++; resaltarTurnoActivo(); playSonido('paso'); 
-                
-                const wrapPasador = document.getElementById(`pos-j${turnoActual}`);
-                if (wrapPasador) { wrapPasador.classList.add('avatar-paso'); setTimeout(() => wrapPasador.classList.remove('avatar-paso'), 2200); }
-
-                if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
-                
-                let txtPaso = frasesPaso[Math.floor(Math.random() * frasesPaso.length)];
-
-                if (esPrimerTurnoDespuesDeSalida) {
-                    mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
-                    let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
-                    if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
-                    agregarRondaHistorial(equipoSalida, 30);
-                    mostrarBannerEspecial(`🔥 ¡30 A LA SALIDA! 🔥`, `+30 Puntos para Equipo ${equipoSalida === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
-                    if(revisarPuntos()) return;
+                if (window.esMultijugador) {
+                    if (turnoActual === 1) setTimeout(() => window.enviarPaseFirebase(), 1000);
+                    else mostrarBurbuja(turnoActual, "Pensando...", "pensando");
+                    return; 
                 } else {
-                    mostrarBurbuja(turnoActual, txtPaso, "paso", false, true);
+                    window.ejecutarPase(turnoActual);
                 }
-                
-                esPrimerTurnoDespuesDeSalida = false; setTimeout(avanzarTurno, 1500);
             } else {
-                if (pasesConsecutivos === 3 && fichaCentro) {
-                    let equipo = (turnoActual === 1 || turnoActual === 3) ? 1 : 2;
-                    if (equipo === 1) puntosNosotros += 30; else puntosEllos += 30;
-                    agregarRondaHistorial(equipo, 30);
-                    mostrarBannerEspecial(`🔄 ¡VUELTA DE PASES!`, `+30 Puntos para Equipo ${equipo === 1 ? 'Nosotros' : 'Ellos'}`, 'salida-30', 2500);
-                    let termino = revisarPuntos(); pasesConsecutivos = 0; if(termino) return; 
-                }
+                if (window.esMultijugador && turnoActual !== 1) { mostrarBurbuja(turnoActual, "Pensando...", "pensando"); return; }
                 pasesConsecutivos = 0; esPrimerTurnoDespuesDeSalida = false; iniciarTurnoNormal();
             }
         }
@@ -1470,9 +1470,8 @@
             if (turnoActual !== 1) { 
                 let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
                 mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
-                setTimeout(turnoIA, 1400); 
-            }
-            else {
+                if (!window.esMultijugador) setTimeout(turnoIA, 1400); 
+            } else {
                 if (salidaObligatoria && !fichaCentro) mostrarToast("Debes salir con el Doble 6");
                 else mostrarToast("¡Tu turno!"); 
                 iniciarTemporizador(10); 
@@ -1507,31 +1506,28 @@
             if (fichaCentro && puedeIzq && puedeDer) { ponerIzquierda = preferirIzquierda !== null ? preferirIzquierda : Math.random() > 0.5; }
             else if (puedeIzq) ponerIzquierda = true;
 
-            procesarJugadaFinal(ficha, idJugador, index, ponerIzquierda, esCapicua);
+            window.despacharJugada(ficha, index, ponerIzquierda, esCapicua);
         }
 
         function ejecutarEleccion(esIzquierda) {
             esperandoSeleccionPunta = false; ocultarToast(); detenerTemporizador();
             let esCapicua = fichaSeleccionada.esCapicua || false;
-            procesarJugadaFinal(fichaSeleccionada, 1, indexSeleccionado, esIzquierda, esCapicua);
+            window.despacharJugada(fichaSeleccionada, indexSeleccionado, esIzquierda, esCapicua);
             fichaSeleccionada = null; indexSeleccionado = null;
         }
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
             playSonido('ficha'); 
             let [a, b] = ficha; 
-            
             if (!fichaCentro) { 
                 let max = Math.max(a, b); let min = Math.min(a, b);
                 if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
                 else { fichaCentro = [max, min]; extremoIzquierdo = max; extremoDerecho = min; }
                 salidaObligatoria = false; esPrimerTurnoDespuesDeSalida = true; 
             } else if (colocarIzquierda) {
-                if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } 
-                else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
+                if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
             } else {
-                if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } 
-                else { ramaDerecha.push([b, a]); extremoDerecho = a; }
+                if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } else { ramaDerecha.push([b, a]); extremoDerecho = a; }
             }
             jugadores[idJugador].splice(index, 1); ultimoJugadorEnJugar = idJugador; 
             
@@ -1546,17 +1542,9 @@
             let faltasCompadre = historialPases[compadre]; let faltasRival = historialPases[rivalSiguiente];
 
             let peso = a + b; if (a === b) peso += 15; 
-
-            if (dificultadIA === 'facil') {
-                peso += Math.random() * 20;
-                return { ficha: ficha, peso: peso, esIzquierda: esIzquierda };
-            }
-
-            if (faltasRival.includes(nuevoExtremo)) peso += 50;
-            if (faltasCompadre.includes(nuevoExtremo)) peso -= 40;
-            
-            let misFichasPalo = manoIA.filter(f => f[0] === nuevoExtremo || f[1] === nuevoExtremo).length;
-            peso += misFichasPalo * 5; 
+            if (dificultadIA === 'facil') { peso += Math.random() * 20; return { ficha: ficha, peso: peso, esIzquierda: esIzquierda }; }
+            if (faltasRival.includes(nuevoExtremo)) peso += 50; if (faltasCompadre.includes(nuevoExtremo)) peso -= 40;
+            let misFichasPalo = manoIA.filter(f => f[0] === nuevoExtremo || f[1] === nuevoExtremo).length; peso += misFichasPalo * 5; 
 
             if (dificultadIA === 'experto') {
                 let conteoMesa = 0;
@@ -1566,10 +1554,8 @@
                     ramaDerecha.forEach(f => { if (f[0] === nuevoExtremo || f[1] === nuevoExtremo) conteoMesa++; });
                 }
                 let totalVisibles = conteoMesa + misFichasPalo;
-                if (totalVisibles === 7) peso += 100;
-                else if (totalVisibles === 6) peso += 30; 
+                if (totalVisibles === 7) peso += 100; else if (totalVisibles === 6) peso += 30; 
             }
-
             return { ficha: ficha, peso: peso, esIzquierda: esIzquierda };
         }
 
@@ -1588,10 +1574,7 @@
                 if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
             }
             
-            if (validas.length > 0) {
-                validas.sort((a,b) => b.peso - a.peso); let mejorJugada = validas[0];
-                intentarJugada(mejorJugada.ficha, turnoActual, mejorJugada.index, mejorJugada.esIzquierda);
-            }
+            if (validas.length > 0) { validas.sort((a,b) => b.peso - a.peso); let mejorJugada = validas[0]; intentarJugada(mejorJugada.ficha, turnoActual, mejorJugada.index, mejorJugada.esIzquierda); }
         }
 
         function crearAnimacionFichas() {
@@ -1608,28 +1591,34 @@
         function iniciarManoConAnimacion() {
             document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
             for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso'); }
-
             limpiarBurbujas(); ocultarToast(); detenerTemporizador();
             document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
             document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
             document.getElementById('zoom-container').innerHTML = '';
 
+            // SI ES MULTIJUGADOR, DETENEMOS LA EJECUCION LOCAL Y LE DECIMOS A FIREBASE QUE EMPIECE
+            if (window.esMultijugador) {
+                if (window.miPuesto === 1 && window.iniciarPartidaRed) { window.iniciarPartidaRed(); }
+                return;
+            }
+
+            // MODO LOCAL
             const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
             crearAnimacionFichas(); playSonidoBarajar(); 
-            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaReparto(); }, 2000);
+            setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaRepartoLocal(); }, 2000);
         }
 
-        function ejecutarLogicaReparto() {
+        function ejecutarLogicaRepartoLocal() {
+            fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
+            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
+            historialPases = { 1: [], 2: [], 3: [], 4: [] };
+            
             mazo = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazo.push([i, j]);
             for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
             let pos = 0; for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
 
-            fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
-            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
-            historialPases = { 1: [], 2: [], 3: [], 4: [] };
-
-            let primerJuego = (puntosNosotros === 0 && puntosEllos === 0);
+            let primerJuego = window.esPrimerJuego();
             if (primerJuego) { for (let i = 1; i <= 4; i++) { if (jugadores[i].some(f => f[0] === 6 && f[1] === 6)) { turnoActual = i; salidaObligatoria = true; break; } } } 
             else { turnoActual = ultimoGanador || 1; salidaObligatoria = false; }
             
@@ -1639,8 +1628,218 @@
         window.addEventListener('resize', () => { renderizarManos(); renderizarMesa(); });
         window.addEventListener('orientationchange', () => { setTimeout(() => { renderizarManos(); renderizarMesa(); }, 200); });
         
-        // INICIALIZACIÓN DE ESTADÍSTICAS AL CARGAR LA PÁGINA
         inicializarEstadisticas();
+    </script>
+
+    <!-- SCRIPT 2: MÓDULO MULTIJUGADOR FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
+            authDomain: "dominord-155ec.firebaseapp.com",
+            databaseURL: "https://dominord-155ec-default-rtdb.firebaseio.com",
+            projectId: "dominord-155ec",
+            storageBucket: "dominord-155ec.firebasestorage.app",
+            messagingSenderId: "684277355038",
+            appId: "1:684277355038:web:140f8550fa6fdd5a6c140f",
+            measurementId: "G-WKVQPN8G51"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.salaIdActual = null;
+        window.miPuesto = 1; 
+        window.esMultijugador = false;
+        window.ultimaManoJugada = 0; // Controla qué número de partida vamos
+        let ultimoTimestampAccion = 0;
+
+        window.crearSalaReal = async function() {
+            try {
+                let nombreRed = document.getElementById('input-nombre-red').value.trim();
+                if(!nombreRed) nombreRed = "Jugador 1";
+                let avatarRed = document.getElementById('input-avatar-red').value;
+
+                const codigo = "MESA-" + Math.floor(100 + Math.random() * 900);
+                window.salaIdActual = codigo;
+                window.miPuesto = 1; 
+                window.esMultijugador = true;
+
+                window.cerrarModalMultijugador();
+                document.getElementById('ui-menu-principal').style.display = 'none';
+                document.getElementById('ui-sala-espera').style.display = 'flex';
+                document.getElementById('lobby-codigo').innerText = codigo;
+
+                const configLocal = window.getConfiguracionJuego();
+                const salaRef = ref(db, 'salas/' + codigo);
+                
+                await set(salaRef, {
+                    estado: 'esperando',
+                    metaPuntos: configLocal.metaPuntos,
+                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true } }
+                });
+
+                escucharCambiosSala(codigo);
+            } catch (error) { window.mostrarToast("Error creando sala."); }
+        };
+
+        window.unirseSalaReal = async function() {
+            try {
+                const val = document.getElementById('input-codigo-sala').value.trim().toUpperCase();
+                if(val.length < 4) { window.mostrarToast("Ingresa un código válido"); return; }
+                
+                let nombreRed = document.getElementById('input-nombre-red').value.trim();
+                if(!nombreRed) nombreRed = "Invitado";
+                let avatarRed = document.getElementById('input-avatar-red').value;
+
+                window.mostrarToast("Buscando sala " + val + "...");
+                const salaRef = ref(db, 'salas/' + val);
+                const snapshot = await get(salaRef);
+
+                if (snapshot.exists()) {
+                    const datosSala = snapshot.val();
+                    if (datosSala.estado !== 'esperando') { window.mostrarToast("La partida ya comenzó"); return; }
+
+                    let asientoLibre = null;
+                    for (let i = 2; i <= 4; i++) { if (!datosSala.jugadores || !datosSala.jugadores[i]) { asientoLibre = i; break; } }
+                    if (!asientoLibre) { window.mostrarToast("La sala está llena"); return; }
+
+                    window.salaIdActual = val; window.miPuesto = asientoLibre; window.esMultijugador = true;
+
+                    window.cerrarModalMultijugador();
+                    document.getElementById('ui-menu-principal').style.display = 'none';
+                    document.getElementById('ui-sala-espera').style.display = 'flex';
+                    document.getElementById('lobby-codigo').innerText = val;
+
+                    await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), { nombre: nombreRed, avatar: avatarRed, listo: true });
+                    escucharCambiosSala(val);
+                } else { window.mostrarToast("La sala no existe"); }
+            } catch(error) { window.mostrarToast("Error uniéndose."); }
+        };
+
+        // LA FUNCIÓN DE INICIAR SOLUCIONADA: Creador genera y sube los datos a Firebase
+        window.iniciarPartidaRed = async function() {
+            if (window.miPuesto !== 1) return; 
+            
+            let mazoLocal = [];
+            for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazoLocal.push([i, j]);
+            for (let i = mazoLocal.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazoLocal[i], mazoLocal[j]] = [mazoLocal[j], mazoLocal[i]]; }
+            
+            let manosGeneradas = { 1: mazoLocal.slice(0, 7), 2: mazoLocal.slice(7, 14), 3: mazoLocal.slice(14, 21), 4: mazoLocal.slice(21, 28) };
+            
+            let primerJuego = window.esPrimerJuego();
+            let turnoInicial = 1;
+            if (primerJuego) { 
+                for (let i = 1; i <= 4; i++) { if (manosGeneradas[i].some(f => f[0] === 6 && f[1] === 6)) { turnoInicial = i; break; } } 
+            } else { 
+                turnoInicial = window.getUltimoGanadorRed() || 1; 
+            }
+
+            let nuevaMano = (window.ultimaManoJugada || 0) + 1;
+
+            const salaRef = ref(db, 'salas/' + window.salaIdActual);
+            await update(salaRef, { 
+                estado: 'jugando',
+                partida: {
+                    numeroMano: nuevaMano,
+                    manos: manosGeneradas,
+                    turnoActual: turnoInicial,
+                    salidaObligatoria: primerJuego
+                }
+            }); 
+        };
+
+        // EMISORES DE JUGADAS
+        window.enviarJugadaFirebase = async function(ficha, colocarIzquierda, esCapicua) {
+            const salaRef = ref(db, 'salas/' + window.salaIdActual + '/ultimaAccion');
+            await set(salaRef, { tipo: 'JUGAR', puestoAbsoluto: window.miPuesto, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+        };
+
+        window.enviarPaseFirebase = async function() {
+            const salaRef = ref(db, 'salas/' + window.salaIdActual + '/ultimaAccion');
+            await set(salaRef, { tipo: 'PASAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+        };
+
+        function escucharCambiosSala(codigoSala) {
+            const salaRef = ref(db, 'salas/' + codigoSala);
+            
+            onValue(salaRef, (snapshot) => {
+                const datos = snapshot.val();
+                if (!datos) return;
+
+                if (datos.estado === 'esperando') {
+                    let htmlJugadores = ''; let contadorJugadores = 0;
+                    for (let i = 1; i <= 4; i++) {
+                        if (datos.jugadores && datos.jugadores[i]) {
+                            htmlJugadores += `<div>${datos.jugadores[i].avatar} <b style="color: #fff;">${datos.jugadores[i].nombre}</b> <span style="color:#00bcd4; font-size:11px;">(Puesto ${i})</span></div>`;
+                            contadorJugadores++;
+                        } else {
+                            htmlJugadores += `<div style="color: #666; font-style: italic;">🪑 Asiento ${i} disponible...</div>`;
+                        }
+                    }
+                    document.getElementById('lobby-jugadores').innerHTML = htmlJugadores;
+
+                    if (window.miPuesto === 1) {
+                        document.getElementById('btn-empezar-red').style.display = 'block';
+                        if (contadorJugadores === 4) document.getElementById('lobby-mensaje').innerText = "¡Mesa llena! Presiona empezar.";
+                        else document.getElementById('lobby-mensaje').innerText = "Esperando jugadores...";
+                    } else {
+                        document.getElementById('lobby-mensaje').innerText = "Esperando a que el creador inicie la partida...";
+                    }
+                }
+
+                if (datos.jugadores) { mapearJugadoresEnMesa(datos.jugadores, window.miPuesto); }
+
+                // INICIO DE MANO (TODOS RECIBEN ESTO Y ARRANCAN AL MISMO TIEMPO)
+                if (datos.estado === 'jugando' && datos.partida) {
+                    let manoEnBD = datos.partida.numeroMano || 1;
+                    if (!window.getJuegoIniciado() || manoEnBD > (window.ultimaManoJugada || 0)) {
+                        window.setJuegoIniciado(true);
+                        window.ultimaManoJugada = manoEnBD;
+                        
+                        document.getElementById('ui-sala-espera').style.display = 'none';
+                        document.getElementById('pantalla-bienvenida').style.display = 'none';
+                        
+                        window.iniciarManoMultijugadorDesdeFirebase(datos.partida);
+                    }
+                }
+
+                // RECEPCIÓN DE MOVIMIENTOS EN TIEMPO REAL
+                if (datos.ultimaAccion && datos.ultimaAccion.timestamp > ultimoTimestampAccion) {
+                    ultimoTimestampAccion = datos.ultimaAccion.timestamp;
+                    if (window.getJuegoIniciado()) {
+                        let offset = datos.ultimaAccion.puestoAbsoluto - window.miPuesto;
+                        if (offset < 0) offset += 4;
+                        let localSeat = offset + 1;
+
+                        if (datos.ultimaAccion.tipo === 'JUGAR') {
+                            let indexFicha = window.jugadores[localSeat].findIndex(f => f[0] === datos.ultimaAccion.ficha[0] && f[1] === datos.ultimaAccion.ficha[1]);
+                            if (indexFicha !== -1) {
+                                window.procesarJugadaFinalLocal(datos.ultimaAccion.ficha, localSeat, indexFicha, datos.ultimaAccion.colocarIzquierda, datos.ultimaAccion.esCapicua);
+                            }
+                        } else if (datos.ultimaAccion.tipo === 'PASAR') {
+                            window.ejecutarPase(localSeat);
+                        }
+                    }
+                }
+            });
+        }
+
+        function mapearJugadoresEnMesa(jugadoresDB, miPuestoLocal) {
+            for (let i = 1; i <= 4; i++) {
+                if (jugadoresDB[i]) {
+                    let offset = i - miPuestoLocal;
+                    if (offset < 0) offset += 4;
+                    let posicionPantalla = offset + 1; 
+
+                    window.nombresJugadores[posicionPantalla] = jugadoresDB[i].nombre;
+                    window.avataresJugadores[posicionPantalla] = jugadoresDB[i].avatar;
+                }
+            }
+            if(window.actualizarUIAvatares) window.actualizarUIAvatares();
+        }
     </script>
 </body>
 </html>
