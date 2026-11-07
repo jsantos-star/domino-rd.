@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 749</title>
+    <title>Dominó RD 132</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -141,11 +141,72 @@
         .btn-flotante.solo-icono { width: 32px; padding: 0; border-radius: 50%; font-size: 15px; }
         .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
 
+        /* MINI MARCADOR EN MESA */
+        #mini-marcador {
+            position: absolute; top: 12px; left: 12px; 
+            background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.15); 
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #ccc; 
+            z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.6); backdrop-filter: blur(4px); 
+            display: flex; gap: 10px; align-items: center; cursor: pointer; transition: transform 0.2s;
+        }
+        #mini-marcador:active { transform: scale(0.95); }
+        #mini-marcador span { white-space: nowrap; }
+
         .escenario-mesa { position: relative; flex: 1; width: 100%; height: 100%; padding: 6px; display: flex; justify-content: center; align-items: center; }
         .zona-tapete {
             width: 100%; height: 100%; background: var(--tapete-fondo); border-radius: 20px; border: 6px solid var(--madera); 
             box-shadow: 0 0 0 2px #002868, 0 0 0 4px #ce1126, inset 0 0 40px rgba(0,0,0,0.85); 
             position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- CAJA DE SOBRANTES MEJORADA Y BACANA --- */
+        #zona-sobrantes {
+            position: absolute; right: 20px; bottom: 90px; 
+            display: flex; flex-direction: column; align-items: center; gap: 8px; 
+            z-index: 100; cursor: pointer; transition: transform 0.2s;
+        }
+        #zona-sobrantes:active { transform: scale(0.95); }
+        
+        #sobrantes-stack { 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            background: rgba(0, 0, 0, 0.4); 
+            padding: 10px 14px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 6px 12px rgba(0,0,0,0.6);
+            min-height: 44px;
+        }
+        
+        .dorso-caja {
+            width: 18px; 
+            height: 32px; 
+            border-radius: 3px; border: 1px solid #1a2233; box-shadow: -3px 3px 6px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: 
+                linear-gradient(to right, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
+                linear-gradient(to bottom, transparent calc(50% - 1px), #ffffff calc(50% - 1px), #ffffff calc(50% + 1px), transparent calc(50% + 1px)),
+                conic-gradient(from 0deg at 50% 50%, #002868 0deg 90deg, #ce1126 90deg 180deg, #002868 180deg 270deg, #ce1126 270deg 360deg);
+            margin-left: -10px;
+            transform: rotate(-3deg);
+            transition: all 0.3s ease;
+        }
+        .dorso-caja:first-child { margin-left: 0; }
+        .dorso-caja::after { content: 'RD'; font-size: 5px; font-weight: 900; color: #111111; background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px; z-index: 2;}
+        
+        /* Animación bacana al pasar el dedo/mouse */
+        #zona-sobrantes:hover #sobrantes-stack .dorso-caja {
+            transform: rotate(0deg) translateY(-5px);
+            margin-left: -5px;
+            box-shadow: -1px 5px 8px rgba(0,188,212,0.5);
+            border-color: #00bcd4;
+        }
+
+        #sobrantes-label { 
+            font-size: 12px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.8); 
+            padding: 4px 10px; border-radius: 8px; white-space: nowrap; text-align: center; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         @keyframes shakeMesa { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 80% { transform: translate(1px, -1px); } 100% { transform: translate(0, 0); } }
@@ -163,7 +224,6 @@
             display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.6); transition: all 0.3s ease; position: relative; z-index: 15;
         }
         
-        /* TEMPORIZADOR CIRCULAR */
         .timer-ring {
             position: absolute; width: 46px; height: 46px; z-index: 10; transform: rotate(-90deg);
             opacity: 0; transition: opacity 0.3s; pointer-events: none;
@@ -191,6 +251,7 @@
         }
         .burbuja-estado.visible { opacity: 1; }
         .burbuja-estado.paso { border-color: #ff3333; color: #ff3333; background: rgba(40,0,0,0.92); }
+        .burbuja-estado.burbuja-robar { border-color: #00ff88; color: #00ff88; background: rgba(0,40,0,0.92); }
         .burbuja-estado.pensando { border-color: #ffcc00; color: #ffcc00; }
         .burbuja-estado.ganador { border-color: #00ff00; color: #00ff00; background: rgba(0,40,0,0.92); }
         .burbuja-estado.capicua { border-color: #FF0080; color: #FF0080; background: rgba(40,0,40,0.92); }
@@ -237,7 +298,6 @@
         .ficha:hover { transform: translateY(-8px); }
         .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95), inset 2px 2px 5px rgba(255,255,255,0.8); border-color: #00bcd4; }
 
-        /* ESTILOS PARA DRAG & DROP */
         .ficha.arrastrando {
             position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
             transform: scale(1.15) translateY(-15px) !important;
@@ -280,7 +340,6 @@
 
         #zoom-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; transition: transform 0.28s ease-out; }
 
-        /* CORRECCIÓN 3 APLICADA: Círculos táctiles más grandes, de distinto color y con touch-action: none */
         .marcador-punta { 
             position: absolute; 
             width: 65px; 
@@ -369,7 +428,7 @@
         .btn-cerrar-ajustes { background: rgba(0, 188, 212, 0.12); color: var(--azul-rd); border: 1px solid var(--azul-rd); padding: 10px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 4px; width: 100%; transition: all 0.2s ease;}
         .btn-cerrar-ajustes:active { transform: scale(0.96); }
 
-        /* NUEVO: ESTILOS DE ESTADÍSTICAS */
+        /* ESTILOS DE ESTADÍSTICAS */
         .estadisticas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-box { background: rgba(0, 188, 212, 0.1); border: 1px solid rgba(0, 188, 212, 0.3); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .stat-box span { font-size: 11px; color: #ccc; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; text-align: center; }
@@ -385,17 +444,28 @@
         .ficha-revuelta::after { content: 'RD'; font-size: 7px; font-weight: 900; color: #111111; background: rgba(255, 255, 255, 0.9); padding: 0 1px; border-radius: 2px; }
         @keyframes mezclar { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(calc(var(--rx) * 1px), calc(var(--ry) * 1px)) rotate(calc(var(--rrot) * 1deg)); } 100% { transform: translate(calc(var(--rx2) * 1px), calc(var(--ry2) * 1px)) rotate(calc(var(--rrot2) * 1deg)); } }
 
+        /* PANTALLA GANADOR MEJORADA */
         #modal-victoria { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 21, 34, 0.95); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 320px; width: 90%; z-index: 5000; }
-        .tarjeta-victoria h1 { font-size: 24px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 6px;}
-        .tarjeta-victoria h1 span { font-size: 40px; } 
-        .tarjeta-victoria h2 { font-size: 18px; color: #fff; margin-bottom: 20px; font-weight: 400;}
-        .marcador-final { display: flex; justify-content: center; align-items: center; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
-        .marcador-col { display: flex; flex-direction: column; align-items: center; width: 80px; }
-        .marcador-label { font-size: 12px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
-        .marcador-pts { font-size: 32px; font-weight: 900; color: #fff; }
-        .marcador-pts.resaltado { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); transform: scale(1.1); }
-        .marcador-div { font-size: 14px; font-weight: bold; color: #555; }
+        .tarjeta-victoria { background: #131926; border: 1px solid rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 18px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.85); max-width: 350px; width: 90%; z-index: 5000; display: flex; flex-direction: column; align-items: center; }
+        .tarjeta-victoria h1 { font-size: 26px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 900; letter-spacing: 1px;}
+        .tarjeta-victoria h1 span { font-size: 45px; } 
+        .tarjeta-victoria h2 { font-size: 16px; color: #fff; margin-bottom: 25px; font-weight: bold; padding: 0 10px; line-height: 1.4;}
+        .marcador-final { display: flex; justify-content: center; align-items: center; gap: 20px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; }
+        .marcador-col { display: flex; flex-direction: column; align-items: center; width: 90px; }
+        .marcador-label { font-size: 12px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; }
+        .marcador-pts { font-size: 38px; font-weight: 900; color: #fff; }
+        .marcador-pts.resaltado { color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); transform: scale(1.15); }
+        .marcador-div { font-size: 15px; font-weight: bold; color: #555; }
+        
+        /* BOTÓN DE NUEVA PARTIDA ESTILO BACANO */
+        .btn-jugar-nuevo {
+            background: linear-gradient(45deg, #00bcd4, #005ce6); color: white; border: none; padding: 14px 32px;
+            border-radius: 30px; font-size: 15px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4); transition: all 0.2s ease;
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;
+        }
+        .btn-jugar-nuevo:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 188, 212, 0.6); }
+        .btn-jugar-nuevo:active { transform: scale(0.96); }
         
         .etiqueta-desarrollo {
             background: rgba(255, 140, 0, 0.15); color: #FF8C00;
@@ -439,10 +509,20 @@
                                 <span>📊</span> RÉCORD
                             </button>
                         </div>
+
+                        <!-- Botones Ayuda y Créditos en el Inicio -->
+                        <div style="display: flex; gap: 10px; width: 100%;">
+                            <button type="button" class="btn-secundario" style="flex: 1;" onclick="toggleModalAyuda()">
+                                <span>❔</span> AYUDA
+                            </button>
+                            <button type="button" class="btn-secundario" style="flex: 1;" onclick="toggleModalCreditos()">
+                                <span>ℹ️</span> CRÉDITOS
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- CONTENEDOR 2: SALA DE ESPERA CON BOTON DE COMPARTIR -->
+                <!-- CONTENEDOR 2: SALA DE ESPERA -->
                 <div id="ui-sala-espera" style="display: none; width: 100%; flex-direction: column; align-items: center;">
                     
                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; margin-bottom: 5px;">
@@ -458,9 +538,15 @@
                         <!-- Aquí se inyectarán los jugadores desde Firebase -->
                     </div>
 
-                    <button type="button" id="btn-empezar-red" class="btn-iniciar-partida" style="display: none; background: #00ff88; color: #000; box-shadow: 0 5px 15px rgba(0,255,136,0.4); transition: opacity 0.3s;" onclick="window.iniciarPartidaRed()">
-                        🚀 EMPEZAR PARTIDA
-                    </button>
+                    <!-- BOTONES DINÁMICOS PARA EMPEZAR RED -->
+                    <div id="btn-container-empezar" style="display: flex; gap: 8px; width: 100%; justify-content: center; flex-direction: column;">
+                        <button type="button" id="btn-empezar-solo" class="btn-iniciar-partida" style="display: none; background: #FF8C00; font-size: 12px;" onclick="window.iniciarPartidaRed(false, false)">
+                            👥 EMPEZAR INCOMPLETO (SIN BOTS)
+                        </button>
+                        <button type="button" id="btn-empezar-red" class="btn-iniciar-partida" style="display: none; background: #00ff88; color: #000; font-size: 12px;" onclick="window.iniciarPartidaRed(false, true)">
+                            🤖 LLENAR CON BOTS
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -477,6 +563,22 @@
         <div class="area-principal">
             <main class="escenario-mesa">
                 <div class="zona-tapete" id="mesa-tapete">
+                    
+                    <!-- CAJA DE FICHAS SOBRANTES -->
+                    <div id="zona-sobrantes" style="display: none;" onclick="window.robarFicha()">
+                        <div id="sobrantes-stack"></div>
+                        <div id="sobrantes-label">Caja: 0</div>
+                    </div>
+
+                    <!-- MINI MARCADOR EN LA ESQUINA -->
+                    <div id="mini-marcador" onclick="toggleLibreta()" title="Toca para ver el desglose completo">
+                        <span style="color: #00bcd4;">Meta: <span id="mini-meta">200</span></span>
+                        <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
+                        <span>Nos: <span id="mini-pts-nos" style="color: #fff;">0</span></span>
+                        <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
+                        <span>Ellos: <span id="mini-pts-ellos" style="color: #fff;">0</span></span>
+                    </div>
+
                     <div class="marca-agua"><span>🇩🇴</span>Dominó RD</div>
                     <div id="zoom-container"></div>
 
@@ -626,12 +728,12 @@
             <div class="tarjeta-ajustes" style="max-width: 460px;">
                 <h2>📖 Reglas del Dominó RD</h2>
                 <div class="contenido-texto">
-                    <p><strong>🔹 Salida Obligatoria:</strong> En la primera mano, debe salir el jugador que tenga el Doble 6. En las siguientes manos, sale el ganador de la mano anterior con la ficha que desee.</p>
+                    <p><strong>🔹 Salida Obligatoria:</strong> En la primera mano, debe salir el jugador que tenga el Doble 6. Si nadie lo tiene, sale el creador de la sala con cualquier ficha.</p>
                     <p><strong>🌟 Capicúa (+30 pts):</strong> Si logras ganar la mano colocando una ficha que encaje en ambos extremos de la mesa, ¡tu equipo gana 30 puntos adicionales!</p>
                     <p><strong>🔒 Tranque:</strong> Ocurre cuando ningún jugador puede colocar ficha. Gana el equipo que sume menos puntos en las fichas de sus manos.</p>
-                    <p><strong>🔄 Vuelta de Pases (+30 pts):</strong> Si 3 jugadores seguidos pasan, el equipo del jugador que causó los pases recibe 30 puntos extra.</p>
-                    <p><strong>🔥 Pase a la Salida (+30 pts):</strong> Si sales en tu turno y el jugador que sigue después de ti no tiene esa ficha, tu equipo gana 30 puntos en el acto.</p>
-                    <p><strong>⏳ Temporizador Inteligente:</strong> Tienes 10 segundos para jugar tu turno. Si no lo haces, la IA tomará el control por ti y hará la mejor jugada posible.</p>
+                    <p><strong>🔄 Vuelta de Pases (+30 pts):</strong> Si 3 jugadores seguidos pasan y el que provocó los pases aún puede seguir jugando, su equipo recibe 30 puntos extra. (Se desactiva jugando 1vs1).</p>
+                    <p><strong>📦 Modo Caja (Sobrantes):</strong> En 1vs1 puedes elegir si las fichas que sobran se roban (Modo Abierto) o no (Modo Cerrado).</p>
+                    <p><strong>⏳ Temporizador Inteligente:</strong> Tienes 15 segundos para jugar tu turno. Si no lo haces, se jugará o pasará automáticamente por ti.</p>
                 </div>
                 <button type="button" class="btn-cerrar-ajustes" onclick="toggleModalAyuda()">Entendido</button>
             </div>
@@ -647,7 +749,7 @@
                         Desarrollado y Creado por:
                         <span>Tu Nombre Aquí 😎</span>
                     </div>
-                    <p style="font-size: 11px; margin-top: 10px;">Versión 9.2 - Sincronización y Función Compartir Sala</p>
+                    <p style="font-size: 11px; margin-top: 10px;">Versión 11.3 - UI de Ganadores y Botón Estilizado</p>
                 </div>
                 <button type="button" class="btn-cerrar-ajustes" onclick="toggleModalCreditos()">Cerrar</button>
             </div>
@@ -658,6 +760,14 @@
             <div class="tarjeta-ajustes">
                 <h2>⚙️ Configuración (Local)</h2>
                 
+                <div class="grupo-ajuste">
+                    <label>Fichas Sobrantes (Modo Incompleto)</label>
+                    <div class="opciones-botones" style="grid-template-columns: 1fr 1fr;">
+                        <button type="button" class="btn-opcion activo" id="btn-robar-cerrado" onclick="window.cambiarModoRobar(false)">Cerrado (Pase)</button>
+                        <button type="button" class="btn-opcion" id="btn-robar-abierto" onclick="window.cambiarModoRobar(true)">Abierto (Robar)</button>
+                    </div>
+                </div>
+
                 <div class="grupo-ajuste">
                     <label>Nombres y Avatares (Modo vs IA)</label>
                     <div class="opciones-nombres">
@@ -732,10 +842,11 @@
             </div>
         </div>
         
+        <!-- PANTALLA GANADOR MEJORADA -->
         <div id="modal-victoria" class="oculto">
             <div class="tarjeta-victoria">
                 <h1 id="titulo-victoria-color"><span>🏆</span> ¡GANADOR!</h1>
-                <h2 id="equipo-ganador-texto">Equipo Nosotros</h2>
+                <h2 id="equipo-ganador-texto">Nombres aquí</h2>
                 
                 <div class="marcador-final">
                     <div class="marcador-col">
@@ -783,8 +894,9 @@
         let nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
         let avataresJugadores = { 1: "😎", 2: "🧔🏾‍♂️", 3: "👨🏽‍🦳", 4: "👩🏽" };
         
-        // --- PUENTE HACIA FIREBASE ---
-        window.getConfiguracionJuego = () => ({ metaPuntos: metaPuntos });
+        // --- PUENTE HACIA FIREBASE Y CONTROL DE ASIENTOS ---
+        window.bloqueoRed = false; 
+        window.getConfiguracionJuego = () => ({ metaPuntos: metaPuntos, modoRobar: window.modoRobar });
         window.mostrarToast = mostrarToast;
         window.cerrarModalMultijugador = function() { document.getElementById('modal-multijugador').classList.add('oculto'); };
         window.getJuegoIniciado = () => juegoIniciado;
@@ -799,17 +911,153 @@
         window.getUltimoGanadorRed = () => ultimoGanador;
         window.actualizarUIAvatares = actualizarUIAvatares;
         
-        // RECIBIR REPARTO DESDE FIREBASE
+        window.getExtremoIzquierdo = () => extremoIzquierdo;
+        window.getExtremoDerecho = () => extremoDerecho;
+        window.getFichaCentro = () => fichaCentro;
+        window.iniciarTemporizadorGlobal = iniciarTemporizador;
+        window.turnoIA = turnoIA;
+
+        window.datosSala = {}; 
+        window.esBotLocal = { 1: false, 2: false, 3: false, 4: false };
+        window.asientosActivosLocales = [1, 2, 3, 4];
+        
+        // Variables para la CAJA DE SOBRANTES
+        window.modoRobar = false; 
+        window.sobrantes = [];
+
+        window.cambiarModoRobar = function(valor) {
+            window.modoRobar = valor;
+            const bC = document.getElementById('btn-robar-cerrado');
+            const bA = document.getElementById('btn-robar-abierto');
+            if(bC) bC.classList.toggle('activo', !valor);
+            if(bA) bA.classList.toggle('activo', valor);
+        };
+
+        window.setMetaPuntos = function(val) {
+            metaPuntos = val;
+            document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
+            window.actualizarMiniMarcador();
+        };
+
+        window.actualizarMiniMarcador = function() {
+            document.getElementById('mini-meta').innerText = metaPuntos;
+            document.getElementById('mini-pts-nos').innerText = puntosNosotros;
+            document.getElementById('mini-pts-ellos').innerText = puntosEllos;
+        };
+        
+        window.resetearPuntosRed = function() {
+            puntosNosotros = 0; puntosEllos = 0; ultimoGanador = null;
+            document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
+            document.getElementById('historial-nosotros').innerHTML = ''; document.getElementById('historial-ellos').innerHTML = '';
+            document.getElementById('modal-victoria').classList.add('oculto');
+            window.actualizarMiniMarcador();
+        };
+
+        window.renderizarSobrantes = function() {
+            let cont = document.getElementById('zona-sobrantes');
+            let stack = document.getElementById('sobrantes-stack');
+            let label = document.getElementById('sobrantes-label');
+            if (!cont || !stack) return;
+            stack.innerHTML = '';
+            
+            if (!window.sobrantes || window.sobrantes.length === 0 || window.asientosActivosLocales.length === 4) {
+                cont.style.display = 'none';
+                return;
+            }
+            
+            cont.style.display = 'flex';
+            window.sobrantes.forEach((f, i) => {
+                let dorso = document.createElement('div');
+                dorso.className = 'dorso-caja';
+                dorso.style.zIndex = i;
+                stack.appendChild(dorso);
+            });
+            
+            let modoTexto = window.modoRobar ? "<span style='color: #00ff88;'>🟢 Abierto (Robar)</span>" : "<span style='color: #ff3333;'>🔴 Cerrado</span>";
+            label.innerHTML = `📦 Caja: <b>${window.sobrantes.length}</b><br><span style="font-size:10px; font-weight:normal;">${modoTexto}</span>`;
+        };
+
+        window.robarFicha = function() {
+            if (juegoTerminado || turnoActual !== 1) return;
+            if (esperandoSeleccionPunta || window.bloqueoRed) return;
+            
+            if (!window.modoRobar) {
+                mostrarToast("Modo Cerrado. Debes pasar si no tienes.");
+                return;
+            }
+
+            let puedeJugar = jugadores[1].some(ficha => Number(ficha[0]) === extremoIzquierdo || Number(ficha[1]) === extremoIzquierdo || Number(ficha[0]) === extremoDerecho || Number(ficha[1]) === extremoDerecho);
+            if (!fichaCentro) puedeJugar = true;
+
+            if (puedeJugar) {
+                mostrarToast("Aún tienes fichas para jugar.");
+                return;
+            }
+
+            if (window.sobrantes.length === 0) {
+                mostrarToast("La caja está vacía.");
+                return;
+            }
+
+            detenerTemporizador();
+            if (window.esMultijugador) {
+                window.bloqueoRed = true;
+                window.enviarRobarFirebase();
+            } else {
+                window.ejecutarRobo(1);
+            }
+        };
+
+        window.ejecutarRobo = function(idJugador) {
+            if (!window.sobrantes || window.sobrantes.length === 0) return;
+            playSonido('ficha'); 
+            let f = window.sobrantes.shift();
+            jugadores[idJugador].push(f);
+            
+            renderizarManos();
+            window.renderizarSobrantes();
+            
+            mostrarBurbuja(idJugador, "¡Robando!", "burbuja-robar", false, true);
+
+            if (idJugador === 1 && !window.esMultijugador) {
+                let puedeJugar = jugadores[1].some(ficha => Number(ficha[0]) === extremoIzquierdo || Number(ficha[1]) === extremoIzquierdo || Number(ficha[0]) === extremoDerecho || Number(ficha[1]) === extremoDerecho);
+                if (!fichaCentro) puedeJugar = true;
+
+                if (puedeJugar) {
+                    mostrarToast("¡Robaste una que va! Juega.");
+                    iniciarTemporizador(15);
+                } else {
+                    if (window.sobrantes.length > 0) {
+                        mostrarToast("Sigue sin ir. Roba otra.");
+                        iniciarTemporizador(15);
+                    } else {
+                        window.ejecutarPase(1);
+                    }
+                }
+            }
+        };
+
         window.iniciarManoMultijugadorDesdeFirebase = function(partidaDB) {
             document.getElementById('btn-siguiente').style.display = 'none'; 
             document.getElementById('banner-ganador-mano').style.display = 'none';
+            window.bloqueoRed = false; 
+            
+            window.modoRobar = partidaDB.modoRobar || false;
+            window.sobrantes = partidaDB.sobrantes || [];
             
             const overlay = document.getElementById('pantalla-barajar'); 
             overlay.classList.remove('oculto');
             crearAnimacionFichas(); playSonidoBarajar();
             
+            window.asientosActivosLocales = (partidaDB.asientosActivos || [1,2,3,4]).map(seat => {
+                let offset = seat - window.miPuesto;
+                if (offset < 0) offset += 4;
+                return offset + 1;
+            }).sort((a,b) => a - b);
+
             setTimeout(() => { 
                 overlay.classList.add('oculto');
+                
                 for (let i = 1; i <= 4; i++) {
                     let offset = i - window.miPuesto;
                     if (offset < 0) offset += 4;
@@ -827,12 +1075,18 @@
                 historialPases = { 1: [], 2: [], 3: [], 4: [] };
                 jugadorSalida = turnoActual; 
                 
-                renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
+                renderizarManos(); 
+                renderizarMesa(); 
+                window.renderizarSobrantes();
+                iniciarTurnoNormal();
             }, 2000);
         };
 
         window.despacharJugada = function(ficha, idJugador, index, colocarIzquierda, esCapicua) {
             if (window.esMultijugador) {
+                if (window.bloqueoRed) return; 
+                window.bloqueoRed = true;
+                detenerTemporizador();
                 window.enviarJugadaFirebase(ficha, colocarIzquierda, esCapicua);
             } else {
                 procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua);
@@ -843,7 +1097,6 @@
             procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua);
         };
 
-        // NUEVA FUNCIÓN: COMPARTIR SALA
         window.compartirCodigoSala = function() {
             const codigo = document.getElementById('lobby-codigo').innerText;
             if (!codigo || codigo === '---') return;
@@ -877,7 +1130,6 @@
                 mostrarToast("¡Código copiado al portapapeles! 📋");
             }
         }
-        // ----------------------------------------
 
         let estadisticas = { victorias: 0, derrotas: 0, capicuas: 0, puntosTotales: 0 };
         const frasesPensando = ["A ver...", "Pensando...", "Mmm...", "Esa pinta..."];
@@ -950,10 +1202,11 @@
         }
 
         function generarHTMLMitad(numero) { let html = `<div class="mitad ${clasesNumeros[numero]}">`; for(let i = 0; i < numero; i++) html += `<div class="punto"></div>`; return html + `</div>`; }
-        function sumarMano(mano) { return mano.reduce((sum, f) => sum + f[0] + f[1], 0); }
+        function sumarMano(mano) { return mano.reduce((sum, f) => sum + Number(f[0]) + Number(f[1]), 0); }
 
         function comenzarDesdeBienvenida() {
             guardarAjustesVariables(); initAudio(); juegoIniciado = true; window.esMultijugador = false;
+            window.actualizarMiniMarcador();
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
                     if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(err => console.log("Giro automático no soportado", err)); }
@@ -1012,7 +1265,9 @@
         }
 
         function cambiarMetaPuntos(nuevaMeta) {
-            metaPuntos = nuevaMeta; document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
+            metaPuntos = nuevaMeta; 
+            document.getElementById('lbl-meta').innerText = `Meta: ${metaPuntos} pts`;
+            window.actualizarMiniMarcador();
             [50, 100, 150, 200].forEach(pts => { const b = document.getElementById(`btn-meta-${pts}`); if (b) b.classList.toggle('activo', pts === nuevaMeta); });
             revisarPuntos();
         }
@@ -1044,13 +1299,12 @@
 
         function dibujarFichasReveladas(idContenedor, mano, tipo) {
             const cont = document.getElementById(idContenedor); cont.innerHTML = '';
-            // Aumentamos el tamaño al doble aprox (scale 0.5 en lugar de 0.24)
             const w = tipo === 'h' ? '50px' : '25px'; 
             const h = tipo === 'h' ? '25px' : '50px';
             mano.forEach((ficha, index) => {
                 const wrapper = document.createElement('div'); wrapper.style.width = w; wrapper.style.height = h; wrapper.style.position = 'relative'; wrapper.className = 'wrapper-revelada'; wrapper.style.animationDelay = `${index * 0.08}s`;
                 const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${tipo === 'h' ? 'horizontal' : 'vertical'} ficha-revelada`; divFicha.style.transform = 'scale(0.5)';  divFicha.style.transformOrigin = 'top left'; divFicha.style.position = 'absolute'; divFicha.style.top = '0'; divFicha.style.left = '0'; divFicha.style.pointerEvents = 'none'; 
-                divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
+                divFicha.innerHTML = `${generarHTMLMitad(Number(ficha[0]))}<div class="linea-divisoria"></div>${generarHTMLMitad(Number(ficha[1]))}`;
                 wrapper.appendChild(divFicha); cont.appendChild(wrapper);
             });
         }
@@ -1059,11 +1313,11 @@
 
         /* --- SISTEMA DRAG & DROP --- */
         function iniciarArrastre(e, ficha, index, element) {
-            // CORRECCIÓN 1: Se eliminó `esperandoSeleccionPunta` de esta validación
             if (juegoTerminado || turnoActual !== 1) return;
+            if (window.esMultijugador && window.bloqueoRed) return; 
             
-            // NUEVO: Si estaba esperando que tocara la punta, pero el usuario decide arrastrar,
-            // cancelamos la selección y le permitimos moverla libremente.
+            detenerTemporizador();
+            
             if (esperandoSeleccionPunta) {
                 esperandoSeleccionPunta = false;
                 fichaSeleccionada = null;
@@ -1072,7 +1326,7 @@
                 renderizarMesa();
             }
 
-            let [a, b] = ficha;
+            let a = Number(ficha[0]); let b = Number(ficha[1]);
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
             if (salidaObligatoria && !fichaCentro && (a !== 6 || b !== 6)) { puedeIzq = false; puedeDer = false; }
@@ -1123,27 +1377,36 @@
 
             if (juegoTerminado || turnoActual !== 1) return;
 
-            let [a, b] = dragTileData;
+            let a = Number(dragTileData[0]); let b = Number(dragTileData[1]);
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
             if (draggedDist < 10) { intentarJugada(dragTileData, 1, dragTileIndex); return; }
 
+            let jugadaRealizada = false;
+
             if (!fichaCentro) {
                 if (soltadoEnCentro || (elemAbaixo && elemAbaixo.closest('#mesa-tapete'))) {
-                    if (salidaObligatoria && (a !== 6 || b !== 6)) { mostrarToast("Debes salir con el doble 6."); return; }
-                    window.despacharJugada(dragTileData, 1, dragTileIndex, true, false);
+                    if (salidaObligatoria && (a !== 6 || b !== 6)) { mostrarToast("Debes salir con el doble 6."); }
+                    else {
+                        window.despacharJugada(dragTileData, 1, dragTileIndex, true, false);
+                        jugadaRealizada = true;
+                    }
                 }
             } else {
                 let esCapicua = (jugadores[1].length === 1 && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho);
-                if (soltadoEnIzq && puedeIzq) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
-                else if (soltadoEnDer && puedeDer) window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua);
+                if (soltadoEnIzq && puedeIzq) { window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua); jugadaRealizada = true; }
+                else if (soltadoEnDer && puedeDer) { window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua); jugadaRealizada = true; }
                 else if (elemAbaixo && elemAbaixo.closest('#mesa-tapete')) {
-                    if (puedeIzq && !puedeDer) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
-                    else if (puedeDer && !puedeIzq) window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua);
-                    else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) intentarJugada(dragTileData, 1, dragTileIndex); 
-                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua);
+                    if (puedeIzq && !puedeDer) { window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua); jugadaRealizada = true; }
+                    else if (puedeDer && !puedeIzq) { window.despacharJugada(dragTileData, 1, dragTileIndex, false, esCapicua); jugadaRealizada = true; }
+                    else if (puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) { intentarJugada(dragTileData, 1, dragTileIndex); jugadaRealizada = true; } 
+                    else if (puedeIzq && puedeDer && extremoIzquierdo === extremoDerecho) { window.despacharJugada(dragTileData, 1, dragTileIndex, true, esCapicua); jugadaRealizada = true; }
                 }
+            }
+
+            if (!jugadaRealizada && !esperandoSeleccionPunta && turnoActual === 1) {
+                iniciarTemporizador(15);
             }
         }
 
@@ -1160,18 +1423,30 @@
 
         function renderizarManos() {
             const miMano = document.getElementById('mi-mano'); miMano.innerHTML = ''; 
+            
+            for (let i = 1; i <= 4; i++) {
+                let elMano = document.getElementById(`mano-j${i}`);
+                let elPos = document.getElementById(`pos-j${i}`);
+                if (elMano && i !== 1) elMano.style.display = window.asientosActivosLocales.includes(i) ? 'flex' : 'none';
+                if (elPos && i !== 1) elPos.style.display = window.asientosActivosLocales.includes(i) ? 'flex' : 'none';
+            }
+
             jugadores[1].forEach((ficha, index) => {
                 const divFicha = document.createElement('div'); divFicha.className = 'ficha';
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
-                divFicha.innerHTML = `${generarHTMLMitad(ficha[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(ficha[1])}`;
+                divFicha.innerHTML = `${generarHTMLMitad(Number(ficha[0]))}<div class="linea-divisoria"></div>${generarHTMLMitad(Number(ficha[1]))}`;
                 divFicha.onpointerdown = (e) => iniciarArrastre(e, ficha, index, divFicha);
                 miMano.appendChild(divFicha);
             });
 
             if (juegoTerminado) {
-                dibujarFichasReveladas('mano-j2', jugadores[2], 'v'); dibujarFichasReveladas('mano-j3', jugadores[3], 'h'); dibujarFichasReveladas('mano-j4', jugadores[4], 'v');
+                dibujarFichasReveladas('mano-j2', jugadores[2] || [], 'v'); 
+                dibujarFichasReveladas('mano-j3', jugadores[3] || [], 'h'); 
+                dibujarFichasReveladas('mano-j4', jugadores[4] || [], 'v');
             } else {
-                dibujarDorsos('mano-j2', jugadores[2].length, 'v'); dibujarDorsos('mano-j3', jugadores[3].length, 'h'); dibujarDorsos('mano-j4', jugadores[4].length, 'v');
+                dibujarDorsos('mano-j2', (jugadores[2] || []).length, 'v'); 
+                dibujarDorsos('mano-j3', (jugadores[3] || []).length, 'h'); 
+                dibujarDorsos('mano-j4', (jugadores[4] || []).length, 'v');
             }
         }
 
@@ -1194,7 +1469,7 @@
         }
 
         function drawFichaOrientada(ficha, cx, cy, dir, contenedor, zIndexLocal) {
-            const esDoble = ficha[0] === ficha[1];
+            const esDoble = Number(ficha[0]) === Number(ficha[1]);
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
@@ -1203,14 +1478,14 @@
             const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${claseExtra}`;
             divFicha.style.left = (cx - w/2) + 'px'; divFicha.style.top = (cy - h/2) + 'px'; divFicha.style.zIndex = zIndexLocal; 
             
-            let parte1 = ficha[0], parte2 = ficha[1];
-            if (dir === 'L' || dir === 'U') { parte1 = ficha[1]; parte2 = ficha[0]; }
+            let parte1 = Number(ficha[0]), parte2 = Number(ficha[1]);
+            if (dir === 'L' || dir === 'U') { parte1 = Number(ficha[1]); parte2 = Number(ficha[0]); }
             divFicha.innerHTML = `${generarHTMLMitad(parte1)}<div class="linea-divisoria"></div>${generarHTMLMitad(parte2)}`;
             contenedor.appendChild(divFicha);
         }
 
         function simularFichaBounds(ficha, cx, cy, dir) {
-            const esDoble = ficha[0] === ficha[1];
+            const esDoble = Number(ficha[0]) === Number(ficha[1]);
             let w = (dir === 'R' || dir === 'L') ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50); let h = (dir === 'R' || dir === 'L') ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100);
             if (dir === 'U' || dir === 'D') { if (esDoble) { w = 100; h = 50; } }
             return { minX: cx - w/2, maxX: cx + w/2, minY: cy - h/2, maxY: cy + h/2 };
@@ -1228,11 +1503,11 @@
 
         function trazarRama(rama, joint, isRightBranch, iniciaNosotros, callbackFicha) {
             let plan = getBranchPlan(iniciaNosotros, isRightBranch);
-            let prevIsDouble = fichaCentro[0] === fichaCentro[1]; let currentDir = joint.dir;
+            let prevIsDouble = Number(fichaCentro[0]) === Number(fichaCentro[1]); let currentDir = joint.dir;
             let stepIndex = 0; let countInStep = 0;
 
             rama.forEach((ficha, idx) => {
-                let isD = ficha[0] === ficha[1];
+                let isD = Number(ficha[0]) === Number(ficha[1]);
                 if (countInStep >= plan.counts[stepIndex]) { if (!isD) { stepIndex = (stepIndex + 1) % plan.dirs.length; countInStep = 0; } }
                 let targetDir = plan.dirs[stepIndex];
                 if (targetDir !== currentDir) { aplicarGiro(joint, prevIsDouble, currentDir, targetDir); currentDir = targetDir; }
@@ -1251,7 +1526,7 @@
 
         function calcularCadenaBounds() {
             if (!fichaCentro) return null; let bounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
-            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = fichaCentro[0] === fichaCentro[1];
+            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = Number(fichaCentro[0]) === Number(fichaCentro[1]);
             let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100); let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             bounds.minX = -w/2; bounds.maxX = w/2; bounds.minY = -h/2; bounds.maxY = h/2;
             let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
@@ -1288,12 +1563,12 @@
             const transX = centroSeguroX - (centroCadenaX * escalaOptima); const transY = centroSeguroY - (centroCadenaY * escalaOptima);
             contenedorZoom.style.transform = `translate(${transX}px, ${transY}px) scale(${escalaOptima})`; contenedorZoom.style.transformOrigin = '0 0';
 
-            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = fichaCentro[0] === fichaCentro[1];
+            let iniciaNosotros = (jugadorSalida === 1 || jugadorSalida === 3); let esDoble = Number(fichaCentro[0]) === Number(fichaCentro[1]);
             let w = iniciaNosotros ? (esDoble ? 100 : 50) : (esDoble ? 50 : 100); let h = iniciaNosotros ? (esDoble ? 50 : 100) : (esDoble ? 100 : 50);
             let claseExtraCentro = (w > h) ? 'horizontal' : 'vertical';
 
             const divFicha = document.createElement('div'); divFicha.className = `ficha-mesa ${claseExtraCentro}`; divFicha.style.left = (-w/2) + 'px'; divFicha.style.top = (-h/2) + 'px'; divFicha.style.zIndex = 10;
-            divFicha.innerHTML = `${generarHTMLMitad(fichaCentro[0])}<div class="linea-divisoria"></div>${generarHTMLMitad(fichaCentro[1])}`;
+            divFicha.innerHTML = `${generarHTMLMitad(Number(fichaCentro[0]))}<div class="linea-divisoria"></div>${generarHTMLMitad(Number(fichaCentro[1]))}`;
             contenedorZoom.appendChild(divFicha);
             
             let jointDer = iniciaNosotros ? { x: 0, y: h/2, dir: 'D' } : { x: w/2, y: 0, dir: 'R' };
@@ -1306,7 +1581,6 @@
 
             puntaIzqCoords = { x: jointIzq.x, y: jointIzq.y }; puntaDerCoords = { x: jointDer.x, y: jointDer.y };
 
-            // CORRECCIÓN 2 APLICADA: Uso de onpointerdown y e.stopPropagation() en los círculos verdes
             if (esperandoSeleccionPunta) {
                 const marcadorDer = document.createElement('div'); marcadorDer.className = 'marcador-punta'; marcadorDer.style.left = jointDer.x + 'px'; marcadorDer.style.top = jointDer.y + 'px'; marcadorDer.onpointerdown = (e) => { e.stopPropagation(); ejecutarEleccion(false); }; contenedorZoom.appendChild(marcadorDer);
                 const marcadorIzq = document.createElement('div'); marcadorIzq.className = 'marcador-punta'; marcadorIzq.style.left = jointIzq.x + 'px'; marcadorIzq.style.top = jointIzq.y + 'px'; marcadorIzq.onpointerdown = (e) => { e.stopPropagation(); ejecutarEleccion(true); }; contenedorZoom.appendChild(marcadorIzq);
@@ -1320,6 +1594,7 @@
             else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
         }
 
+        // --- CORRECCIÓN APLICADA AQUÍ (Nombres en el Modal de Victoria) ---
         function mostrarModalVictoria(ganadorEquipo) {
             playSonido('victoria');
             const modal = document.getElementById('modal-victoria'); 
@@ -1327,7 +1602,19 @@
             const titulo = document.getElementById('titulo-victoria-color');
             const ptsNosotrosEl = document.getElementById('pts-final-nosotros'); const ptsEllosEl = document.getElementById('pts-final-ellos');
 
-            texto.innerText = ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos'; 
+            // Determinar qué nombres mostrar (solo los activos de cada equipo)
+            let nombresGanadores = [];
+            if (ganadorEquipo === 1) {
+                if (window.asientosActivosLocales.includes(1)) nombresGanadores.push(nombresJugadores[1]);
+                if (window.asientosActivosLocales.includes(3)) nombresGanadores.push(nombresJugadores[3]);
+            } else {
+                if (window.asientosActivosLocales.includes(2)) nombresGanadores.push(nombresJugadores[2]);
+                if (window.asientosActivosLocales.includes(4)) nombresGanadores.push(nombresJugadores[4]);
+            }
+
+            let textoFinalGanador = nombresGanadores.length > 0 ? nombresGanadores.join(" y ") : (ganadorEquipo === 1 ? 'Equipo Nosotros' : 'Equipo Ellos');
+            texto.innerText = textoFinalGanador; 
+
             texto.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744'; 
             titulo.style.color = ganadorEquipo === 1 ? '#00bcd4' : '#ff1744';
             ptsNosotrosEl.innerText = puntosNosotros; ptsEllosEl.innerText = puntosEllos;
@@ -1340,15 +1627,24 @@
         }
 
         function reiniciarPartidaCompleta() {
+            if (window.esMultijugador && window.miPuesto !== 1) {
+                mostrarToast("Esperando al anfitrión para la revancha...");
+                return;
+            }
+            
             puntosNosotros = 0; puntosEllos = 0; ultimoGanador = null;
             document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
             document.getElementById('historial-nosotros').innerHTML = ''; document.getElementById('historial-ellos').innerHTML = '';
             document.getElementById('modal-victoria').classList.add('oculto');
-            iniciarManoConAnimacion();
+            window.actualizarMiniMarcador();
+            
+            iniciarManoConAnimacion(true); 
         }
 
         function revisarPuntos() {
             document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
+            window.actualizarMiniMarcador(); 
+            
             if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
                 juegoTerminado = true; detenerTemporizador();
                 document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
@@ -1362,11 +1658,16 @@
             juegoTerminado = true; limpiarBurbujas(); ocultarToast(); detenerTemporizador();
             for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda'); }
             
-            let sumaPuntosMano = 0; for(let i = 1; i <= 4; i++) sumaPuntosMano += sumarMano(jugadores[i]);
+            let sumaPuntosMano = 0;
+            window.asientosActivosLocales.forEach(i => sumaPuntosMano += sumarMano(jugadores[i]));
+            
             let equipoGanador = 0; let jGanadorFinal = ganador; let tipoVictoria = "¡DOMINÓ!"; let claseBanner = "domino";
             
             if (porTranque) {
-                let jTranco = ultimoJugadorEnJugar; let jSigue = (ultimoJugadorEnJugar % 4) + 1;
+                let jTranco = ultimoJugadorEnJugar; 
+                let currIdx = window.asientosActivosLocales.indexOf(ultimoJugadorEnJugar);
+                let jSigue = window.asientosActivosLocales[(currIdx + 1) % window.asientosActivosLocales.length];
+                
                 let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
                 jGanadorFinal = (ptsTranco <= ptsSigue) ? jTranco : jSigue; equipoGanador = (jGanadorFinal === 1 || jGanadorFinal === 3) ? 1 : 2; ultimoGanador = jGanadorFinal;
                 tipoVictoria = "¡TRANQUE! 🔒"; claseBanner = "tranque"; sacudirMesa();
@@ -1417,17 +1718,20 @@
 
         function jugadaAutomaticaHumano() {
             if (juegoTerminado || turnoActual !== 1) return;
+            if (window.esMultijugador && window.bloqueoRed) return; 
+
             detenerTemporizador(); 
             if(esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; }
 
             let mano = jugadores[1]; let validas = [];
             
             if (salidaObligatoria && !fichaCentro) {
-                let idx = mano.findIndex(f => f[0] === 6 && f[1] === 6);
+                let idx = mano.findIndex(f => Number(f[0]) === 6 && Number(f[1]) === 6);
                 if (idx !== -1) validas.push({ ficha: mano[idx], index: idx, esIzquierda: true, peso: 100 });
             } else {
                 for (let i = 0; i < mano.length; i++) {
                     let ficha = mano[i]; let [a, b] = ficha;
+                    a = Number(a); b = Number(b);
                     let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
                     let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
@@ -1441,12 +1745,25 @@
                 mostrarToast("⏳ ¡Tiempo agotado! Jugada automática.");
                 let esCapicua = false;
                 if (mano.length === 1 && fichaCentro && extremoIzquierdo !== extremoDerecho) {
-                    let [a,b] = mejorJugada.ficha;
+                    let a = Number(mejorJugada.ficha[0]); let b = Number(mejorJugada.ficha[1]);
                     if ((a === extremoIzquierdo || b === extremoIzquierdo) && (a === extremoDerecho || b === extremoDerecho)) esCapicua = true;
                 }
                 window.despacharJugada(mejorJugada.ficha, 1, mejorJugada.index, mejorJugada.esIzquierda, esCapicua);
             } else {
-                if (window.esMultijugador && window.enviarPaseFirebase) window.enviarPaseFirebase();
+                if (window.modoRobar && window.sobrantes && window.sobrantes.length > 0) {
+                    if (window.esMultijugador) {
+                        if (!window.bloqueoRed) { window.bloqueoRed = true; window.enviarRobarFirebase(); }
+                    } else {
+                        window.ejecutarRobo(1);
+                        setTimeout(jugadaAutomaticaHumano, 800); 
+                    }
+                } else {
+                    if (window.esMultijugador && window.enviarPaseFirebase) {
+                        if (!window.bloqueoRed) { window.bloqueoRed = true; window.enviarPaseFirebase(); }
+                    } else {
+                        window.ejecutarPase(1);
+                    }
+                }
             }
         }
 
@@ -1457,9 +1774,10 @@
             const wrapPasador = document.getElementById(`pos-j${idJugador}`);
             if (wrapPasador) { wrapPasador.classList.add('avatar-paso'); setTimeout(() => wrapPasador.classList.remove('avatar-paso'), 2200); }
 
-            if (pasesConsecutivos >= 4) { finalizarMano(0, true); return; }
+            if (pasesConsecutivos >= window.asientosActivosLocales.length) { finalizarMano(0, true); return; } 
             
             let txtPaso = frasesPaso[Math.floor(Math.random() * frasesPaso.length)];
+            
             if (esPrimerTurnoDespuesDeSalida) {
                 mostrarBurbuja(idJugador, txtPaso, "paso", false, true);
                 let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
@@ -1470,27 +1788,87 @@
             } else {
                 mostrarBurbuja(idJugador, txtPaso, "paso", false, true);
             }
-            esPrimerTurnoDespuesDeSalida = false; setTimeout(avanzarTurno, 1500);
+            
+            esPrimerTurnoDespuesDeSalida = false; 
+
+            if (pasesConsecutivos === window.asientosActivosLocales.length - 1 && window.asientosActivosLocales.length > 2) {
+                let puedeJugarSiguiente = jugadores[ultimoJugadorEnJugar].some(ficha => Number(ficha[0]) === extremoIzquierdo || Number(ficha[1]) === extremoIzquierdo || Number(ficha[0]) === extremoDerecho || Number(ficha[1]) === extremoDerecho);
+                
+                if (puedeJugarSiguiente) {
+                    let equipoVuelta = (ultimoJugadorEnJugar === 1 || ultimoJugadorEnJugar === 3) ? 1 : 2;
+                    if (equipoVuelta === 1) puntosNosotros += 30; else puntosEllos += 30;
+                    agregarRondaHistorial(equipoVuelta, 30);
+                    mostrarBannerEspecial(`🔄 ¡30 DE VUELTA! 🔄`, `+30 Puntos`, 'salida-30', 2500);
+                    if(revisarPuntos()) return;
+                }
+            }
+
+            setTimeout(avanzarTurno, 1500);
         }
 
         function avanzarTurno() {
             if (juegoTerminado) return;
             detenerTemporizador();
-            turnoActual = turnoActual === 4 ? 1 : turnoActual + 1;
+            
+            let currentIndex = window.asientosActivosLocales.indexOf(turnoActual);
+            turnoActual = window.asientosActivosLocales[(currentIndex + 1) % window.asientosActivosLocales.length];
+            
+            if (turnoActual === 1) window.bloqueoRed = false;
+
             if (!fichaCentro) { iniciarTurnoNormal(); return; }
 
-            let puedeJugar = jugadores[turnoActual].some(ficha => ficha[0] === extremoIzquierdo || ficha[1] === extremoIzquierdo || ficha[0] === extremoDerecho || ficha[1] === extremoDerecho);
+            let puedeJugar = jugadores[turnoActual].some(ficha => Number(ficha[0]) === extremoIzquierdo || Number(ficha[1]) === extremoIzquierdo || Number(ficha[0]) === extremoDerecho || Number(ficha[1]) === extremoDerecho);
 
             if (!puedeJugar) {
-                if (window.esMultijugador) {
-                    if (turnoActual === 1) setTimeout(() => window.enviarPaseFirebase(), 1000);
-                    else mostrarBurbuja(turnoActual, "Pensando...", "pensando");
-                    return; 
+                resaltarTurnoActivo(); 
+
+                if (window.modoRobar && window.sobrantes && window.sobrantes.length > 0) {
+                    if (window.esMultijugador) {
+                        if (turnoActual === 1) {
+                            mostrarToast("Toca las fichas de la caja para robar.");
+                            iniciarTemporizador(15);
+                        } else if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                            setTimeout(() => window.turnoIA(), 1500);
+                        } else {
+                            mostrarBurbuja(turnoActual, "Pensando...", "pensando");
+                        }
+                    } else {
+                        if (turnoActual === 1) {
+                            mostrarToast("Toca las fichas de la caja para robar.");
+                            iniciarTemporizador(15);
+                        } else {
+                            setTimeout(() => window.turnoIA(), 1500);
+                        }
+                    }
                 } else {
-                    window.ejecutarPase(turnoActual);
+                    if (window.esMultijugador) {
+                        if (turnoActual === 1) { 
+                            mostrarToast("No tienes fichas para jugar. Pasando...");
+                            setTimeout(() => {
+                                if (!window.bloqueoRed) { window.bloqueoRed = true; window.enviarPaseFirebase(); }
+                            }, 1200);
+                        } else if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                            setTimeout(() => {
+                                let absoluteSeat = window.miPuesto + (turnoActual - 1);
+                                if (absoluteSeat > 4) absoluteSeat -= 4;
+                                window.enviarPaseBotFirebase(absoluteSeat);
+                            }, 1200);
+                        } else {
+                            mostrarBurbuja(turnoActual, "Pensando...", "pensando");
+                        }
+                    } else {
+                        setTimeout(() => window.ejecutarPase(turnoActual), 1200);
+                    }
                 }
             } else {
-                if (window.esMultijugador && turnoActual !== 1) { mostrarBurbuja(turnoActual, "Pensando...", "pensando"); return; }
+                if (window.esMultijugador && turnoActual !== 1) { 
+                    resaltarTurnoActivo();
+                    mostrarBurbuja(turnoActual, "Pensando...", "pensando");
+                    if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                        setTimeout(window.turnoIA, 2500);
+                    }
+                    return; 
+                }
                 iniciarTurnoNormal();
             }
         }
@@ -1498,29 +1876,40 @@
         function iniciarTurnoNormal() {
             resaltarTurnoActivo();
             detenerTemporizador();
+            
+            if (turnoActual === 1) window.bloqueoRed = false;
+
             if (turnoActual !== 1) { 
                 let txtPensar = frasesPensando[Math.floor(Math.random() * frasesPensando.length)];
                 mostrarBurbuja(turnoActual, txtPensar, "pensando"); 
-                if (!window.esMultijugador) setTimeout(turnoIA, 1400); 
+                
+                if (!window.esMultijugador) {
+                    setTimeout(window.turnoIA, 2500); 
+                } else {
+                    if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                        setTimeout(window.turnoIA, 2500);
+                    }
+                }
             } else {
                 if (salidaObligatoria && !fichaCentro) mostrarToast("Debes salir con el Doble 6");
                 else mostrarToast("¡Tu turno!"); 
-                iniciarTemporizador(10); 
+                iniciarTemporizador(15); 
             }
         }
 
         function intentarJugada(ficha, idJugador, index, preferirIzquierda = null) {
             if (juegoTerminado || turnoActual !== idJugador) return; 
-            if (salidaObligatoria && !fichaCentro) { if (ficha[0] !== 6 || ficha[1] !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
+            if (window.esMultijugador && window.bloqueoRed) return; 
+            if (salidaObligatoria && !fichaCentro) { if (Number(ficha[0]) !== 6 || Number(ficha[1]) !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
             
             detenerTemporizador();
             if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); iniciarTurnoNormal(); }
 
-            let [a, b] = ficha;
+            let a = Number(ficha[0]); let b = Number(ficha[1]);
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
-            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); iniciarTemporizador(10); return; } 
+            if (!puedeIzq && !puedeDer) { mostrarToast("Ficha no válida"); iniciarTemporizador(15); return; } 
 
             let esCapicua = false;
             if (jugadores[idJugador].length === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) esCapicua = true;
@@ -1529,7 +1918,7 @@
                 esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index; fichaSeleccionada.esCapicua = esCapicua;
                 renderizarManos(); renderizarMesa(); 
                 mostrarToast("Toca el aro verde donde colocarla");
-                iniciarTemporizador(10); 
+                iniciarTemporizador(15); 
                 return; 
             }
 
@@ -1549,7 +1938,7 @@
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
             playSonido('ficha'); 
-            let [a, b] = ficha; 
+            let a = Number(ficha[0]); let b = Number(ficha[1]); 
             if (!fichaCentro) { 
                 let max = Math.max(a, b); let min = Math.min(a, b);
                 if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
@@ -1564,8 +1953,7 @@
                 esPrimerTurnoDespuesDeSalida = false;
             }
             
-            pasesConsecutivos = 0; // <--- AQUÍ SE SOLUCIONA EL ERROR DEL FALSO TRANQUE
-
+            pasesConsecutivos = 0; 
             jugadores[idJugador].splice(index, 1); ultimoJugadorEnJugar = idJugador; 
             
             if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
@@ -1573,22 +1961,27 @@
         }
 
         function evaluarJugadaIA(ficha, extremoActual, esIzquierda, manoIA) {
-            let [a, b] = ficha; let nuevoExtremo = (a === extremoActual) ? b : a;
-            let compadre = (turnoActual === 2) ? 4 : ((turnoActual === 4) ? 2 : 1);
-            let rivalSiguiente = (turnoActual === 4) ? 1 : turnoActual + 1;
-            let faltasCompadre = historialPases[compadre]; let faltasRival = historialPases[rivalSiguiente];
-
+            let a = Number(ficha[0]); let b = Number(ficha[1]); 
+            let nuevoExtremo = (a === extremoActual) ? b : a;
+            
             let peso = a + b; if (a === b) peso += 15; 
             if (dificultadIA === 'facil') { peso += Math.random() * 20; return { ficha: ficha, peso: peso, esIzquierda: esIzquierda }; }
-            if (faltasRival.includes(nuevoExtremo)) peso += 50; if (faltasCompadre.includes(nuevoExtremo)) peso -= 40;
-            let misFichasPalo = manoIA.filter(f => f[0] === nuevoExtremo || f[1] === nuevoExtremo).length; peso += misFichasPalo * 5; 
+            
+            if (window.asientosActivosLocales.length > 2) {
+                let compadre = (turnoActual === 2) ? 4 : ((turnoActual === 4) ? 2 : 1);
+                let rivalSiguiente = (turnoActual === 4) ? 1 : turnoActual + 1;
+                let faltasCompadre = historialPases[compadre] || []; let faltasRival = historialPases[rivalSiguiente] || [];
+                if (faltasRival.includes(nuevoExtremo)) peso += 50; if (faltasCompadre.includes(nuevoExtremo)) peso -= 40;
+            }
+
+            let misFichasPalo = manoIA.filter(f => Number(f[0]) === nuevoExtremo || Number(f[1]) === nuevoExtremo).length; peso += misFichasPalo * 5; 
 
             if (dificultadIA === 'experto') {
                 let conteoMesa = 0;
                 if (fichaCentro) {
-                    if (fichaCentro[0] === nuevoExtremo || fichaCentro[1] === nuevoExtremo) conteoMesa++;
-                    ramaIzquierda.forEach(f => { if (f[0] === nuevoExtremo || f[1] === nuevoExtremo) conteoMesa++; });
-                    ramaDerecha.forEach(f => { if (f[0] === nuevoExtremo || f[1] === nuevoExtremo) conteoMesa++; });
+                    if (Number(fichaCentro[0]) === nuevoExtremo || Number(fichaCentro[1]) === nuevoExtremo) conteoMesa++;
+                    ramaIzquierda.forEach(f => { if (Number(f[0]) === nuevoExtremo || Number(f[1]) === nuevoExtremo) conteoMesa++; });
+                    ramaDerecha.forEach(f => { if (Number(f[0]) === nuevoExtremo || Number(f[1]) === nuevoExtremo) conteoMesa++; });
                 }
                 let totalVisibles = conteoMesa + misFichasPalo;
                 if (totalVisibles === 7) peso += 100; else if (totalVisibles === 6) peso += 30; 
@@ -1599,19 +1992,62 @@
         function turnoIA() {
             if (juegoTerminado) return;
             let manoIA = jugadores[turnoActual];
-            if (salidaObligatoria && !fichaCentro) { let index66 = manoIA.findIndex(f => f[0] === 6 && f[1] === 6); if (index66 !== -1) { intentarJugada(manoIA[index66], turnoActual, index66); return; } }
-            
             let validas = [];
-            for (let i = 0; i < manoIA.length; i++) {
-                let ficha = manoIA[i]; let [a, b] = ficha;
-                let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
-                let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
 
-                if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, manoIA); jugada.index = i; validas.push(jugada); }
-                if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
+            if (salidaObligatoria && !fichaCentro) {
+                let index66 = manoIA.findIndex(f => Number(f[0]) === 6 && Number(f[1]) === 6);
+                if (index66 !== -1) { 
+                    validas.push({ ficha: manoIA[index66], index: index66, esIzquierda: true, peso: 100 });
+                }
+            } else {
+                for (let i = 0; i < manoIA.length; i++) {
+                    let ficha = manoIA[i]; let [a, b] = ficha;
+                    a = Number(a); b = Number(b);
+                    let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
+                    let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
+
+                    if (puedeIzq) { let jugada = evaluarJugadaIA(ficha, extremoIzquierdo, true, manoIA); jugada.index = i; validas.push(jugada); }
+                    if (puedeDer && fichaCentro && extremoIzquierdo !== extremoDerecho) { let jugada = evaluarJugadaIA(ficha, extremoDerecho, false, manoIA); jugada.index = i; validas.push(jugada); }
+                }
             }
             
-            if (validas.length > 0) { validas.sort((a,b) => b.peso - a.peso); let mejorJugada = validas[0]; intentarJugada(mejorJugada.ficha, turnoActual, mejorJugada.index, mejorJugada.esIzquierda); }
+            if (validas.length > 0) { 
+                validas.sort((a,b) => b.peso - a.peso); 
+                let mejorJugada = validas[0]; 
+                
+                let esCapicua = false;
+                if (manoIA.length === 1 && fichaCentro && extremoIzquierdo !== extremoDerecho) {
+                    let a = Number(mejorJugada.ficha[0]); let b = Number(mejorJugada.ficha[1]);
+                    if ((a === extremoIzquierdo || b === extremoIzquierdo) && (a === extremoDerecho || b === extremoDerecho)) esCapicua = true;
+                }
+
+                if (window.esMultijugador) {
+                    let absoluteSeat = window.miPuesto + (turnoActual - 1);
+                    if (absoluteSeat > 4) absoluteSeat -= 4;
+                    window.enviarJugadaBotFirebase(mejorJugada.ficha, absoluteSeat, mejorJugada.esIzquierda, esCapicua);
+                } else {
+                    intentarJugada(mejorJugada.ficha, turnoActual, mejorJugada.index, mejorJugada.esIzquierda); 
+                }
+            } else {
+                if (window.modoRobar && window.sobrantes && window.sobrantes.length > 0) {
+                    if (window.esMultijugador) {
+                        let absoluteSeat = window.miPuesto + (turnoActual - 1);
+                        if (absoluteSeat > 4) absoluteSeat -= 4;
+                        window.enviarRobarBotFirebase(absoluteSeat);
+                    } else {
+                        window.ejecutarRobo(turnoActual);
+                        setTimeout(window.turnoIA, 800); 
+                    }
+                } else {
+                    if (window.esMultijugador) {
+                        let absoluteSeat = window.miPuesto + (turnoActual - 1);
+                        if (absoluteSeat > 4) absoluteSeat -= 4;
+                        window.enviarPaseBotFirebase(absoluteSeat);
+                    } else {
+                        window.ejecutarPase(turnoActual);
+                    }
+                }
+            }
         }
 
         function crearAnimacionFichas() {
@@ -1625,7 +2061,7 @@
             }
         }
 
-        function iniciarManoConAnimacion() {
+        function iniciarManoConAnimacion(esNuevaPartida = false) {
             document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
             for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso'); }
             limpiarBurbujas(); ocultarToast(); detenerTemporizador();
@@ -1633,13 +2069,15 @@
             document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
             document.getElementById('zoom-container').innerHTML = '';
 
-            // SI ES MULTIJUGADOR, DETENEMOS LA EJECUCION LOCAL Y LE DECIMOS A FIREBASE QUE EMPIECE
+            // SI ES MULTIJUGADOR
             if (window.esMultijugador) {
-                if (window.miPuesto === 1 && window.iniciarPartidaRed) { window.iniciarPartidaRed(); }
+                if (window.miPuesto === 1 && window.iniciarPartidaRed) { window.iniciarPartidaRed(esNuevaPartida, false); }
                 return;
             }
 
-            // MODO LOCAL
+            // MODO LOCAL SIEMPRE TIENE 4 JUGADORES
+            window.asientosActivosLocales = [1, 2, 3, 4];
+            
             const overlay = document.getElementById('pantalla-barajar'); overlay.classList.remove('oculto');
             crearAnimacionFichas(); playSonidoBarajar(); 
             setTimeout(() => { overlay.classList.add('oculto'); ejecutarLogicaRepartoLocal(); }, 2000);
@@ -1653,13 +2091,39 @@
             mazo = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazo.push([i, j]);
             for (let i = mazo.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazo[i], mazo[j]] = [mazo[j], mazo[i]]; }
-            let pos = 0; for (let i = 1; i <= 4; i++) { jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; }
+            
+            let pos = 0; 
+            for (let i = 1; i <= 4; i++) { 
+                jugadores[i] = mazo.slice(pos, pos + 7); pos += 7; 
+            }
+            window.sobrantes = mazo.slice(pos); 
 
             let primerJuego = window.esPrimerJuego();
-            if (primerJuego) { for (let i = 1; i <= 4; i++) { if (jugadores[i].some(f => f[0] === 6 && f[1] === 6)) { turnoActual = i; salidaObligatoria = true; break; } } } 
-            else { turnoActual = ultimoGanador || 1; salidaObligatoria = false; }
+            let alguienTieneElDoble6 = false;
+
+            if (primerJuego) { 
+                for (let i = 1; i <= 4; i++) { 
+                    if (jugadores[i].some(f => Number(f[0]) === 6 && Number(f[1]) === 6)) { 
+                        turnoActual = i; 
+                        salidaObligatoria = true; 
+                        alguienTieneElDoble6 = true;
+                        break; 
+                    } 
+                } 
+                if (!alguienTieneElDoble6) {
+                    turnoActual = 1;
+                    salidaObligatoria = false;
+                }
+            } else { 
+                turnoActual = ultimoGanador || 1; 
+                salidaObligatoria = false; 
+            }
             
-            jugadorSalida = turnoActual; renderizarManos(); renderizarMesa(); iniciarTurnoNormal();
+            jugadorSalida = turnoActual; 
+            renderizarManos(); 
+            renderizarMesa(); 
+            window.renderizarSobrantes();
+            iniciarTurnoNormal();
         }
 
         window.addEventListener('resize', () => { renderizarManos(); renderizarMesa(); });
@@ -1671,7 +2135,7 @@
     <!-- SCRIPT 2: MÓDULO MULTIJUGADOR FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
@@ -1690,9 +2154,9 @@
         window.salaIdActual = null;
         window.miPuesto = 1; 
         window.esMultijugador = false;
-        window.ultimaManoJugada = 0; // Controla qué número de partida vamos
+        window.ultimaManoJugada = 0; 
         let ultimoTimestampAccion = 0;
-        window.jugadoresConectados = 0; // NUEVO: Rastrea los jugadores
+        window.jugadoresConectados = 0; 
 
         window.crearSalaReal = async function() {
             try {
@@ -1716,7 +2180,8 @@
                 await set(salaRef, {
                     estado: 'esperando',
                     metaPuntos: configLocal.metaPuntos,
-                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true } }
+                    modoRobar: configLocal.modoRobar,
+                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false } }
                 });
 
                 escucharCambiosSala(codigo);
@@ -1751,59 +2216,130 @@
                     document.getElementById('ui-sala-espera').style.display = 'flex';
                     document.getElementById('lobby-codigo').innerText = val;
 
-                    await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), { nombre: nombreRed, avatar: avatarRed, listo: true });
+                    await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false });
                     escucharCambiosSala(val);
                 } else { window.mostrarToast("La sala no existe"); }
             } catch(error) { window.mostrarToast("Error uniéndose."); }
         };
 
-        // LA FUNCIÓN DE INICIAR SOLUCIONADA: Creador genera y sube los datos a Firebase
-        window.iniciarPartidaRed = async function() {
+        window.iniciarPartidaRed = async function(esNuevaPartida = false, rellenarBots = true) {
             if (window.miPuesto !== 1) return; 
             
-            // NUEVO: Verificamos si están los 4 jugadores conectados antes de dejar iniciar
-            if (window.jugadoresConectados < 4) {
-                window.mostrarToast("Faltan jugadores. La mesa debe estar llena.");
-                return;
-            }
+            let asientosDb = Object.keys(window.datosSala.jugadores).map(Number);
             
+            if (rellenarBots) {
+                let updates = {};
+                for (let i = 1; i <= 4; i++) {
+                    if (!window.datosSala.jugadores || !window.datosSala.jugadores[i]) {
+                        updates['salas/' + window.salaIdActual + '/jugadores/' + i] = { 
+                            nombre: "Robot " + i, avatar: "🤖", isBot: true, listo: true 
+                        };
+                        asientosDb.push(i);
+                    }
+                }
+                if (Object.keys(updates).length > 0) await update(ref(db), updates);
+                asientosDb = [1, 2, 3, 4];
+            }
+
             let mazoLocal = [];
             for (let i = 0; i <= 6; i++) for (let j = i; j <= 6; j++) mazoLocal.push([i, j]);
             for (let i = mazoLocal.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [mazoLocal[i], mazoLocal[j]] = [mazoLocal[j], mazoLocal[i]]; }
             
-            let manosGeneradas = { 1: mazoLocal.slice(0, 7), 2: mazoLocal.slice(7, 14), 3: mazoLocal.slice(14, 21), 4: mazoLocal.slice(21, 28) };
+            let manosGeneradas = {};
+            let pos = 0;
+            asientosDb.forEach(seat => {
+                manosGeneradas[seat] = mazoLocal.slice(pos, pos + 7);
+                pos += 7;
+            });
+            let fichasSobrantesRed = mazoLocal.slice(pos);
             
             let primerJuego = window.esPrimerJuego();
-            let turnoInicial = 1;
+            if (esNuevaPartida) primerJuego = true; 
+
+            let turnoInicial = asientosDb[0];
+            let salirConDoble6 = false;
+
             if (primerJuego) { 
-                for (let i = 1; i <= 4; i++) { if (manosGeneradas[i].some(f => f[0] === 6 && f[1] === 6)) { turnoInicial = i; break; } } 
+                for (let seat of asientosDb) { 
+                    if (manosGeneradas[seat].some(f => Number(f[0]) === 6 && Number(f[1]) === 6)) { 
+                        turnoInicial = seat; 
+                        salirConDoble6 = true;
+                        break; 
+                    } 
+                } 
             } else { 
-                turnoInicial = window.getUltimoGanadorRed() || 1; 
+                turnoInicial = window.getUltimoGanadorRed() || asientosDb[0]; 
             }
 
             let nuevaMano = (window.ultimaManoJugada || 0) + 1;
+            if (esNuevaPartida) nuevaMano = 1; 
 
+            const configLocal = window.getConfiguracionJuego();
             const salaRef = ref(db, 'salas/' + window.salaIdActual);
+            
             await update(salaRef, { 
                 estado: 'jugando',
+                acciones: null,
                 partida: {
                     numeroMano: nuevaMano,
+                    esNuevaPartida: esNuevaPartida,
+                    asientosActivos: asientosDb, 
                     manos: manosGeneradas,
+                    sobrantes: fichasSobrantesRed, 
+                    modoRobar: configLocal.modoRobar,
                     turnoActual: turnoInicial,
-                    salidaObligatoria: primerJuego
+                    salidaObligatoria: salirConDoble6, 
+                    timestampInicio: Date.now()
                 }
             }); 
         };
 
-        // EMISORES DE JUGADAS
         window.enviarJugadaFirebase = async function(ficha, colocarIzquierda, esCapicua) {
-            const salaRef = ref(db, 'salas/' + window.salaIdActual + '/ultimaAccion');
-            await set(salaRef, { tipo: 'JUGAR', puestoAbsoluto: window.miPuesto, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'JUGAR', puestoAbsoluto: window.miPuesto, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+            } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
         };
 
         window.enviarPaseFirebase = async function() {
-            const salaRef = ref(db, 'salas/' + window.salaIdActual + '/ultimaAccion');
-            await set(salaRef, { tipo: 'PASAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'PASAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+            } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
+        };
+
+        window.enviarRobarFirebase = async function() {
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'ROBAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+            } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
+        };
+
+        window.enviarJugadaBotFirebase = async function(ficha, absoluteSeat, colocarIzquierda, esCapicua) {
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'JUGAR', puestoAbsoluto: absoluteSeat, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+            } catch(e) {}
+        };
+
+        window.enviarPaseBotFirebase = async function(absoluteSeat) {
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'PASAR', puestoAbsoluto: absoluteSeat, timestamp: Date.now() });
+            } catch(e) {}
+        };
+
+        window.enviarRobarBotFirebase = async function(absoluteSeat) {
+            try {
+                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
+                const nuevaAccion = push(accionesRef);
+                await set(nuevaAccion, { tipo: 'ROBAR', puestoAbsoluto: absoluteSeat, timestamp: Date.now() });
+            } catch(e) {}
         };
 
         function escucharCambiosSala(codigoSala) {
@@ -1812,6 +2348,16 @@
             onValue(salaRef, (snapshot) => {
                 const datos = snapshot.val();
                 if (!datos) return;
+                
+                window.datosSala = datos; 
+
+                if (datos.metaPuntos && window.getConfiguracionJuego().metaPuntos !== datos.metaPuntos) {
+                    window.setMetaPuntos(datos.metaPuntos);
+                }
+                
+                if (datos.modoRobar !== undefined && window.getConfiguracionJuego().modoRobar !== datos.modoRobar) {
+                    window.cambiarModoRobar(datos.modoRobar);
+                }
 
                 if (datos.estado === 'esperando') {
                     let htmlJugadores = ''; let contadorJugadores = 0;
@@ -1824,17 +2370,27 @@
                         }
                     }
                     document.getElementById('lobby-jugadores').innerHTML = htmlJugadores;
-                    window.jugadoresConectados = contadorJugadores; // Actualiza el conteo global
+                    window.jugadoresConectados = contadorJugadores; 
 
                     if (window.miPuesto === 1) {
-                        document.getElementById('btn-empezar-red').style.display = 'block';
-                        // NUEVO: El botón reacciona si falta gente
+                        const btnRed = document.getElementById('btn-empezar-red');
+                        const btnSolo = document.getElementById('btn-empezar-solo');
+                        
                         if (contadorJugadores === 4) {
-                            document.getElementById('lobby-mensaje').innerText = "¡Mesa llena! Presiona empezar.";
-                            document.getElementById('btn-empezar-red').style.opacity = '1';
+                            btnRed.style.display = 'block';
+                            btnRed.innerText = "🚀 EMPEZAR PARTIDA";
+                            btnRed.style.opacity = '1';
+                            btnSolo.style.display = 'none';
+                        } else if (contadorJugadores > 1) {
+                            btnRed.style.display = 'block';
+                            btnRed.innerText = "🤖 LLENAR CON BOTS";
+                            btnRed.style.opacity = '1';
+                            
+                            btnSolo.style.display = 'block';
+                            btnSolo.innerText = `👥 EMPEZAR INCOMPLETO (SIN BOTS)`;
                         } else {
-                            document.getElementById('lobby-mensaje').innerText = "Esperando jugadores (" + contadorJugadores + "/4)...";
-                            document.getElementById('btn-empezar-red').style.opacity = '0.5';
+                            btnRed.style.display = 'none';
+                            btnSolo.style.display = 'none';
                         }
                     } else {
                         document.getElementById('lobby-mensaje').innerText = "Esperando a que el creador inicie la partida...";
@@ -1843,12 +2399,18 @@
 
                 if (datos.jugadores) { mapearJugadoresEnMesa(datos.jugadores, window.miPuesto); }
 
-                // INICIO DE MANO (TODOS RECIBEN ESTO Y ARRANCAN AL MISMO TIEMPO)
+                // INICIO DE MANO
                 if (datos.estado === 'jugando' && datos.partida) {
                     let manoEnBD = datos.partida.numeroMano || 1;
                     if (!window.getJuegoIniciado() || manoEnBD > (window.ultimaManoJugada || 0)) {
+                        
+                        if (datos.partida.esNuevaPartida) {
+                            window.resetearPuntosRed();
+                        }
+
                         window.setJuegoIniciado(true);
                         window.ultimaManoJugada = manoEnBD;
+                        ultimoTimestampAccion = datos.partida.timestampInicio || 0;
                         
                         document.getElementById('ui-sala-espera').style.display = 'none';
                         document.getElementById('pantalla-bienvenida').style.display = 'none';
@@ -1857,21 +2419,55 @@
                     }
                 }
 
-                // RECEPCIÓN DE MOVIMIENTOS EN TIEMPO REAL
-                if (datos.ultimaAccion && datos.ultimaAccion.timestamp > ultimoTimestampAccion) {
-                    ultimoTimestampAccion = datos.ultimaAccion.timestamp;
-                    if (window.getJuegoIniciado()) {
-                        let offset = datos.ultimaAccion.puestoAbsoluto - window.miPuesto;
-                        if (offset < 0) offset += 4;
-                        let localSeat = offset + 1;
+                if (datos.acciones) {
+                    const listaAcciones = Object.values(datos.acciones).sort((a,b) => a.timestamp - b.timestamp);
+                    
+                    for (let accion of listaAcciones) {
+                        if (accion.timestamp > ultimoTimestampAccion) {
+                            ultimoTimestampAccion = accion.timestamp;
+                            
+                            if (window.getJuegoIniciado()) {
+                                let offset = accion.puestoAbsoluto - window.miPuesto;
+                                if (offset < 0) offset += 4;
+                                let localSeat = offset + 1;
 
-                        if (datos.ultimaAccion.tipo === 'JUGAR') {
-                            let indexFicha = window.jugadores[localSeat].findIndex(f => f[0] === datos.ultimaAccion.ficha[0] && f[1] === datos.ultimaAccion.ficha[1]);
-                            if (indexFicha !== -1) {
-                                window.procesarJugadaFinalLocal(datos.ultimaAccion.ficha, localSeat, indexFicha, datos.ultimaAccion.colocarIzquierda, datos.ultimaAccion.esCapicua);
+                                if (accion.tipo === 'JUGAR') {
+                                    let indexFicha = window.jugadores[localSeat].findIndex(f => Number(f[0]) === Number(accion.ficha[0]) && Number(f[1]) === Number(accion.ficha[1]));
+                                    if (indexFicha !== -1) {
+                                        window.procesarJugadaFinalLocal(accion.ficha, localSeat, indexFicha, accion.colocarIzquierda, accion.esCapicua);
+                                    }
+                                } else if (accion.tipo === 'PASAR') {
+                                    window.ejecutarPase(localSeat);
+                                } else if (accion.tipo === 'ROBAR') {
+                                    window.ejecutarRobo(localSeat);
+                                    
+                                    if (localSeat === 1) {
+                                        window.bloqueoRed = false;
+                                        let ei = window.getExtremoIzquierdo();
+                                        let ed = window.getExtremoDerecho();
+                                        let fc = window.getFichaCentro();
+                                        
+                                        let puedeJugar = window.jugadores[1].some(ficha => Number(ficha[0]) === ei || Number(ficha[1]) === ei || Number(ficha[0]) === ed || Number(ficha[1]) === ed);
+                                        if (!fc) puedeJugar = true;
+                                        
+                                        if (puedeJugar) {
+                                            window.mostrarToast("¡Robaste una que va! Juega.");
+                                            window.iniciarTemporizadorGlobal(15);
+                                        } else {
+                                            if (window.sobrantes.length > 0) {
+                                                window.mostrarToast("Sigue sin ir. Roba otra.");
+                                                window.iniciarTemporizadorGlobal(15);
+                                            } else {
+                                                setTimeout(() => {
+                                                    if (!window.bloqueoRed) { window.bloqueoRed = true; window.enviarPaseFirebase(); }
+                                                }, 1000);
+                                            }
+                                        }
+                                    } else if (window.miPuesto === 1 && window.esBotLocal[localSeat]) {
+                                        setTimeout(window.turnoIA, 1000); 
+                                    }
+                                }
                             }
-                        } else if (datos.ultimaAccion.tipo === 'PASAR') {
-                            window.ejecutarPase(localSeat);
                         }
                     }
                 }
@@ -1879,6 +2475,7 @@
         }
 
         function mapearJugadoresEnMesa(jugadoresDB, miPuestoLocal) {
+            window.esBotLocal = { 1: false, 2: false, 3: false, 4: false }; 
             for (let i = 1; i <= 4; i++) {
                 if (jugadoresDB[i]) {
                     let offset = i - miPuestoLocal;
@@ -1887,6 +2484,7 @@
 
                     window.nombresJugadores[posicionPantalla] = jugadoresDB[i].nombre;
                     window.avataresJugadores[posicionPantalla] = jugadoresDB[i].avatar;
+                    window.esBotLocal[posicionPantalla] = jugadoresDB[i].isBot === true;
                 }
             }
             if(window.actualizarUIAvatares) window.actualizarUIAvatares();
