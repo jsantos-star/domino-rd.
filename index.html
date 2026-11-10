@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 132</title>
+    <title>Dominó RD 829</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -131,15 +131,29 @@
         .btn-secundario:hover { background: rgba(0, 188, 212, 0.25); }
         .btn-secundario:active { transform: scale(0.96); }
 
-        /* --- BOTONES DE CONTROL SUPERIOR EN MESA --- */
-        .botones-cabecera { position: absolute; top: 8px; right: 12px; display: flex; gap: 8px; z-index: 150; }
-        .btn-flotante {
-            height: 32px; background: rgba(19, 25, 38, 0.88); border: 1px solid rgba(255,255,255,0.18); border-radius: 16px; 
-            color: #fff; font-size: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6); padding: 0 10px; font-weight: bold; backdrop-filter: blur(5px);
-        }
-        .btn-flotante.solo-icono { width: 32px; padding: 0; border-radius: 50%; font-size: 15px; }
-        .btn-flotante:active { transform: scale(0.92); border-color: var(--azul-rd); }
+        /* --- MENÚ FLOTANTE MODERNO (ABAJO) --- */
+        .menu-flotante-container { position: absolute; bottom: 25px; right: 25px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 14px; }
+        .btn-menu-principal { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00bcd4, #005ce6); border: 2px solid rgba(255,255,255,0.2); color: white; font-size: 24px; box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .btn-menu-principal:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 10px 30px rgba(0, 188, 212, 0.7); }
+        .btn-menu-principal:active { transform: scale(0.9); }
+        
+        #menu-herramientas { display: flex; flex-direction: column; gap: 8px; background: rgba(10, 15, 24, 0.95); padding: 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.05); min-width: 220px; transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom right; }
+        #menu-herramientas.oculto { opacity: 0; pointer-events: none; transform: scale(0.6) translateY(40px) translateX(20px); }
+        
+        .btn-herramienta { width: 100%; text-align: left; padding: 12px 16px; background: rgba(19, 25, 38, 0.6); border: none; border-left: 4px solid transparent; color: white; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.25s ease; border-radius: 8px; position: relative;}
+        .btn-herramienta:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(-4px); }
+        .btn-herramienta:active { transform: scale(0.96); }
+        
+        .btn-herramienta .left-content { display: flex; align-items: center; gap: 12px; }
+        .btn-herramienta span.icono { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+
+        /* Colores Neón Vibrantes */
+        .btn-h-chat { border-left-color: #00bcd4; color: #00bcd4; background: linear-gradient(90deg, rgba(0, 188, 212, 0.15) 0%, transparent 100%); }
+        .btn-h-marcador { border-left-color: #4caf50; color: #4caf50; background: linear-gradient(90deg, rgba(76, 175, 80, 0.15) 0%, transparent 100%); }
+        .btn-h-pantalla { border-left-color: #ff9800; color: #ff9800; background: linear-gradient(90deg, rgba(255, 152, 0, 0.15) 0%, transparent 100%); }
+        .btn-h-ajustes { border-left-color: #9c27b0; color: #e1bee7; background: linear-gradient(90deg, rgba(156, 39, 176, 0.15) 0%, transparent 100%); }
+        .btn-h-reglas { border-left-color: #ff1744; color: #ff1744; background: linear-gradient(90deg, rgba(255, 23, 68, 0.15) 0%, transparent 100%); }
+        .btn-h-creditos { border-left-color: #2196f3; color: #2196f3; background: linear-gradient(90deg, rgba(33, 150, 243, 0.15) 0%, transparent 100%); }
 
         /* MINI MARCADOR EN MESA */
         #mini-marcador {
@@ -161,7 +175,7 @@
 
         /* --- CAJA DE SOBRANTES MEJORADA Y BACANA --- */
         #zona-sobrantes {
-            position: absolute; right: 20px; bottom: 90px; 
+            position: absolute; right: 20px; bottom: 120px; 
             display: flex; flex-direction: column; align-items: center; gap: 8px; 
             z-index: 100; cursor: pointer; transition: transform 0.2s;
         }
@@ -284,24 +298,49 @@
         .mano-jugador-activa { 
             display: flex; justify-content: center; align-items: flex-end; gap: 6px; pointer-events: auto;
             background: rgba(7, 10, 16, 0.65); padding: 4px 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 85vw; overflow-x: auto; transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 85vw; overflow-x: auto; 
+            transition: all 0.3s ease;
+            transform: perspective(600px) rotateX(15deg);
+            transform-origin: bottom center;
         }
-        .mano-jugador-activa:hover { background: rgba(7, 10, 16, 0.85); }
+        .mano-jugador-activa:hover { 
+            background: rgba(7, 10, 16, 0.85); 
+            transform: perspective(600px) rotateX(5deg); 
+        }
 
         .ficha {
             width: 48px; height: 90px; background: var(--ficha-bg); border-radius: 6px; display: flex; flex-direction: column; padding: 4px;
-            cursor: grab; transition: transform 0.15s ease, box-shadow 0.15s ease; flex-shrink: 0;
+            cursor: grab; transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; flex-shrink: 0;
             box-shadow: 2px 4px 10px rgba(0,0,0,0.6), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
             border: 1px solid rgba(0,0,0,0.3); touch-action: none;
+            opacity: 0.6; /* Fichas oscurecidas por defecto cuando es nuestro turno */
         }
+        
+        /* CUANDO NO ES NUESTRO TURNO, MOSTRAR NORMAL (sin resaltado, sin opacidad reducida) */
+        .turno-inactivo .ficha {
+            opacity: 1;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.6), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
+            border-color: rgba(0,0,0,0.3);
+            pointer-events: none; /* No se pueden tocar */
+        }
+
+        /* FICHAS QUE SÍ SE PUEDEN JUGAR EN NUESTRO TURNO */
+        .ficha.jugable {
+            opacity: 1;
+            box-shadow: 0 0 15px 2px rgba(0, 255, 136, 0.6), inset 2px 2px 5px rgba(255,255,255,0.8);
+            border-color: #00ff88;
+            transform: translateY(-4px); /* Ligeramente levantadas */
+        }
+
         .ficha:active { cursor: grabbing; }
-        .ficha:hover { transform: translateY(-8px); }
-        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95), inset 2px 2px 5px rgba(255,255,255,0.8); border-color: #00bcd4; }
+        .ficha.jugable:hover, .turno-inactivo .ficha:hover { transform: translateY(-8px); }
+        .ficha.seleccionada { transform: translateY(-14px); box-shadow: 0 0 16px rgba(0, 188, 212, 0.95), inset 2px 2px 5px rgba(255,255,255,0.8); border-color: #00bcd4; opacity: 1;}
 
         .ficha.arrastrando {
             position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
             transform: scale(1.15) translateY(-15px) !important;
             box-shadow: 0 15px 30px rgba(0, 188, 212, 0.9) !important; transition: none !important; margin: 0 !important;
+            opacity: 1 !important;
         }
 
         .zona-drop {
@@ -473,6 +512,103 @@
             font-size: 10px; font-weight: bold; text-transform: uppercase;
             letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
         }
+
+        /* ESTILOS DEL MENÚ DE REACCIONES FLOTANTES */
+        #menu-reacciones {
+            position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%);
+            background: rgba(19, 25, 38, 0.96); border: 1px solid rgba(0, 188, 212, 0.4); 
+            border-radius: 12px; padding: 8px; display: grid; grid-template-columns: repeat(3, 1fr); 
+            gap: 6px; width: 220px; box-shadow: 0 8px 30px rgba(0,0,0,0.9); z-index: 200;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        #menu-reacciones.oculto { opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.95); }
+        .btn-reaccion-opcion {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; color: #fff; padding: 6px; font-size: 11px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+        }
+        .btn-reaccion-opcion:hover { background: rgba(0, 188, 212, 0.2); border-color: var(--azul-rd); }
+        .btn-reaccion-opcion span { font-size: 16px; }
+
+        /* FUEGO ANIMATION (RACHA DE VICTORIAS) */
+        @keyframes fuegoFondo {
+            0% { box-shadow: 0 0 15px #ff3333, 0 0 25px #ff8800; border-color: #ff8800; }
+            100% { box-shadow: 0 0 25px #ff8800, 0 0 40px #ffff00; border-color: #ffff00; }
+        }
+        .en-fuego .avatar {
+            animation: fuegoFondo 0.5s infinite alternate !important;
+            border-width: 3px !important;
+        }
+        .en-fuego .avatar-wrap::before, .en-fuego .avatar-nosotros-pill::before {
+            content: '🔥';
+            position: absolute;
+            top: -18px;
+            right: -10px;
+            font-size: 24px;
+            animation: flotarFuego 0.8s infinite alternate;
+            z-index: 60;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+        }
+        @keyframes flotarFuego {
+            0% { transform: translateY(0) scale(1) rotate(-5deg); }
+            100% { transform: translateY(-6px) scale(1.2) rotate(5deg); }
+        }
+
+        /* TRAIL PARTICLES */
+        .trail-particle {
+            position: fixed; pointer-events: none; z-index: 9998;
+            background: radial-gradient(circle, #fff 0%, #00bcd4 60%, transparent 100%);
+            border-radius: 50%; width: 12px; height: 12px;
+            box-shadow: 0 0 10px #00bcd4, 0 0 20px #00bcd4;
+            animation: fadeTrail 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        @keyframes fadeTrail { 
+            0% { opacity: 1; transform: scale(1) translate(-50%, -50%); } 
+            100% { opacity: 0; transform: scale(0.2) translate(-50%, -50%); } 
+        }
+
+        /* CHAT PANEL */
+        .panel-chat {
+            position: absolute; top: 0; left: 0; height: 100%; width: 300px; background: #131926; border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 16px; box-shadow: 10px 0 35px rgba(0,0,0,0.85); z-index: 300; transform: translateX(-100%); transition: transform 0.28s ease;
+        }
+        .panel-chat.abierta { transform: translateX(0); }
+        .chat-mensajes { flex: 1; overflow-y: auto; background: #0b0f19; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .chat-mensajes::-webkit-scrollbar { width: 3px; } .chat-mensajes::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
+        .msg-burbuja { font-size: 13px; padding: 8px 12px; border-radius: 14px; max-width: 85%; line-height: 1.3; }
+        .msg-burbuja.mio { background: rgba(0, 188, 212, 0.15); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid var(--azul-rd);}
+        .msg-burbuja.otro { background: rgba(255, 255, 255, 0.1); color: #ccc; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg-autor { font-size: 10px; color: #888; margin-bottom: 3px; font-weight: bold;}
+        .chat-input-area { display: flex; gap: 6px; }
+        .chat-input-area input { flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; color: #fff; padding: 10px 14px; font-size: 13px; outline: none; }
+        .chat-input-area input:focus { border-color: var(--azul-rd); }
+        .chat-input-area button { background: linear-gradient(45deg, #00bcd4, #005ce6); color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 14px; box-shadow: 0 4px 10px rgba(0,188,212,0.4);}
+        .chat-input-area button:active { transform: scale(0.92); }
+        .notif-dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: #ff1744; border-radius: 50%; border: 2px solid #131926; display: none; box-shadow: 0 0 8px #ff1744;}
+        .notif-dot.activa { display: block; }
+        
+        /* --- MENÚ FLOTANTE MODERNO (ABAJO) --- */
+        .menu-flotante-container { position: absolute; bottom: 25px; right: 25px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 14px; }
+        .btn-menu-principal { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00bcd4, #005ce6); border: 2px solid rgba(255,255,255,0.2); color: white; font-size: 24px; box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .btn-menu-principal:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 10px 30px rgba(0, 188, 212, 0.7); }
+        .btn-menu-principal:active { transform: scale(0.9); }
+        
+        #menu-herramientas { display: flex; flex-direction: column; gap: 8px; background: rgba(10, 15, 24, 0.95); padding: 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.05); min-width: 220px; transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom right; }
+        #menu-herramientas.oculto { opacity: 0; pointer-events: none; transform: scale(0.6) translateY(40px) translateX(20px); }
+        
+        .btn-herramienta { width: 100%; text-align: left; padding: 12px 16px; background: rgba(19, 25, 38, 0.6); border: none; border-left: 4px solid transparent; color: white; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.25s ease; border-radius: 8px; position: relative;}
+        .btn-herramienta:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(-4px); }
+        .btn-herramienta:active { transform: scale(0.96); }
+        
+        .btn-herramienta .left-content { display: flex; align-items: center; gap: 12px; }
+        .btn-herramienta span.icono { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+
+        /* Colores Neón Vibrantes */
+        .btn-h-chat { border-left-color: #00bcd4; color: #00bcd4; background: linear-gradient(90deg, rgba(0, 188, 212, 0.15) 0%, transparent 100%); }
+        .btn-h-marcador { border-left-color: #4caf50; color: #4caf50; background: linear-gradient(90deg, rgba(76, 175, 80, 0.15) 0%, transparent 100%); }
+        .btn-h-pantalla { border-left-color: #ff9800; color: #ff9800; background: linear-gradient(90deg, rgba(255, 152, 0, 0.15) 0%, transparent 100%); }
+        .btn-h-ajustes { border-left-color: #9c27b0; color: #e1bee7; background: linear-gradient(90deg, rgba(156, 39, 176, 0.15) 0%, transparent 100%); }
+        .btn-h-reglas { border-left-color: #ff1744; color: #ff1744; background: linear-gradient(90deg, rgba(255, 23, 68, 0.15) 0%, transparent 100%); }
+        .btn-h-creditos { border-left-color: #2196f3; color: #2196f3; background: linear-gradient(90deg, rgba(33, 150, 243, 0.15) 0%, transparent 100%); }
     </style>
 </head>
 <body class="ficha-blanco mesa-verde">
@@ -552,12 +688,33 @@
             </div>
         </div>
 
-        <div class="botones-cabecera">
-            <button type="button" class="btn-flotante solo-icono" onclick="toggleModalCreditos()" title="Créditos">ℹ️</button>
-            <button type="button" class="btn-flotante solo-icono" id="btn-fullscreen" onclick="togglePantallaCompleta()" title="Pantalla Completa">⛶</button>
-            <button type="button" class="btn-flotante solo-icono" onclick="toggleModalAyuda()" title="Reglas del Juego">❔</button>
-            <button type="button" class="btn-flotante" id="btn-abrir-libreta" onclick="toggleLibreta()">📋 Marcador</button>
-            <button type="button" class="btn-flotante solo-icono" id="btn-ajustes" onclick="toggleModalAjustes()" title="Configuración">⚙️</button>
+        <!-- MENÚ FLOTANTE MODERNO (REEMPLAZA BOTONES SUPERIORES) -->
+        <div class="menu-flotante-container">
+            <button type="button" class="btn-menu-principal" onclick="toggleMenuHerramientas()" title="Menú">
+                ⚙️
+                <div class="notif-dot" id="menu-notif-global"></div>
+            </button>
+            <div id="menu-herramientas" class="oculto">
+                <button class="btn-herramienta btn-h-chat" onclick="toggleChat(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">💬</span> Chat de Mesa</div>
+                    <div class="notif-dot" id="chat-notif" style="position: static; display: none; width: 10px; height: 10px;"></div>
+                </button>
+                <button class="btn-herramienta btn-h-marcador" onclick="toggleLibreta(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">📋</span> Marcador Global</div>
+                </button>
+                <button class="btn-herramienta btn-h-pantalla" onclick="togglePantallaCompleta(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">⛶</span> Pantalla Completa</div>
+                </button>
+                <button class="btn-herramienta btn-h-ajustes" onclick="toggleModalAjustes(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">🛠️</span> Configuración</div>
+                </button>
+                <button class="btn-herramienta btn-h-reglas" onclick="toggleModalAyuda(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">📖</span> Reglas y Ayuda</div>
+                </button>
+                <button class="btn-herramienta btn-h-creditos" onclick="toggleModalCreditos(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">ℹ️</span> Créditos</div>
+                </button>
+            </div>
         </div>
 
         <div class="area-principal">
@@ -637,7 +794,21 @@
                         </div>
                         <div class="nombre-tag">Nosotros</div>
                         <div class="burbuja-estado" id="burbuja-j1"></div>
+                        
+                        <!-- BOTÓN Y MENÚ DE REACCIONES -->
+                        <div id="contenedor-reacciones" style="position: absolute; top: -5px; right: -30px;">
+                            <button type="button" id="btn-reaccion" onclick="toggleMenuReacciones()" style="background: rgba(0,0,0,0.7); border: 1px solid var(--azul-rd); border-radius: 50%; width: 26px; height: 26px; font-size: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 0;">💬</button>
+                            <div id="menu-reacciones" class="oculto">
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Sopla! 🔥')"><span>🔥</span> Sopla</button>
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Pasó! ❌')"><span>❌</span> Paso</button>
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('Tranquilo ☕')"><span>☕</span> Café</button>
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Acózalo! 🇩🇴')"><span>🇩🇴</span> Palo</button>
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Tiembla! 💀')"><span>💀</span> Miedo</button>
+                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Capicúa! 🌟')"><span>🌟</span> Capicúa</button>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="mano-jugador-activa" id="mi-mano"></div>
                 </div>
 
@@ -650,6 +821,7 @@
             <div id="toast-mensaje">Cargando partida...</div>
         </div>
 
+        <!-- PANEL DE ANOTACION LATERAL -->
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
                 <button type="button" class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
@@ -672,6 +844,21 @@
                 <div class="divisor-linea"></div>
                 <div class="columna-puntos" id="historial-ellos"></div>
             </div>
+        </aside>
+
+        <!-- PANEL DE CHAT LATERAL -->
+        <aside class="panel-chat" id="panel-chat">
+            <div class="header-libreta">
+                <button type="button" class="btn-cerrar-libreta" style="right: auto; left: -4px;" onclick="toggleChat()">✕</button>
+                <h1>Chat <span>Mesa</span></h1>
+            </div>
+            <div class="chat-mensajes" id="chat-mensajes">
+                <div style="text-align: center; color: #666; font-size: 10px; margin-top: auto;">Inicia la conversación</div>
+            </div>
+            <form class="chat-input-area" onsubmit="window.enviarMensajeChat(event)">
+                <input type="text" id="input-chat" placeholder="Escribe un mensaje..." autocomplete="off">
+                <button type="submit">➤</button>
+            </form>
         </aside>
 
         <!-- MODAL MULTIJUGADOR ACTUALIZADO -->
@@ -749,7 +936,7 @@
                         Desarrollado y Creado por:
                         <span>Tu Nombre Aquí 😎</span>
                     </div>
-                    <p style="font-size: 11px; margin-top: 10px;">Versión 11.3 - UI de Ganadores y Botón Estilizado</p>
+                    <p style="font-size: 11px; margin-top: 10px;">Versión 12.1 - Menú Flotante Moderno</p>
                 </div>
                 <button type="button" class="btn-cerrar-ajustes" onclick="toggleModalCreditos()">Cerrar</button>
             </div>
@@ -894,6 +1081,106 @@
         let nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
         let avataresJugadores = { 1: "😎", 2: "🧔🏾‍♂️", 3: "👨🏽‍🦳", 4: "👩🏽" };
         
+        // --- NOVEDADES: ESTADOS Y CHAT ---
+        window.rachaEquipo1 = 0;
+        window.rachaEquipo2 = 0;
+        
+        function toggleMenuReacciones() {
+            const m = document.getElementById('menu-reacciones');
+            if (m) m.classList.toggle('oculto');
+        }
+
+        function enviarReaccion(texto) {
+            toggleMenuReacciones();
+            if (window.esMultijugador && window.enviarReaccionFirebase) {
+                window.enviarReaccionFirebase(texto);
+            } else {
+                mostrarBurbuja(1, texto, 'pensando', false, false);
+            }
+        }
+        
+        function toggleMenuHerramientas() {
+            const m = document.getElementById('menu-herramientas');
+            if (m) m.classList.toggle('oculto');
+        }
+
+        function toggleChat() {
+            const panel = document.getElementById('panel-chat');
+            panel.classList.toggle('abierta');
+            if (panel.classList.contains('abierta')) {
+                document.querySelectorAll('.notif-dot').forEach(d => d.classList.remove('activa'));
+                const chatMsgs = document.getElementById('chat-mensajes');
+                chatMsgs.scrollTop = chatMsgs.scrollHeight;
+            }
+        }
+
+        window.enviarMensajeChat = function(e) {
+            e.preventDefault();
+            const input = document.getElementById('input-chat');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            input.value = '';
+            
+            if (window.esMultijugador && window.salaIdActual) {
+                window.enviarChatFirebase(msg);
+            } else {
+                window.recibirMensajeChatLocal(nombresJugadores[1], msg, true);
+                
+                // Bot Responde en local
+                setTimeout(() => {
+                    const respBots = ["¡No me desconcentres!", "Tranquilo que esta la ganamos", "Juega rápido mejor", "🤐"];
+                    const resp = respBots[Math.floor(Math.random() * respBots.length)];
+                    window.recibirMensajeChatLocal(nombresJugadores[3], resp, false);
+                }, 1000);
+            }
+        };
+
+        window.recibirMensajeChatLocal = function(autor, msg, esMio) {
+            const container = document.getElementById('chat-mensajes');
+            const div = document.createElement('div');
+            div.className = 'msg-burbuja ' + (esMio ? 'mio' : 'otro');
+            div.innerHTML = `<div class="msg-autor">${autor}</div><div>${msg}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            
+            const panel = document.getElementById('panel-chat');
+            if (!panel.classList.contains('abierta') && !esMio) {
+                document.querySelectorAll('.notif-dot').forEach(d => d.classList.add('activa'));
+                playSonido('tick'); 
+            }
+        };
+
+        window.actualizarModoFuego = function() {
+            for (let i = 1; i <= 4; i++) {
+                const wrap = document.getElementById(`pos-j${i}`);
+                if (wrap) wrap.classList.remove('en-fuego');
+            }
+            if (window.rachaEquipo1 >= 2) {
+                const w1 = document.getElementById('pos-j1'); if(w1) w1.classList.add('en-fuego');
+                const w3 = document.getElementById('pos-j3'); if(w3) w3.classList.add('en-fuego');
+            }
+            if (window.rachaEquipo2 >= 2) {
+                const w2 = document.getElementById('pos-j2'); if(w2) w2.classList.add('en-fuego');
+                const w4 = document.getElementById('pos-j4'); if(w4) w4.classList.add('en-fuego');
+            }
+        };
+
+        let lastTrailTime = 0;
+        function crearParticulaTrail(x, y) {
+            let now = Date.now();
+            if (now - lastTrailTime < 25) return; // Limitar creación de partículas
+            lastTrailTime = now;
+            
+            const p = document.createElement('div');
+            p.className = 'trail-particle';
+            // Pequeño offset para que se vea como estela mágica
+            p.style.left = (x + (Math.random()*16 - 8)) + 'px';
+            p.style.top = (y + (Math.random()*16 - 8)) + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 600);
+        }
+        
         // --- PUENTE HACIA FIREBASE Y CONTROL DE ASIENTOS ---
         window.bloqueoRed = false; 
         window.getConfiguracionJuego = () => ({ metaPuntos: metaPuntos, modoRobar: window.modoRobar });
@@ -950,6 +1237,10 @@
             document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
             document.getElementById('historial-nosotros').innerHTML = ''; document.getElementById('historial-ellos').innerHTML = '';
             document.getElementById('modal-victoria').classList.add('oculto');
+            
+            // Reiniciar Racha
+            window.rachaEquipo1 = 0; window.rachaEquipo2 = 0; window.actualizarModoFuego();
+            
             window.actualizarMiniMarcador();
         };
 
@@ -1044,6 +1335,11 @@
             
             window.modoRobar = partidaDB.modoRobar || false;
             window.sobrantes = partidaDB.sobrantes || [];
+            
+            // Sync Rachas de Fuego
+            window.rachaEquipo1 = partidaDB.rachaEquipo1 || 0;
+            window.rachaEquipo2 = partidaDB.rachaEquipo2 || 0;
+            window.actualizarModoFuego();
             
             const overlay = document.getElementById('pantalla-barajar'); 
             overlay.classList.remove('oculto');
@@ -1166,20 +1462,34 @@
         let audioCtx = null;
         function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
 
+        function vibrarDispositivo(patron) {
+            if ("vibrate" in navigator) {
+                try { navigator.vibrate(patron); } catch (e) {}
+            }
+        }
+
         function playSonido(tipo) {
             if (!audioCtx) return;
             const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
+            
             if (tipo === 'ficha') { 
-                osc.type = 'sine'; osc.frequency.setValueAtTime(600, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-                gain.gain.setValueAtTime(1, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05); osc.start(t); osc.stop(t + 0.05);
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(320, t); 
+                osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
+                gain.gain.setValueAtTime(1.2, t); 
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08); 
+                osc.start(t); osc.stop(t + 0.08);
+                vibrarDispositivo(20);
             } else if (tipo === 'paso') { 
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
                 gain.gain.setValueAtTime(0.5, t); gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
+                vibrarDispositivo(40);
             } else if (tipo === 'victoria') { 
                 osc.type = 'square'; osc.frequency.setValueAtTime(440, t); osc.frequency.setValueAtTime(554.37, t + 0.1); 
                 osc.frequency.setValueAtTime(659.25, t + 0.2); osc.frequency.setValueAtTime(880, t + 0.3); 
                 gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.6); osc.start(t); osc.stop(t + 0.6);
+                vibrarDispositivo([100, 50, 100, 50, 200]);
             } else if (tipo === 'tick') {
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, t);
                 gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); osc.start(t); osc.stop(t + 0.1);
@@ -1331,6 +1641,13 @@
             let puedeDer = (!fichaCentro) ? true : (a === extremoDerecho || b === extremoDerecho);
             if (salidaObligatoria && !fichaCentro && (a !== 6 || b !== 6)) { puedeIzq = false; puedeDer = false; }
 
+            // EVITAR ARRASTRAR FICHAS NO VÁLIDAS
+            if (!puedeIzq && !puedeDer) {
+                mostrarToast("Esa ficha no va.");
+                iniciarTemporizador(15);
+                return;
+            }
+
             e.preventDefault(); isDragging = true; dragStartX = e.clientX; dragStartY = e.clientY;
             dragTileData = ficha; dragTileIndex = index;
             
@@ -1353,6 +1670,10 @@
             if (!isDragging) return;
             dragTile.style.left = (e.clientX - 24) + 'px';
             dragTile.style.top = (e.clientY - 45) + 'px';
+            
+            // GENERAR PARTÍCULA DE RASTRO MAGICO
+            crearParticulaTrail(e.clientX, e.clientY);
+            
             document.querySelectorAll('.zona-drop').forEach(z => z.classList.remove('hover'));
             let elemAbaixo = document.elementFromPoint(e.clientX, e.clientY);
             if (elemAbaixo && elemAbaixo.classList.contains('zona-drop')) { elemAbaixo.classList.add('hover'); }
@@ -1424,6 +1745,13 @@
         function renderizarManos() {
             const miMano = document.getElementById('mi-mano'); miMano.innerHTML = ''; 
             
+            // Asignar clase para controlar el estado visual del turno
+            if (turnoActual !== 1) {
+                miMano.classList.add('turno-inactivo');
+            } else {
+                miMano.classList.remove('turno-inactivo');
+            }
+
             for (let i = 1; i <= 4; i++) {
                 let elMano = document.getElementById(`mano-j${i}`);
                 let elPos = document.getElementById(`pos-j${i}`);
@@ -1432,10 +1760,38 @@
             }
 
             jugadores[1].forEach((ficha, index) => {
-                const divFicha = document.createElement('div'); divFicha.className = 'ficha';
+                const divFicha = document.createElement('div'); 
+                divFicha.className = 'ficha';
+                
+                // LÓGICA DE RESALTADO DE JUGABILIDAD
+                let a = Number(ficha[0]); let b = Number(ficha[1]);
+                let puedeJugar = false;
+
+                if (!fichaCentro) {
+                    if (salidaObligatoria) {
+                        if (a === 6 && b === 6) puedeJugar = true;
+                    } else {
+                        puedeJugar = true; 
+                    }
+                } else {
+                    if (a === extremoIzquierdo || b === extremoIzquierdo || a === extremoDerecho || b === extremoDerecho) {
+                        puedeJugar = true;
+                    }
+                }
+
+                // Aplicar clase si es tu turno y la ficha se puede jugar
+                if (turnoActual === 1 && puedeJugar && !juegoTerminado && (!window.esMultijugador || !window.bloqueoRed)) {
+                    divFicha.classList.add('jugable');
+                }
+
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
+                
                 divFicha.innerHTML = `${generarHTMLMitad(Number(ficha[0]))}<div class="linea-divisoria"></div>${generarHTMLMitad(Number(ficha[1]))}`;
-                divFicha.onpointerdown = (e) => iniciarArrastre(e, ficha, index, divFicha);
+                
+                if(turnoActual === 1 && puedeJugar && !juegoTerminado) {
+                    divFicha.onpointerdown = (e) => iniciarArrastre(e, ficha, index, divFicha);
+                }
+                
                 miMano.appendChild(divFicha);
             });
 
@@ -1594,7 +1950,6 @@
             else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
         }
 
-        // --- CORRECCIÓN APLICADA AQUÍ (Nombres en el Modal de Victoria) ---
         function mostrarModalVictoria(ganadorEquipo) {
             playSonido('victoria');
             const modal = document.getElementById('modal-victoria'); 
@@ -1602,7 +1957,6 @@
             const titulo = document.getElementById('titulo-victoria-color');
             const ptsNosotrosEl = document.getElementById('pts-final-nosotros'); const ptsEllosEl = document.getElementById('pts-final-ellos');
 
-            // Determinar qué nombres mostrar (solo los activos de cada equipo)
             let nombresGanadores = [];
             if (ganadorEquipo === 1) {
                 if (window.asientosActivosLocales.includes(1)) nombresGanadores.push(nombresJugadores[1]);
@@ -1620,7 +1974,7 @@
             ptsNosotrosEl.innerText = puntosNosotros; ptsEllosEl.innerText = puntosEllos;
 
             if (ganadorEquipo === 1) { ptsNosotrosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); estadisticas.victorias++; } 
-            else { ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
+            else { ptsEllosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
             estadisticas.puntosTotales += puntosNosotros; guardarEstadisticasLocal();
             modal.classList.remove('oculto');
             if (ganadorEquipo === 1) lanzarConfeti(4);
@@ -1636,6 +1990,10 @@
             document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
             document.getElementById('historial-nosotros').innerHTML = ''; document.getElementById('historial-ellos').innerHTML = '';
             document.getElementById('modal-victoria').classList.add('oculto');
+            
+            // Reiniciar Racha de fuego
+            window.rachaEquipo1 = 0; window.rachaEquipo2 = 0; window.actualizarModoFuego();
+            
             window.actualizarMiniMarcador();
             
             iniciarManoConAnimacion(true); 
@@ -1682,6 +2040,14 @@
             mostrarBannerEspecial(`🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, claseBanner, 0);
             if (equipoGanador === 1) lanzarConfeti(1.5);
 
+            // CONTROL DE RACHAS (EN FUEGO)
+            if (equipoGanador === 1) { 
+                window.rachaEquipo1++; window.rachaEquipo2 = 0; 
+            } else { 
+                window.rachaEquipo2++; window.rachaEquipo1 = 0; 
+            }
+            window.actualizarModoFuego();
+
             let termino = revisarPuntos();
             if (termino) { 
                 document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none'; 
@@ -1721,7 +2087,7 @@
             if (window.esMultijugador && window.bloqueoRed) return; 
 
             detenerTemporizador(); 
-            if(esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; }
+            if(esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); }
 
             let mano = jugadores[1]; let validas = [];
             
@@ -1814,6 +2180,7 @@
             turnoActual = window.asientosActivosLocales[(currentIndex + 1) % window.asientosActivosLocales.length];
             
             if (turnoActual === 1) window.bloqueoRed = false;
+            renderizarManos(); // Actualizar el resaltado de fichas si es nuestro turno
 
             if (!fichaCentro) { iniciarTurnoNormal(); return; }
 
@@ -1876,6 +2243,7 @@
         function iniciarTurnoNormal() {
             resaltarTurnoActivo();
             detenerTemporizador();
+            renderizarManos();
             
             if (turnoActual === 1) window.bloqueoRed = false;
 
@@ -1939,6 +2307,7 @@
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
             playSonido('ficha'); 
             let a = Number(ficha[0]); let b = Number(ficha[1]); 
+            if (a === b) sacudirMesa(); // Efecto visual y sensorial "Golpe Seco" para los dobles
             if (!fichaCentro) { 
                 let max = Math.max(a, b); let min = Math.min(a, b);
                 if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
@@ -2135,7 +2504,7 @@
     <!-- SCRIPT 2: MÓDULO MULTIJUGADOR FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
@@ -2184,6 +2553,10 @@
                     jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false } }
                 });
 
+                // GESTIÓN DE DESCONEXIÓN: Si el creador se desconecta, se convierte en bot para no trabar la mesa
+                const miJugadorRef = ref(db, 'salas/' + codigo + '/jugadores/1');
+                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true });
+
                 escucharCambiosSala(codigo);
             } catch (error) { window.mostrarToast("Error creando sala."); }
         };
@@ -2217,6 +2590,11 @@
                     document.getElementById('lobby-codigo').innerText = val;
 
                     await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false });
+                    
+                    // GESTIÓN DE DESCONEXIÓN: Si el jugador pierde red, su asiento lo asume el bot del creador
+                    const miJugadorRef = ref(db, 'salas/' + val + '/jugadores/' + asientoLibre);
+                    onDisconnect(miJugadorRef).update({ conectado: false, isBot: true });
+                    
                     escucharCambiosSala(val);
                 } else { window.mostrarToast("La sala no existe"); }
             } catch(error) { window.mostrarToast("Error uniéndose."); }
@@ -2289,6 +2667,8 @@
                     modoRobar: configLocal.modoRobar,
                     turnoActual: turnoInicial,
                     salidaObligatoria: salirConDoble6, 
+                    rachaEquipo1: window.rachaEquipo1 || 0,
+                    rachaEquipo2: window.rachaEquipo2 || 0,
                     timestampInicio: Date.now()
                 }
             }); 
@@ -2318,6 +2698,29 @@
             } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
         };
 
+        window.enviarReaccionFirebase = async function(texto) {
+            try {
+                const refReacciones = ref(db, 'salas/' + window.salaIdActual + '/reacciones');
+                await push(refReacciones, {
+                    puesto: window.miPuesto,
+                    mensaje: texto,
+                    timestamp: Date.now()
+                });
+            } catch(e) {}
+        };
+        
+        window.enviarChatFirebase = async function(texto) {
+            try {
+                const refChat = ref(db, 'salas/' + window.salaIdActual + '/chat');
+                await push(refChat, {
+                    puesto: window.miPuesto,
+                    nombre: window.nombresJugadores[1] || "Jugador",
+                    mensaje: texto,
+                    timestamp: Date.now()
+                });
+            } catch(e) {}
+        };
+
         window.enviarJugadaBotFirebase = async function(ficha, absoluteSeat, colocarIzquierda, esCapicua) {
             try {
                 const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
@@ -2345,6 +2748,38 @@
         function escucharCambiosSala(codigoSala) {
             const salaRef = ref(db, 'salas/' + codigoSala);
             
+            // ESCUCHAR REACCIONES
+            onValue(ref(db, 'salas/' + codigoSala + '/reacciones'), (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+                const items = Object.values(data);
+                const ultima = items[items.length - 1];
+                // Solo mostrar si es reciente (menos de 3 seg)
+                if (ultima && Date.now() - ultima.timestamp < 3000) {
+                    let offset = ultima.puesto - window.miPuesto;
+                    if (offset < 0) offset += 4;
+                    let posLocal = offset + 1;
+                    
+                    window.mostrarBurbuja(posLocal, ultima.mensaje, 'pensando', false, false);
+                }
+            });
+
+            // ESCUCHAR CHAT
+            let ultimoChatTimestamp = 0;
+            onValue(ref(db, 'salas/' + codigoSala + '/chat'), (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+                const items = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+                
+                items.forEach(item => {
+                    if (item.timestamp > ultimoChatTimestamp) {
+                        ultimoChatTimestamp = item.timestamp;
+                        let esMio = (item.puesto === window.miPuesto);
+                        window.recibirMensajeChatLocal(item.nombre, item.mensaje, esMio);
+                    }
+                });
+            });
+
             onValue(salaRef, (snapshot) => {
                 const datos = snapshot.val();
                 if (!datos) return;
