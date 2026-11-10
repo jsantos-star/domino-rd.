@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 829</title>
+    <title>Dominó RD 1213</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -148,6 +148,7 @@
         .btn-herramienta span.icono { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
         /* Colores Neón Vibrantes */
+        .btn-h-reaccion { border-left-color: #e91e63; color: #f48fb1; background: linear-gradient(90deg, rgba(233, 30, 99, 0.15) 0%, transparent 100%); }
         .btn-h-chat { border-left-color: #00bcd4; color: #00bcd4; background: linear-gradient(90deg, rgba(0, 188, 212, 0.15) 0%, transparent 100%); }
         .btn-h-marcador { border-left-color: #4caf50; color: #4caf50; background: linear-gradient(90deg, rgba(76, 175, 80, 0.15) 0%, transparent 100%); }
         .btn-h-pantalla { border-left-color: #ff9800; color: #ff9800; background: linear-gradient(90deg, rgba(255, 152, 0, 0.15) 0%, transparent 100%); }
@@ -155,7 +156,7 @@
         .btn-h-reglas { border-left-color: #ff1744; color: #ff1744; background: linear-gradient(90deg, rgba(255, 23, 68, 0.15) 0%, transparent 100%); }
         .btn-h-creditos { border-left-color: #2196f3; color: #2196f3; background: linear-gradient(90deg, rgba(33, 150, 243, 0.15) 0%, transparent 100%); }
 
-        /* MINI MARCADOR EN MESA */
+        /* MINI MARCADOR EN MESA ACTUALIZADO */
         #mini-marcador {
             position: absolute; top: 12px; left: 12px; 
             background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.15); 
@@ -175,7 +176,7 @@
 
         /* --- CAJA DE SOBRANTES MEJORADA Y BACANA --- */
         #zona-sobrantes {
-            position: absolute; right: 20px; bottom: 120px; 
+            position: absolute; right: 20px; top: 20px; 
             display: flex; flex-direction: column; align-items: center; gap: 8px; 
             z-index: 100; cursor: pointer; transition: transform 0.2s;
         }
@@ -225,6 +226,23 @@
 
         @keyframes shakeMesa { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, 0); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, 2px); } 80% { transform: translate(1px, -1px); } 100% { transform: translate(0, 0); } }
         .mesa-temblando { animation: shakeMesa 0.4s ease both; }
+
+        /* --- ANIMACIÓN TRANQUE ÉPICO --- */
+        #animacion-tranque {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            font-size: 140px; z-index: 5000; pointer-events: none; opacity: 0;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9));
+        }
+        .tranque-activo {
+            animation: caerCandado 2.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes caerCandado {
+            0% { transform: translate(-50%, -200%) scale(2.5) rotate(-20deg); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(0 0 60px rgba(255, 51, 51, 1)); }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 51, 51, 0.8)); }
+            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+        }
 
         .marca-agua { position: absolute; font-size: 26px; font-weight: 900; color: var(--tapete-marca-agua); text-transform: uppercase; letter-spacing: 4px; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .marca-agua span { font-size: 44px; margin-bottom: -6px; opacity: 0.12;}
@@ -513,22 +531,22 @@
             letter-spacing: 1px; margin-bottom: 10px; display: inline-block;
         }
 
-        /* ESTILOS DEL MENÚ DE REACCIONES FLOTANTES */
+        /* ESTILOS DEL MENÚ DE REACCIONES (AHORA CENTRADO) */
         #menu-reacciones {
-            position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(19, 25, 38, 0.96); border: 1px solid rgba(0, 188, 212, 0.4); 
-            border-radius: 12px; padding: 8px; display: grid; grid-template-columns: repeat(3, 1fr); 
-            gap: 6px; width: 220px; box-shadow: 0 8px 30px rgba(0,0,0,0.9); z-index: 200;
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            border-radius: 12px; padding: 12px; display: grid; grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; width: 280px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); z-index: 3600;
+            transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #menu-reacciones.oculto { opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.95); }
+        #menu-reacciones.oculto { opacity: 0; pointer-events: none; transform: translate(-50%, -40%) scale(0.9); }
         .btn-reaccion-opcion {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 8px; color: #fff; padding: 6px; font-size: 11px; cursor: pointer; 
-            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            border-radius: 8px; color: #fff; padding: 10px 6px; font-size: 12px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.2s;
         }
-        .btn-reaccion-opcion:hover { background: rgba(0, 188, 212, 0.2); border-color: var(--azul-rd); }
-        .btn-reaccion-opcion span { font-size: 16px; }
+        .btn-reaccion-opcion:hover { background: rgba(0, 188, 212, 0.2); border-color: var(--azul-rd); transform: translateY(-2px); }
+        .btn-reaccion-opcion span { font-size: 20px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
         /* FUEGO ANIMATION (RACHA DE VICTORIAS) */
         @keyframes fuegoFondo {
@@ -586,29 +604,30 @@
         .notif-dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: #ff1744; border-radius: 50%; border: 2px solid #131926; display: none; box-shadow: 0 0 8px #ff1744;}
         .notif-dot.activa { display: block; }
         
-        /* --- MENÚ FLOTANTE MODERNO (ABAJO) --- */
-        .menu-flotante-container { position: absolute; bottom: 25px; right: 25px; z-index: 1500; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 14px; }
-        .btn-menu-principal { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00bcd4, #005ce6); border: 2px solid rgba(255,255,255,0.2); color: white; font-size: 24px; box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        .btn-menu-principal:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 10px 30px rgba(0, 188, 212, 0.7); }
-        .btn-menu-principal:active { transform: scale(0.9); }
-        
-        #menu-herramientas { display: flex; flex-direction: column; gap: 8px; background: rgba(10, 15, 24, 0.95); padding: 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.05); min-width: 220px; transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: bottom right; }
-        #menu-herramientas.oculto { opacity: 0; pointer-events: none; transform: scale(0.6) translateY(40px) translateX(20px); }
-        
-        .btn-herramienta { width: 100%; text-align: left; padding: 12px 16px; background: rgba(19, 25, 38, 0.6); border: none; border-left: 4px solid transparent; color: white; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.25s ease; border-radius: 8px; position: relative;}
-        .btn-herramienta:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(-4px); }
-        .btn-herramienta:active { transform: scale(0.96); }
-        
-        .btn-herramienta .left-content { display: flex; align-items: center; gap: 12px; }
-        .btn-herramienta span.icono { font-size: 18px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-
-        /* Colores Neón Vibrantes */
-        .btn-h-chat { border-left-color: #00bcd4; color: #00bcd4; background: linear-gradient(90deg, rgba(0, 188, 212, 0.15) 0%, transparent 100%); }
-        .btn-h-marcador { border-left-color: #4caf50; color: #4caf50; background: linear-gradient(90deg, rgba(76, 175, 80, 0.15) 0%, transparent 100%); }
-        .btn-h-pantalla { border-left-color: #ff9800; color: #ff9800; background: linear-gradient(90deg, rgba(255, 152, 0, 0.15) 0%, transparent 100%); }
-        .btn-h-ajustes { border-left-color: #9c27b0; color: #e1bee7; background: linear-gradient(90deg, rgba(156, 39, 176, 0.15) 0%, transparent 100%); }
-        .btn-h-reglas { border-left-color: #ff1744; color: #ff1744; background: linear-gradient(90deg, rgba(255, 23, 68, 0.15) 0%, transparent 100%); }
-        .btn-h-creditos { border-left-color: #2196f3; color: #2196f3; background: linear-gradient(90deg, rgba(33, 150, 243, 0.15) 0%, transparent 100%); }
+        /* --- AJUSTES PARA PANTALLAS DE CELULAR (LANDSCAPE) --- */
+        @media (max-height: 500px) {
+            .menu-flotante-container { 
+                bottom: 10px; 
+                right: 10px; 
+                gap: 8px; 
+            }
+            #menu-herramientas { 
+                padding: 10px; 
+                gap: 5px; 
+                min-width: 190px; 
+                max-height: 75vh; /* Evita que el menú sea más alto que la pantalla */
+                overflow-y: auto; /* Agrega scroll interno si sobran opciones */
+            }
+            .btn-herramienta { 
+                padding: 8px 12px; 
+                font-size: 11px; 
+            }
+            .btn-menu-principal { 
+                width: 44px; 
+                height: 44px; 
+                font-size: 20px; 
+            }
+        }
     </style>
 </head>
 <body class="ficha-blanco mesa-verde">
@@ -695,6 +714,9 @@
                 <div class="notif-dot" id="menu-notif-global"></div>
             </button>
             <div id="menu-herramientas" class="oculto">
+                <button class="btn-herramienta btn-h-reaccion" onclick="toggleMenuReacciones(); toggleMenuHerramientas();">
+                    <div class="left-content"><span class="icono">🎭</span> Enviar Reacción</div>
+                </button>
                 <button class="btn-herramienta btn-h-chat" onclick="toggleChat(); toggleMenuHerramientas();">
                     <div class="left-content"><span class="icono">💬</span> Chat de Mesa</div>
                     <div class="notif-dot" id="chat-notif" style="position: static; display: none; width: 10px; height: 10px;"></div>
@@ -727,14 +749,17 @@
                         <div id="sobrantes-label">Caja: 0</div>
                     </div>
 
-                    <!-- MINI MARCADOR EN LA ESQUINA -->
+                    <!-- MINI MARCADOR EN LA ESQUINA DINÁMICO -->
                     <div id="mini-marcador" onclick="toggleLibreta()" title="Toca para ver el desglose completo">
                         <span style="color: #00bcd4;">Meta: <span id="mini-meta">200</span></span>
                         <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
-                        <span>Nos: <span id="mini-pts-nos" style="color: #fff;">0</span></span>
+                        <span><span id="lbl-mini-nos">Nos</span>: <span id="mini-pts-nos" style="color: #fff;">0</span></span>
                         <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
-                        <span>Ellos: <span id="mini-pts-ellos" style="color: #fff;">0</span></span>
+                        <span><span id="lbl-mini-ellos">Ellos</span>: <span id="mini-pts-ellos" style="color: #fff;">0</span></span>
                     </div>
+
+                    <!-- ANIMACIÓN DE TRANQUE GIGANTE -->
+                    <div id="animacion-tranque">🔒</div>
 
                     <div class="marca-agua"><span>🇩🇴</span>Dominó RD</div>
                     <div id="zoom-container"></div>
@@ -794,19 +819,6 @@
                         </div>
                         <div class="nombre-tag">Nosotros</div>
                         <div class="burbuja-estado" id="burbuja-j1"></div>
-                        
-                        <!-- BOTÓN Y MENÚ DE REACCIONES -->
-                        <div id="contenedor-reacciones" style="position: absolute; top: -5px; right: -30px;">
-                            <button type="button" id="btn-reaccion" onclick="toggleMenuReacciones()" style="background: rgba(0,0,0,0.7); border: 1px solid var(--azul-rd); border-radius: 50%; width: 26px; height: 26px; font-size: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 0;">💬</button>
-                            <div id="menu-reacciones" class="oculto">
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Sopla! 🔥')"><span>🔥</span> Sopla</button>
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Pasó! ❌')"><span>❌</span> Paso</button>
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('Tranquilo ☕')"><span>☕</span> Café</button>
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Acózalo! 🇩🇴')"><span>🇩🇴</span> Palo</button>
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Tiembla! 💀')"><span>💀</span> Miedo</button>
-                                <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Capicúa! 🌟')"><span>🌟</span> Capicúa</button>
-                            </div>
-                        </div>
                     </div>
                     
                     <div class="mano-jugador-activa" id="mi-mano"></div>
@@ -821,7 +833,21 @@
             <div id="toast-mensaje">Cargando partida...</div>
         </div>
 
-        <!-- PANEL DE ANOTACION LATERAL -->
+        <!-- PANEL DE REACCIONES CENTRADO -->
+        <div id="menu-reacciones" class="oculto">
+            <div style="grid-column: span 3; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="color: white; font-size: 13px; font-weight: bold;">Reaccionar</span>
+                <button onclick="toggleMenuReacciones()" style="background: none; border: none; color: #ccc; font-size: 16px; cursor: pointer;">✕</button>
+            </div>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Sopla! 🔥')"><span>🔥</span> Sopla</button>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Pasó! ❌')"><span>❌</span> Paso</button>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('Tranquilo ☕')"><span>☕</span> Café</button>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Acózalo! 🇩🇴')"><span>🇩🇴</span> Palo</button>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Tiembla! 💀')"><span>💀</span> Miedo</button>
+            <button class="btn-reaccion-opcion" onclick="enviarReaccion('¡Capicúa! 🌟')"><span>🌟</span> Capicúa</button>
+        </div>
+
+        <!-- PANEL DE ANOTACION LATERAL DINÁMICO -->
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
                 <button type="button" class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
@@ -830,12 +856,12 @@
             </div>
             <div class="marcador-global">
                 <div class="equipo-score">
-                    <h3>Nosotros</h3>
+                    <h3 id="lbl-panel-nos">Nosotros</h3>
                     <div class="puntos nosotros" id="ptos-lat-nosotros">0</div>
                 </div>
                 <div class="vs-circle">VS</div>
                 <div class="equipo-score">
-                    <h3>Ellos</h3>
+                    <h3 id="lbl-panel-ellos">Ellos</h3>
                     <div class="puntos ellos" id="ptos-lat-ellos">0</div>
                 </div>
             </div>
@@ -946,6 +972,14 @@
         <div id="modal-ajustes" class="oculto">
             <div class="tarjeta-ajustes">
                 <h2>⚙️ Configuración (Local)</h2>
+                
+                <div class="grupo-ajuste">
+                    <label>Sonido / Efectos</label>
+                    <div class="opciones-botones" style="grid-template-columns: 1fr 1fr;">
+                        <button type="button" class="btn-opcion activo" id="btn-sonido-on" onclick="window.cambiarEstadoSonido(false)">🔊 Encendido</button>
+                        <button type="button" class="btn-opcion" id="btn-sonido-off" onclick="window.cambiarEstadoSonido(true)">🔇 Silenciado</button>
+                    </div>
+                </div>
                 
                 <div class="grupo-ajuste">
                     <label>Fichas Sobrantes (Modo Incompleto)</label>
@@ -1068,6 +1102,7 @@
         let esperandoSeleccionPunta = false; let fichaSeleccionada = null; let indexSeleccionado = null;
         let jugadorSalida = 1; 
         let esPrimerTurnoDespuesDeSalida = false;
+        let paseSalidaActivo = false;
         let juegoIniciado = false; 
         
         let timerTurno = null; 
@@ -1081,9 +1116,18 @@
         let nombresJugadores = { 1: "Nosotros", 2: "Rival 1", 3: "Compadre", 4: "Rival 2" };
         let avataresJugadores = { 1: "😎", 2: "🧔🏾‍♂️", 3: "👨🏽‍🦳", 4: "👩🏽" };
         
-        // --- NOVEDADES: ESTADOS Y CHAT ---
+        // --- NOVEDADES: ESTADOS, CHAT Y SONIDO ---
         window.rachaEquipo1 = 0;
         window.rachaEquipo2 = 0;
+        window.sonidoMuted = false;
+
+        window.cambiarEstadoSonido = function(muted) {
+            window.sonidoMuted = muted;
+            const bOn = document.getElementById('btn-sonido-on');
+            const bOff = document.getElementById('btn-sonido-off');
+            if(bOn) bOn.classList.toggle('activo', !muted);
+            if(bOff) bOff.classList.toggle('activo', muted);
+        };
         
         function toggleMenuReacciones() {
             const m = document.getElementById('menu-reacciones');
@@ -1367,7 +1411,8 @@
                 salidaObligatoria = partidaDB.salidaObligatoria;
                 
                 fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
-                juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
+                juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; 
+                esPrimerTurnoDespuesDeSalida = false; paseSalidaActivo = false;
                 historialPases = { 1: [], 2: [], 3: [], 4: [] };
                 jugadorSalida = turnoActual; 
                 
@@ -1393,21 +1438,25 @@
             procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua);
         };
 
+        // Función de compartir para usar la URL
         window.compartirCodigoSala = function() {
             const codigo = document.getElementById('lobby-codigo').innerText;
             if (!codigo || codigo === '---') return;
             
-            const texto = `¡Únete a mi mesa de Dominó RD! 🇩🇴\nCódigo de sala: ${codigo}`;
+            const urlBasica = window.location.origin + window.location.pathname;
+            const urlConSala = `${urlBasica}?sala=${codigo}`;
+            
+            const texto = `¡Únete a mi mesa de Dominó RD! 🇩🇴\nEntra directo tocando este enlace:\n${urlConSala}`;
             
             if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
                 navigator.share({
                     title: 'Dominó RD - Partida Multijugador',
                     text: texto
                 }).catch((err) => {
-                    copiarAlPortapapeles(codigo);
+                    copiarAlPortapapeles(texto);
                 });
             } else {
-                copiarAlPortapapeles(codigo);
+                copiarAlPortapapeles(texto);
             }
         };
 
@@ -1469,6 +1518,7 @@
         }
 
         function playSonido(tipo) {
+            if (window.sonidoMuted) return; // Validación de silenciado
             if (!audioCtx) return;
             const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
@@ -1500,6 +1550,7 @@
         }
 
         function playSonidoBarajar() {
+            if (window.sonidoMuted) return; // Validación de silenciado
             if(!audioCtx) return; let t = audioCtx.currentTime;
             for(let i=0; i<15; i++) {
                 let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
@@ -1562,10 +1613,28 @@
         }
 
         function actualizarUIAvatares() {
-            document.querySelector('#pos-j1 .nombre-tag').innerText = nombresJugadores[1]; document.querySelector('#pos-j2 .nombre-tag').innerText = nombresJugadores[2];
-            document.querySelector('#pos-j3 .nombre-tag').innerText = nombresJugadores[3]; document.querySelector('#pos-j4 .nombre-tag').innerText = nombresJugadores[4];
-            document.getElementById('avatar-j1').innerText = avataresJugadores[1]; document.getElementById('avatar-j2').innerText = avataresJugadores[2];
-            document.getElementById('avatar-j3').innerText = avataresJugadores[3]; document.getElementById('avatar-j4').innerText = avataresJugadores[4];
+            document.querySelector('#pos-j1 .nombre-tag').innerText = nombresJugadores[1]; 
+            document.querySelector('#pos-j2 .nombre-tag').innerText = nombresJugadores[2];
+            document.querySelector('#pos-j3 .nombre-tag').innerText = nombresJugadores[3]; 
+            document.querySelector('#pos-j4 .nombre-tag').innerText = nombresJugadores[4];
+            document.getElementById('avatar-j1').innerText = avataresJugadores[1]; 
+            document.getElementById('avatar-j2').innerText = avataresJugadores[2];
+            document.getElementById('avatar-j3').innerText = avataresJugadores[3]; 
+            document.getElementById('avatar-j4').innerText = avataresJugadores[4];
+
+            // ACTUALIZAR NOMBRES EN LOS MARCADORES
+            let n1 = nombresJugadores[1].split(" ")[0]; // Solo el primer nombre para que no se vea gigante en celulares
+            let n2 = nombresJugadores[2].split(" ")[0];
+            
+            const miniNos = document.getElementById('lbl-mini-nos');
+            const miniEllos = document.getElementById('lbl-mini-ellos');
+            if(miniNos) miniNos.innerText = n1;
+            if(miniEllos) miniEllos.innerText = n2;
+
+            const panelNos = document.getElementById('lbl-panel-nos');
+            const panelEllos = document.getElementById('lbl-panel-ellos');
+            if(panelNos) panelNos.innerText = nombresJugadores[1] + " y " + nombresJugadores[3];
+            if(panelEllos) panelEllos.innerText = nombresJugadores[2] + " y " + nombresJugadores[4];
         }
 
         function accionBotonAjustes() { 
@@ -1943,11 +2012,25 @@
             }
         }
 
+        // ACTUALIZADO: Formato para mostrar los -30 puntos rojos
         function agregarRondaHistorial(equipoGanador, puntos) {
-            const colNosotros = document.getElementById('historial-nosotros'); const colEllos = document.getElementById('historial-ellos');
-            const item = document.createElement('div'); item.innerText = `+${puntos}`; item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
-            if (equipoGanador === 1) { colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; } 
-            else { colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; }
+            const colNosotros = document.getElementById('historial-nosotros'); 
+            const colEllos = document.getElementById('historial-ellos');
+            
+            let textoPuntos = puntos > 0 ? `+${puntos}` : `${puntos}`;
+            const item = document.createElement('div'); 
+            item.innerText = textoPuntos; 
+            item.className = equipoGanador === 1 ? 'punto-anotado nos' : 'punto-anotado ellos';
+            
+            if (puntos < 0) {
+                item.style.color = '#ff3333';
+            }
+            
+            if (equipoGanador === 1) { 
+                colNosotros.appendChild(item); colNosotros.scrollTop = colNosotros.scrollHeight; 
+            } else { 
+                colEllos.appendChild(item); colEllos.scrollTop = colEllos.scrollHeight; 
+            }
         }
 
         function mostrarModalVictoria(ganadorEquipo) {
@@ -2028,7 +2111,17 @@
                 
                 let ptsTranco = sumarMano(jugadores[jTranco]); let ptsSigue = sumarMano(jugadores[jSigue]);
                 jGanadorFinal = (ptsTranco <= ptsSigue) ? jTranco : jSigue; equipoGanador = (jGanadorFinal === 1 || jGanadorFinal === 3) ? 1 : 2; ultimoGanador = jGanadorFinal;
-                tipoVictoria = "¡TRANQUE! 🔒"; claseBanner = "tranque"; sacudirMesa();
+                tipoVictoria = "¡TRANQUE! 🔒"; claseBanner = "tranque"; 
+                sacudirMesa();
+                
+                // DISPARAR ANIMACIÓN DEL CANDADO ÉPICO
+                const candado = document.getElementById('animacion-tranque');
+                if (candado) {
+                    candado.classList.remove('tranque-activo');
+                    void candado.offsetWidth; // reiniciar la animación
+                    candado.classList.add('tranque-activo');
+                }
+
             } else {
                 equipoGanador = (ganador === 1 || ganador === 3) ? 1 : 2; ultimoGanador = ganador;
                 if (esCapicua) { sumaPuntosMano += 30; tipoVictoria = "¡CAPICÚA! 🌟"; claseBanner = "capicua"; sacudirMesa(); if(equipoGanador === 1) { estadisticas.capicuas++; guardarEstadisticasLocal(); } }
@@ -2133,6 +2226,7 @@
             }
         }
 
+        // ACTUALIZADO: Lógica de que los 30 de salida "Se Caen"
         window.ejecutarPase = function(idJugador) {
             historialPases[idJugador].push(extremoIzquierdo, extremoDerecho);
             pasesConsecutivos++; resaltarTurnoActivo(); playSonido('paso'); 
@@ -2150,9 +2244,22 @@
                 if (equipoSalida === 1) puntosNosotros += 30; else puntosEllos += 30;
                 agregarRondaHistorial(equipoSalida, 30);
                 mostrarBannerEspecial(`🔥 ¡30 A LA SALIDA! 🔥`, `+30 Puntos`, 'salida-30', 2500);
+                
+                paseSalidaActivo = true; // Activamos el riesgo de que se caiga el pase
+                
                 if(revisarPuntos()) return;
             } else {
                 mostrarBurbuja(idJugador, txtPaso, "paso", false, true);
+                
+                // NUEVO: Si el compañero también pasa, se caen los 30!
+                if (paseSalidaActivo) {
+                    let equipoSalida = (jugadorSalida === 1 || jugadorSalida === 3) ? 1 : 2;
+                    if (equipoSalida === 1) puntosNosotros -= 30; else puntosEllos -= 30;
+                    agregarRondaHistorial(equipoSalida, -30);
+                    mostrarBannerEspecial(`❌ ¡SE CAYÓ EL PASE! ❌`, `-30 Pts (Compañero pasó)`, 'tranque', 2500);
+                    revisarPuntos();
+                    paseSalidaActivo = false; // Se resetea para no volver a restar
+                }
             }
             
             esPrimerTurnoDespuesDeSalida = false; 
@@ -2313,6 +2420,7 @@
                 if (idJugador === 1 || idJugador === 2) { fichaCentro = [min, max]; extremoIzquierdo = min; extremoDerecho = max; } 
                 else { fichaCentro = [max, min]; extremoIzquierdo = max; extremoDerecho = min; }
                 salidaObligatoria = false; esPrimerTurnoDespuesDeSalida = true; 
+                paseSalidaActivo = false;
             } else {
                 if (colocarIzquierda) {
                     if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
@@ -2320,6 +2428,7 @@
                     if (a === extremoDerecho) { ramaDerecha.push([a, b]); extremoDerecho = b; } else { ramaDerecha.push([b, a]); extremoDerecho = a; }
                 }
                 esPrimerTurnoDespuesDeSalida = false;
+                paseSalidaActivo = false; // Se salva el pase porque alguien jugó
             }
             
             pasesConsecutivos = 0; 
@@ -2454,7 +2563,8 @@
 
         function ejecutarLogicaRepartoLocal() {
             fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
-            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
+            juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; 
+            esPrimerTurnoDespuesDeSalida = false; paseSalidaActivo = false;
             historialPases = { 1: [], 2: [], 3: [], 4: [] };
             
             mazo = [];
@@ -2497,6 +2607,36 @@
 
         window.addEventListener('resize', () => { renderizarManos(); renderizarMesa(); });
         window.addEventListener('orientationchange', () => { setTimeout(() => { renderizarManos(); renderizarMesa(); }, 200); });
+        
+        // --- DETECTAR SI ENTRA POR ENLACE CON SALA ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const parametrosURL = new URLSearchParams(window.location.search);
+            const codigoSalaURL = parametrosURL.get('sala');
+            
+            if (codigoSalaURL) {
+                // Si viene un código en la URL, abrimos el modal multijugador
+                abrirModalMultijugador();
+                
+                // Llenamos el input automáticamente
+                const inputSala = document.getElementById('input-codigo-sala');
+                if (inputSala) {
+                    inputSala.value = codigoSalaURL.toUpperCase();
+                    
+                    // Le damos un brillito verde rápido para que el usuario vea que se llenó solo
+                    inputSala.style.boxShadow = "0 0 15px #00ff88";
+                    inputSala.style.borderColor = "#00ff88";
+                    setTimeout(() => {
+                        inputSala.style.boxShadow = "none";
+                        inputSala.style.borderColor = "rgba(255,255,255,0.12)";
+                    }, 2000);
+                    
+                    mostrarToast("¡Código de sala detectado! Pon tu nombre y dale a Entrar.");
+                    
+                    // Limpiamos la URL visualmente para que quede limpia (opcional pero elegante)
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
         
         inicializarEstadisticas();
     </script>
