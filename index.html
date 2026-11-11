@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dominó RD 1213</title>
+    <title>Dominó RD 0921</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -313,14 +313,26 @@
         .avatar-nosotros-pill { display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: auto; flex-shrink: 0; position: relative; }
         .avatar-nosotros-pill .burbuja-estado { bottom: 120%; left: 50%; transform: translateX(-50%); }
 
+        /* MANO DEL JUGADOR ACTUALIZADA CON SCROLL HORIZONTAL */
         .mano-jugador-activa { 
-            display: flex; justify-content: center; align-items: flex-end; gap: 6px; pointer-events: auto;
-            background: rgba(7, 10, 16, 0.65); padding: 4px 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 85vw; overflow-x: auto; 
+            display: flex; justify-content: flex-start; /* Permite que fluya a la derecha y no se corte la izquierda */
+            align-items: flex-end; gap: 6px; pointer-events: auto;
+            background: rgba(7, 10, 16, 0.65); padding: 8px 12px 6px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            max-width: calc(100vw - 100px); /* Ajuste para dar espacio al avatar sin tapar la pantalla */
+            overflow-x: auto; overflow-y: hidden; 
             transition: all 0.3s ease;
             transform: perspective(600px) rotateX(15deg);
             transform-origin: bottom center;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch; /* Suavidad en el scroll para iOS */
         }
+        
+        /* Estilo de la barrita de scroll para que no se vea fea */
+        .mano-jugador-activa::-webkit-scrollbar { height: 6px; }
+        .mano-jugador-activa::-webkit-scrollbar-thumb { background: var(--azul-rd); border-radius: 10px; }
+        .mano-jugador-activa::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 10px; }
+
         .mano-jugador-activa:hover { 
             background: rgba(7, 10, 16, 0.85); 
             transform: perspective(600px) rotateX(5deg); 
@@ -328,7 +340,7 @@
 
         .ficha {
             width: 48px; height: 90px; background: var(--ficha-bg); border-radius: 6px; display: flex; flex-direction: column; padding: 4px;
-            cursor: grab; transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; flex-shrink: 0;
+            cursor: grab; transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease; flex-shrink: 0; /* Asegura que la ficha no se encoja */
             box-shadow: 2px 4px 10px rgba(0,0,0,0.6), inset 2px 2px 5px rgba(255,255,255,0.8), inset -3px -3px 6px rgba(0,0,0,0.2);
             border: 1px solid rgba(0,0,0,0.3); touch-action: none;
             opacity: 0.6; /* Fichas oscurecidas por defecto cuando es nuestro turno */
@@ -484,6 +496,46 @@
         .muestra-m-verde { background: #163823; } .muestra-m-negro { background: #18191a; } .muestra-m-azul { background: #0f3d64; } .muestra-m-blanco { background: #e0e5eb; }
         .btn-cerrar-ajustes { background: rgba(0, 188, 212, 0.12); color: var(--azul-rd); border: 1px solid var(--azul-rd); padding: 10px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 4px; width: 100%; transition: all 0.2s ease;}
         .btn-cerrar-ajustes:active { transform: scale(0.96); }
+
+        /* SALAS PUBLICAS MULTIJUGADOR */
+        .salas-publicas-wrap { background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; }
+        .salas-publicas-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+        .salas-publicas-header strong { font-size:12px; color:#fff; text-transform:uppercase; letter-spacing:.6px; }
+        .estado-salas { font-size:10px; color:#8fa3b8; }
+        #lista-salas-publicas { display:flex; flex-direction:column; gap:7px; max-height:180px; overflow-y:auto; }
+        .sala-publica { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; background:#0b0f19; border:1px solid rgba(255,255,255,.08); border-radius:9px; padding:9px 10px; }
+        .sala-publica-info { min-width:0; }
+        .sala-publica-codigo { color:#ffd700; font-weight:900; font-size:13px; letter-spacing:1px; }
+        .sala-publica-detalle { color:#9eabb9; font-size:10px; margin-top:3px; }
+        .sala-publica-badge { display:inline-block; margin-left:5px; padding:2px 6px; border-radius:10px; font-size:9px; font-weight:900; }
+        .badge-disponible { color:#00ff88; background:rgba(0,255,136,.11); border:1px solid rgba(0,255,136,.4); }
+        .badge-completa { color:#ff6b7f; background:rgba(255,23,68,.1); border:1px solid rgba(255,23,68,.35); }
+        .btn-entrar-sala-lista { border:1px solid #00bcd4; background:rgba(0,188,212,.16); color:#fff; border-radius:8px; padding:7px 10px; font-size:10px; font-weight:900; cursor:pointer; }
+        .btn-entrar-sala-lista:disabled { opacity:.4; cursor:not-allowed; border-color:#667; }
+        .sin-salas { color:#7e8b99; text-align:center; padding:14px 5px; font-size:11px; }
+
+        /* SALAS PUBLICAS - DISEÑO MODERNO */
+        .salas-publicas-wrap { margin-top:10px; background:transparent; border:0; border-top:1px solid rgba(255,255,255,.12); border-radius:0; padding:14px 0 0; }
+        .salas-publicas-header { justify-content:center; position:relative; margin-bottom:12px; }
+        .salas-publicas-header strong { color:#00d9ee; text-transform:none; font-size:13px; letter-spacing:0; }
+        .salas-publicas-header strong::before { content:'●'; color:#6ff0ad; margin-right:8px; text-shadow:0 0 8px #32dfa0; }
+        .estado-salas { position:absolute; right:0; font-size:9px; color:#78889b; }
+        #lista-salas-publicas { gap:7px; max-height:190px; padding-right:6px; }
+        .sala-publica { grid-template-columns:1fr auto; background:linear-gradient(135deg,#202735,#1b222e); border:1px solid #343e4e; border-radius:10px; padding:11px 13px; transition:.18s ease; }
+        .sala-publica:hover { transform:translateY(-1px); border-color:#46546a; background:linear-gradient(135deg,#242d3d,#1e2633); }
+        .sala-publica-codigo { color:#f4f6fa; font-size:14px; letter-spacing:.2px; }
+        .sala-publica-detalle { color:#aaafbd; font-size:10px; }
+        .sala-publica-detalle .estado-esperando {color:#00ef9c;font-weight:800}
+        .sala-publica-detalle .estado-jugando {color:#00d9ee;font-weight:800}
+        .sala-publica-badge { display:none; }
+        .btn-entrar-sala-lista { min-width:81px; color:#06141a; background:linear-gradient(135deg,#13cee2,#02afc7); border:0; padding:9px 15px; border-radius:8px; box-shadow:0 5px 13px rgba(0,203,224,.22); }
+        .btn-entrar-sala-lista:hover:not(:disabled) { filter:brightness(1.1); transform:scale(1.02); }
+        /* INICIO DINAMICO MODERNO */
+        .inicio-subtitulo{margin:10px 0 14px;color:#aeb8c7;font-size:13px;line-height:1.45}.inicio-subtitulo b{color:#fff}.btn-continuar{display:none;width:100%;border:1px solid #39e8ad;background:linear-gradient(135deg,rgba(21,79,65,.95),rgba(14,44,61,.95));color:#60f0bd;border-radius:12px;padding:11px 13px;font-weight:900;font-size:11px;cursor:pointer;text-align:left;box-shadow:0 7px 18px rgba(40,225,168,.14)}.btn-continuar small{display:block;color:#b6c4cf;font-weight:500;margin-top:3px}.actividad-inicio{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(0,217,238,.22);background:rgba(0,217,238,.06);color:#9eadbd;border-radius:10px;padding:8px;font-size:10px;cursor:pointer}.actividad-inicio strong{color:#38e9b0}.pulso-online{width:7px;height:7px;border-radius:50%;background:#42edaa;box-shadow:0 0 9px #42edaa}.version-inicio{margin-top:12px;color:#657285;font-size:9px;letter-spacing:.5px}.btn-secundario.perfil{border-color:#00bcd4;background:rgba(0,188,212,.07)}
+
+        /* EXPERIENCIA MULTIJUGADOR PRO */
+        #lobby-pro{width:100%;margin:8px 0 10px}.lobby-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.asiento-pro{display:flex;align-items:center;gap:8px;min-height:54px;padding:9px;background:linear-gradient(145deg,#1c2432,#121925);border:1px solid #354155;border-radius:12px}.asiento-pro.yo{border-color:#00d9ee;box-shadow:0 0 14px rgba(0,217,238,.12)}.asiento-avatar{font-size:23px;width:35px;text-align:center}.asiento-info{min-width:0;flex:1}.asiento-nombre{font-size:11px;color:#fff;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.asiento-estado{font-size:9px;margin-top:3px}.estado-online{color:#35ef9e}.estado-offline{color:#8490a0}.estado-bot{color:#ffd166}.estado-ready{color:#00d9ee}.lobby-resumen{font-size:10px;color:#aeb9c8;text-align:center;margin:9px 0}.acciones-pro{display:grid;grid-template-columns:1fr 1fr;gap:7px}.btn-pro{border:0;border-radius:9px;padding:9px 7px;font-size:10px;font-weight:900;cursor:pointer}.btn-listo{background:#14392f;color:#50efb0;border:1px solid #2c9b78}.btn-invitar{background:#123444;color:#38d9ef;border:1px solid #227c90}.btn-revancha{background:linear-gradient(135deg,#ff8c00,#ff3d6e);color:#fff}.reconexion-card{display:none;background:linear-gradient(135deg,#143c37,#152638);border:1px solid #35ef9e;border-radius:12px;padding:12px;margin:8px 0;text-align:center}.ranking-mini{margin-top:10px;background:#111824;border:1px solid #2d394a;border-radius:11px;padding:10px}.ranking-mini h4{margin:0 0 7px;color:#ffd166;font-size:11px}.ranking-fila{display:flex;justify-content:space-between;color:#c7d0dc;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+        @media(max-width:420px){.lobby-grid{grid-template-columns:1fr}.acciones-pro{grid-template-columns:1fr}}
 
         /* ESTILOS DE ESTADÍSTICAS */
         .estadisticas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -647,21 +699,23 @@
                 
                 <!-- CONTENEDOR 1: MENÚ PRINCIPAL -->
                 <div id="ui-menu-principal" style="width: 100%;">
-                    <p>¡Bienvenido a tu mesa virtual! 🇩🇴<br>Elige cómo quieres jugar hoy:</p>
+                    <div class="inicio-subtitulo"><b>🇩🇴 La mesa está lista</b><br>Juega solo o reta a tus amigos.</div>
                     <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px;">
+                        <button type="button" id="btn-continuar-inicio" class="btn-continuar" onclick="window.continuarPartidaInicio()">🔄 CONTINUAR PARTIDA<small id="detalle-continuar">Tu asiento sigue disponible</small></button>
                         <button type="button" class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
                             <span>👤</span> JUGAR VS IA
                         </button>
                         <button type="button" class="btn-iniciar-partida" style="background: linear-gradient(45deg, #00bcd4, #005ce6); margin-top: 0;" onclick="abrirModalMultijugador()">
                             <span>🌐</span> MULTIJUGADOR
                         </button>
+                        <button type="button" class="actividad-inicio" onclick="abrirModalMultijugador()"><span class="pulso-online"></span><span id="actividad-inicio-texto"><strong>0 mesas disponibles</strong> · 0 jugadores en línea</span></button>
                         
                         <div style="display: flex; gap: 10px; width: 100%;">
                             <button type="button" class="btn-secundario" style="flex: 1;" onclick="toggleModalAjustes()">
                                 <span>⚙️</span> AJUSTES
                             </button>
-                            <button type="button" class="btn-secundario" style="flex: 1;" onclick="abrirEstadisticas()">
-                                <span>📊</span> RÉCORD
+                            <button type="button" class="btn-secundario perfil" style="flex: 1;" onclick="abrirEstadisticas()">
+                                <span>🏆</span> MI PERFIL
                             </button>
                         </div>
 
@@ -674,11 +728,15 @@
                                 <span>ℹ️</span> CRÉDITOS
                             </button>
                         </div>
+                        <div class="version-inicio">DOMINÓ RD · BETA 1.0 🇩🇴</div>
                     </div>
                 </div>
 
                 <!-- CONTENEDOR 2: SALA DE ESPERA -->
                 <div id="ui-sala-espera" style="display: none; width: 100%; flex-direction: column; align-items: center;">
+                    <div id="reconexion-card" class="reconexion-card"><b>🔄 Tu asiento está disponible</b><div style="font-size:10px;color:#b8c5d2;margin:5px 0 8px">Puedes volver a la mesa y reemplazar al bot.</div><button type="button" class="btn-pro btn-listo" onclick="window.reconectarJugador()">REINCORPORARME</button></div>
+                    <div id="lobby-pro"><div id="lobby-asientos" class="lobby-grid"></div><div id="lobby-resumen" class="lobby-resumen">Preparando la mesa...</div><div class="acciones-pro"><button type="button" id="btn-listo-pro" class="btn-pro btn-listo" onclick="window.toggleListo()">✅ ESTOY LISTO</button><button type="button" class="btn-pro btn-invitar" onclick="window.compartirCodigoSala()">🔗 INVITAR</button><button type="button" class="btn-pro btn-revancha" onclick="window.solicitarRevancha()">🔥 PEDIR REVANCHA</button><button type="button" class="btn-pro btn-invitar" onclick="window.mostrarRankingSala()">🏆 RANKING</button></div><div id="ranking-mini" class="ranking-mini" style="display:none"></div></div>
+
                     
                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; margin-bottom: 5px;">
                         <h2 style="color: #00bcd4; margin: 0;">Sala: <span id="lobby-codigo" style="color: #ffd700; letter-spacing: 2px;">---</span></h2>
@@ -895,6 +953,10 @@
                     <span class="etiqueta-desarrollo">Conectado a Firebase 🟢</span>
                 </div>
                 
+                <div id="banner-invitacion" style="display:none;background:linear-gradient(135deg,rgba(0,188,212,.16),rgba(0,255,136,.08));border:1px solid rgba(0,218,238,.35);padding:13px;border-radius:12px;margin-bottom:10px;text-align:center;">
+                    <div style="color:#00d9ee;font-weight:900;font-size:14px;">🎲 Invitación a una partida</div>
+                    <div id="detalle-invitacion" style="color:#c7d0dc;font-size:11px;line-height:1.5;margin-top:5px;">Escribe tu nombre para entrar a la mesa.</div>
+                </div>
                 <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px;">
                     <p style="font-size: 12px; margin-bottom: 8px; color: #ccc;">Tu Perfil para esta mesa:</p>
                     <div style="display: flex; gap: 5px; justify-content: center;">
@@ -907,16 +969,25 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button type="button" class="btn-iniciar-partida" style="margin: 0; background: #00bcd4; color: #000; box-shadow: none;" onclick="window.crearSalaReal()">
+                    <button type="button" id="btn-crear-sala-red" class="btn-iniciar-partida" style="margin: 0; background: #00bcd4; color: #000; box-shadow: none;" onclick="window.crearSalaReal()">
                         ➕ CREAR SALA NUEVA
                     </button>
                     
-                    <div style="display: flex; gap: 8px;">
+                    <div id="bloque-entrar-sala" style="display: flex; gap: 8px;">
                         <input type="text" id="input-codigo-sala" placeholder="CÓDIGO DE SALA" style="flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; padding: 10px; font-size: 14px; text-align: center; text-transform: uppercase;">
                         <button type="button" class="btn-iniciar-partida" style="margin: 0; width: auto; padding: 0 20px; box-shadow: none; font-size: 12px;" onclick="window.unirseSalaReal()">ENTRAR</button>
                     </div>
                 </div>
 
+                <div class="salas-publicas-wrap">
+                    <div class="salas-publicas-header">
+                        <strong>🎲 Salas disponibles</strong>
+                        <span id="estado-lista-salas" class="estado-salas">Buscando salas...</span>
+                    </div>
+                    <div id="lista-salas-publicas">
+                        <div class="sin-salas">Cargando mesas públicas...</div>
+                    </div>
+                </div>
                 <button type="button" class="btn-cerrar-ajustes" style="background: #333; color: white; border: none; margin-top: 10px;" onclick="window.cerrarModalMultijugador()">VOLVER</button>
             </div>
         </div>
@@ -1055,6 +1126,12 @@
                         <button type="button" class="btn-opcion btn-color" id="btn-mesa-azul" onclick="cambiarColorMesa('azul')"><span class="muestra-color muestra-m-azul"></span> Azul</button>
                         <button type="button" class="btn-opcion btn-color" id="btn-mesa-blanco" onclick="cambiarColorMesa('blanco')"><span class="muestra-color muestra-m-blanco"></span> Blanco</button>
                     </div>
+                </div>
+
+                <div class="grupo-ajuste" style="border:1px solid rgba(255,193,7,.25); background:rgba(255,193,7,.05); border-radius:10px; padding:10px;">
+                    <label style="color:#ffd166;">🧹 Mantenimiento de salas</label>
+                    <div style="font-size:10px;color:#aeb7c4;line-height:1.45;margin:6px 0 9px;">Modo de prueba: borra TODAS las salas guardadas en Firebase para dejar el listado en cero. Úsalo solo mientras estás desarrollando.</div>
+                    <button type="button" class="btn-opcion" id="btn-limpiar-salas" style="width:100%;border-color:#ff4d67;color:#ff8293;background:rgba(255,77,103,.10);" onclick="window.limpiarSalasManual()">🧹 VACIAR TODAS LAS SALAS</button>
                 </div>
 
                 <button type="button" class="btn-cerrar-ajustes" id="btn-guardar-ajustes" style="margin-top: 10px; background: rgba(0, 188, 212, 0.2); border: 1px solid var(--azul-rd); color: white;" onclick="accionBotonAjustes()">
@@ -1352,6 +1429,15 @@
             renderizarManos();
             window.renderizarSobrantes();
             
+            // --- NUEVO: Scroll automático a la derecha al robar ---
+            if (idJugador === 1) {
+                setTimeout(() => {
+                    const miManoEl = document.getElementById('mi-mano');
+                    if(miManoEl) miManoEl.scrollLeft = miManoEl.scrollWidth;
+                }, 50);
+            }
+            // -----------------------------------------------------
+            
             mostrarBurbuja(idJugador, "¡Robando!", "burbuja-robar", false, true);
 
             if (idJugador === 1 && !window.esMultijugador) {
@@ -1411,8 +1497,7 @@
                 salidaObligatoria = partidaDB.salidaObligatoria;
                 
                 fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
-                juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; 
-                esPrimerTurnoDespuesDeSalida = false; paseSalidaActivo = false;
+                juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
                 historialPases = { 1: [], 2: [], 3: [], 4: [] };
                 jugadorSalida = turnoActual; 
                 
@@ -1439,25 +1524,33 @@
         };
 
         // Función de compartir para usar la URL
-        window.compartirCodigoSala = function() {
+        window.compartirCodigoSala = async function() {
             const codigo = document.getElementById('lobby-codigo').innerText;
             if (!codigo || codigo === '---') return;
-            
             const urlBasica = window.location.origin + window.location.pathname;
-            const urlConSala = `${urlBasica}?sala=${codigo}`;
-            
-            const texto = `¡Únete a mi mesa de Dominó RD! 🇩🇴\nEntra directo tocando este enlace:\n${urlConSala}`;
-            
+            const urlConSala = `${urlBasica}?sala=${encodeURIComponent(codigo)}&invitacion=1`;
+            let anfitrion = 'Un jugador';
+            let puntos = metaPuntos || 200;
+            try {
+                const snap = await get(ref(db, 'salas/' + codigo));
+                if (snap.exists()) {
+                    const sala = snap.val();
+                    anfitrion = sala.creadorNombre || (sala.jugadores && sala.jugadores[1] && sala.jugadores[1].nombre) || anfitrion;
+                    puntos = sala.metaPuntos || puntos;
+                }
+            } catch (e) { console.warn('No se pudieron leer los datos de invitación', e); }
+            const texto = `🎲 INVITACIÓN A DOMINÓ RD 🇩🇴
+
+🏆 DESAFÍO DE DOMINÓ\n${anfitrion} te invita a una partida a ${puntos} puntos.
+
+Mesa: ${codigo}
+Para participar, abre el enlace, escribe tu nombre y pulsa ENTRAR A LA PARTIDA:
+${urlConSala}
+
+¿Aceptas el reto? 🎲🔥\n¡La mesa te espera!`;
             if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
-                navigator.share({
-                    title: 'Dominó RD - Partida Multijugador',
-                    text: texto
-                }).catch((err) => {
-                    copiarAlPortapapeles(texto);
-                });
-            } else {
-                copiarAlPortapapeles(texto);
-            }
+                navigator.share({ title: `Invitación a Dominó RD · Mesa ${codigo}`, text: texto }).catch(() => copiarAlPortapapeles(texto));
+            } else copiarAlPortapapeles(texto);
         };
 
         function copiarAlPortapapeles(texto) {
@@ -2057,7 +2150,7 @@
             ptsNosotrosEl.innerText = puntosNosotros; ptsEllosEl.innerText = puntosEllos;
 
             if (ganadorEquipo === 1) { ptsNosotrosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); estadisticas.victorias++; } 
-            else { ptsEllosEl.classList.add('resaltado'); ptsEllosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
+            else { ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
             estadisticas.puntosTotales += puntosNosotros; guardarEstadisticasLocal();
             modal.classList.remove('oculto');
             if (ganadorEquipo === 1) lanzarConfeti(4);
@@ -2614,8 +2707,18 @@
             const codigoSalaURL = parametrosURL.get('sala');
             
             if (codigoSalaURL) {
-                // Si viene un código en la URL, abrimos el modal multijugador
+                window.esModoInvitacion = true;
                 abrirModalMultijugador();
+                const btnCrear = document.getElementById('btn-crear-sala-red');
+                const listaSalas = document.querySelector('.salas-publicas-wrap');
+                const banner = document.getElementById('banner-invitacion');
+                const detalle = document.getElementById('detalle-invitacion');
+                if (btnCrear) btnCrear.style.display = 'none';
+                if (listaSalas) listaSalas.style.display = 'none';
+                if (banner) banner.style.display = 'block';
+                if (detalle) detalle.innerHTML = `Has sido invitado a la mesa <b style="color:#ffd166">${codigoSalaURL.toUpperCase()}</b>. Escribe tu nombre y pulsa <b>ENTRAR</b>.`;
+                const bloqueEntrada = document.getElementById('bloque-entrar-sala');
+                if (bloqueEntrada) bloqueEntrada.querySelector('button').innerText = 'ENTRAR A LA PARTIDA';
                 
                 // Llenamos el input automáticamente
                 const inputSala = document.getElementById('input-codigo-sala');
@@ -2633,7 +2736,7 @@
                     mostrarToast("¡Código de sala detectado! Pon tu nombre y dale a Entrar.");
                     
                     // Limpiamos la URL visualmente para que quede limpia (opcional pero elegante)
-                    window.history.replaceState({}, document.title, window.location.pathname);
+                    const nombreInput = document.getElementById('input-nombre-red'); if (nombreInput) setTimeout(() => nombreInput.focus(), 150);
                 }
             }
         });
@@ -2644,7 +2747,7 @@
     <!-- SCRIPT 2: MÓDULO MULTIJUGADOR FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue, push, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
@@ -2688,60 +2791,85 @@
                 
                 await set(salaRef, {
                     estado: 'esperando',
+                    creadaEn: Date.now(),
+                    creadorNombre: nombreRed,
+                    ultimaActividad: Date.now(),
+                    publica: true,
                     metaPuntos: configLocal.metaPuntos,
                     modoRobar: configLocal.modoRobar,
-                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false } }
+                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false, conectado: true, uid: obtenerUidJugador() } }
                 });
 
                 // GESTIÓN DE DESCONEXIÓN: Si el creador se desconecta, se convierte en bot para no trabar la mesa
                 const miJugadorRef = ref(db, 'salas/' + codigo + '/jugadores/1');
-                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true });
+                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true, nombre: 'Bot sustituto', avatar: '🤖', listo: true });
 
                 escucharCambiosSala(codigo);
             } catch (error) { window.mostrarToast("Error creando sala."); }
         };
 
-        window.unirseSalaReal = async function() {
-            try {
-                const val = document.getElementById('input-codigo-sala').value.trim().toUpperCase();
-                if(val.length < 4) { window.mostrarToast("Ingresa un código válido"); return; }
-                
-                let nombreRed = document.getElementById('input-nombre-red').value.trim();
-                if(!nombreRed) nombreRed = "Invitado";
-                let avatarRed = document.getElementById('input-avatar-red').value;
+        document.getElementById('input-nombre-red')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && window.esModoInvitacion) { e.preventDefault(); window.unirseSalaReal(); }
+        });
 
+        window.prepararEntradaSala = function(codigo) {
+            const input = document.getElementById('input-codigo-sala');
+            if (input) input.value = String(codigo || '').toUpperCase();
+            const nombre = document.getElementById('input-nombre-red');
+            if (nombre && !nombre.value.trim()) nombre.focus();
+            window.mostrarToast('Sala seleccionada. Escribe tu nombre y pulsa Entrar.');
+        };
+
+        window.unirseSalaReal = async function(codigoDirecto = null) {
+            try {
+                const inputCodigo = document.getElementById('input-codigo-sala');
+                const val = String(codigoDirecto || (inputCodigo ? inputCodigo.value : '')).trim().toUpperCase();
+                if(val.length < 4) { window.mostrarToast("Ingresa un código válido"); return; }
+                let nombreRed = document.getElementById('input-nombre-red').value.trim();
+                if(!nombreRed) { window.mostrarToast("Escribe tu nombre antes de entrar"); return; }
+                let avatarRed = document.getElementById('input-avatar-red').value;
                 window.mostrarToast("Buscando sala " + val + "...");
                 const salaRef = ref(db, 'salas/' + val);
                 const snapshot = await get(salaRef);
+                if (!snapshot.exists()) { window.mostrarToast("La sala no existe"); return; }
 
-                if (snapshot.exists()) {
-                    const datosSala = snapshot.val();
-                    if (datosSala.estado !== 'esperando') { window.mostrarToast("La partida ya comenzó"); return; }
+                const datosSala = snapshot.val();
+                const jugadoresSala = datosSala.jugadores || {};
+                let asientoLibre = null;
+                for (let i = 1; i <= 4; i++) {
+                    const jugador = jugadoresSala[i];
+                    if (!jugador || jugador.isBot === true || jugador.conectado === false) {
+                        asientoLibre = i;
+                        break;
+                    }
+                }
+                if (!asientoLibre) { window.mostrarToast("Sala completa. No hay bots para reemplazar."); return; }
 
-                    let asientoLibre = null;
-                    for (let i = 2; i <= 4; i++) { if (!datosSala.jugadores || !datosSala.jugadores[i]) { asientoLibre = i; break; } }
-                    if (!asientoLibre) { window.mostrarToast("La sala está llena"); return; }
+                window.salaIdActual = val;
+                window.miPuesto = asientoLibre;
+                window.esMultijugador = true;
+                window.cerrarModalMultijugador();
+                document.getElementById('ui-menu-principal').style.display = 'none';
+                document.getElementById('ui-sala-espera').style.display = 'flex';
+                document.getElementById('lobby-codigo').innerText = val;
 
-                    window.salaIdActual = val; window.miPuesto = asientoLibre; window.esMultijugador = true;
-
-                    window.cerrarModalMultijugador();
-                    document.getElementById('ui-menu-principal').style.display = 'none';
-                    document.getElementById('ui-sala-espera').style.display = 'flex';
-                    document.getElementById('lobby-codigo').innerText = val;
-
-                    await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false });
-                    
-                    // GESTIÓN DE DESCONEXIÓN: Si el jugador pierde red, su asiento lo asume el bot del creador
-                    const miJugadorRef = ref(db, 'salas/' + val + '/jugadores/' + asientoLibre);
-                    onDisconnect(miJugadorRef).update({ conectado: false, isBot: true });
-                    
-                    escucharCambiosSala(val);
-                } else { window.mostrarToast("La sala no existe"); }
-            } catch(error) { window.mostrarToast("Error uniéndose."); }
+                await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), {
+                    nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false,
+                    conectado: true, reemplazoBot: !!jugadoresSala[asientoLibre], uid: obtenerUidJugador()
+                });
+                await update(ref(db, 'salas/' + val), { ultimaActividad: Date.now() });
+                const miJugadorRef = ref(db, 'salas/' + val + '/jugadores/' + asientoLibre);
+                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true, nombre: 'Bot sustituto', avatar: '🤖', listo: true });
+                escucharCambiosSala(val);
+                window.mostrarToast(datosSala.estado === 'jugando' ? "Entraste reemplazando un bot 🤖" : "Te uniste a la sala");
+            } catch(error) {
+                console.error(error);
+                window.mostrarToast("Error uniéndose a la sala.");
+            }
         };
 
         window.iniciarPartidaRed = async function(esNuevaPartida = false, rellenarBots = true) {
-            if (window.miPuesto !== 1) return; 
+            if (!window.miPuesto || !window.salaIdActual || !window.datosSala) return;
             
             let asientosDb = Object.keys(window.datosSala.jugadores).map(Number);
             
@@ -2750,7 +2878,7 @@
                 for (let i = 1; i <= 4; i++) {
                     if (!window.datosSala.jugadores || !window.datosSala.jugadores[i]) {
                         updates['salas/' + window.salaIdActual + '/jugadores/' + i] = { 
-                            nombre: "Robot " + i, avatar: "🤖", isBot: true, listo: true 
+                            nombre: "Robot " + i, avatar: "🤖", isBot: true, listo: true, conectado: false 
                         };
                         asientosDb.push(i);
                     }
@@ -2885,6 +3013,169 @@
             } catch(e) {}
         };
 
+        window.continuarPartidaInicio = function(){
+            if (window.reconectarJugador) window.reconectarJugador();
+        };
+        function actualizarInicioDinamico(salas){
+            let mesas=0,humanos=0;
+            Object.values(salas||{}).forEach(sala=>{
+                if(!sala||sala.publica===false||(sala.estado!=='esperando'&&sala.estado!=='jugando'))return;
+                const jugadores=Object.values(sala.jugadores||{});
+                const conectados=jugadores.filter(j=>j&&j.isBot!==true&&j.conectado!==false).length;
+                if(conectados>0){mesas++;humanos+=conectados;}
+            });
+            const t=document.getElementById('actividad-inicio-texto');
+            if(t)t.innerHTML=`<strong>${mesas} mesa${mesas===1?'':'s'} disponible${mesas===1?'':'s'}</strong> · ${humanos} jugador${humanos===1?'':'es'} en línea`;
+        }
+        async function comprobarContinuarInicio(){
+            try{
+                const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;
+                const ses=JSON.parse(raw);if(!ses.codigo||Date.now()-(ses.fecha||0)>24*60*60*1000)return;
+                const snap=await get(ref(db,`salas/${ses.codigo}`));if(!snap.exists())return;
+                const sala=snap.val(),j=sala.jugadores&&sala.jugadores[ses.puesto];
+                if(j&&(j.uid===ses.uid||j.isBot===true||j.conectado===false)){
+                    const b=document.getElementById('btn-continuar-inicio'),d=document.getElementById('detalle-continuar');
+                    if(b)b.style.display='block';if(d)d.textContent=`${ses.codigo} · Tu puesto ${ses.puesto} está disponible`;
+                }
+            }catch(e){console.warn('No se pudo comprobar sesión anterior',e)}
+        }
+        onValue(ref(db,'salas'),snap=>actualizarInicioDinamico(snap.val()||{}));
+        comprobarContinuarInicio();
+
+        function obtenerUidJugador(){
+            let uid=localStorage.getItem('dominoRD_uid');
+            if(!uid){uid='u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9);localStorage.setItem('dominoRD_uid',uid)}
+            return uid;
+        }
+        function guardarSesionSala(codigo,puesto,nombre,avatar){localStorage.setItem('dominoRD_sesion',JSON.stringify({codigo,puesto,nombre,avatar,uid:obtenerUidJugador(),fecha:Date.now()}));}
+        function renderLobbyPro(datos){
+            const box=document.getElementById('lobby-asientos'); if(!box)return;
+            let humanos=0,bots=0,listos=0; box.innerHTML='';
+            for(let i=1;i<=4;i++){const j=(datos.jugadores||{})[i];const d=document.createElement('div');d.className='asiento-pro'+(i===window.miPuesto?' yo':'');
+                if(!j){d.innerHTML=`<div class="asiento-avatar">➕</div><div class="asiento-info"><div class="asiento-nombre">Puesto ${i}</div><div class="asiento-estado estado-offline">Esperando jugador...</div></div>`}
+                else{const bot=j.isBot===true||j.conectado===false;if(bot)bots++;else humanos++;if(j.listo||bot)listos++;const estado=bot?'🤖 Bot disponible':(j.conectado===false?'⚫ Desconectado':j.listo?'✅ Listo':'🟢 En línea');const cl=bot?'estado-bot':j.listo?'estado-ready':'estado-online';d.innerHTML=`<div class="asiento-avatar">${j.avatar||'🎲'}</div><div class="asiento-info"><div class="asiento-nombre">${j.nombre||'Jugador'}${i===window.miPuesto?' · Tú':''}</div><div class="asiento-estado ${cl}">${estado}</div></div>`}
+                box.appendChild(d)}
+            const r=document.getElementById('lobby-resumen');if(r)r.textContent=`${humanos} jugador${humanos===1?'':'es'} · ${bots} bot${bots===1?'':'s'} · ${Math.max(0,4-humanos-bots)} espacio${Math.max(0,4-humanos-bots)===1?'':'s'} · ${listos}/4 listos`;
+            const me=(datos.jugadores||{})[window.miPuesto];const b=document.getElementById('btn-listo-pro');if(b&&me)b.textContent=me.listo?'⏳ NO ESTOY LISTO':'✅ ESTOY LISTO';
+            if(window.salaIdActual&&window.miPuesto&&me&&!me.isBot)guardarSesionSala(window.salaIdActual,window.miPuesto,me.nombre,me.avatar);
+        }
+        window.toggleListo=async function(){if(!window.salaIdActual||!window.miPuesto)return;const me=window.datosSala?.jugadores?.[window.miPuesto];await update(ref(db,`salas/${window.salaIdActual}/jugadores/${window.miPuesto}`),{listo:!(me&&me.listo),ultimaConexion:Date.now()});};
+        window.solicitarRevancha=async function(){if(!window.salaIdActual||!window.miPuesto)return;await set(ref(db,`salas/${window.salaIdActual}/revancha/${window.miPuesto}`),{acepta:true,nombre:window.datosSala?.jugadores?.[window.miPuesto]?.nombre||'Jugador',timestamp:Date.now()});window.mostrarToast('🔥 Solicitud de revancha enviada');};
+        window.mostrarRankingSala=async function(){const el=document.getElementById('ranking-mini');if(!el)return;el.style.display=el.style.display==='none'?'block':'none';if(el.style.display==='none')return;const snap=await get(ref(db,'ranking'));const arr=Object.values(snap.val()||{}).sort((a,b)=>(b.puntos||0)-(a.puntos||0)).slice(0,5);el.innerHTML='<h4>🏆 Ranking semanal</h4>'+(arr.length?arr.map((x,i)=>`<div class="ranking-fila"><span>${i+1}. ${x.nombre||'Jugador'}</span><b>${x.puntos||0} pts</b></div>`).join(''):'<div class="ranking-fila"><span>Aún no hay puntuaciones</span></div>');};
+        window.reconectarJugador=async function(){const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;const ses=JSON.parse(raw);const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(!j||j.uid===ses.uid||j.isBot||j.conectado===false){window.salaIdActual=ses.codigo;window.miPuesto=ses.puesto;window.esMultijugador=true;await update(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`),{nombre:ses.nombre,avatar:ses.avatar,uid:ses.uid,isBot:false,conectado:true,listo:true});escucharCambiosSala(ses.codigo);document.getElementById('ui-menu-principal').style.display='none';document.getElementById('ui-sala-espera').style.display='flex';window.mostrarToast('✅ Recuperaste tu asiento');}};
+        (async()=>{try{const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;const ses=JSON.parse(raw);if(Date.now()-ses.fecha>24*60*60*1000)return;const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&(j.uid===ses.uid||j.isBot||j.conectado===false)){const c=document.getElementById('reconexion-card');if(c)c.style.display='block';}}catch(e){console.warn(e)}})();
+
+        const TIEMPO_LIMPIEZA_SALA = 15 * 60 * 1000; // 15 minutos sin humanos
+        let ultimaLimpiezaSalas = 0;
+
+        async function limpiarSalasAbandonadas(salas) {
+            const ahora = Date.now();
+            if (ahora - ultimaLimpiezaSalas < 60 * 1000) return; // como máximo una revisión por minuto
+            ultimaLimpiezaSalas = ahora;
+            const tareas = [];
+            Object.entries(salas || {}).forEach(([codigo, sala]) => {
+                if (!sala) return;
+                const jugadores = sala.jugadores || {};
+                const tieneHumano = Object.values(jugadores).some(j => j && j.isBot !== true && j.conectado !== false);
+                if (tieneHumano) return;
+                const marcaTiempo = Number(sala.ultimaActividad || sala.creadaEn || 0);
+                // Las salas nuevas esperan 15 min. Las salas antiguas sin timestamp y sin humanos también se limpian.
+                if (!marcaTiempo || (ahora - marcaTiempo >= TIEMPO_LIMPIEZA_SALA)) {
+                    tareas.push(remove(ref(db, 'salas/' + codigo)).catch(err => console.warn('No se pudo limpiar sala', codigo, err)));
+                }
+            });
+            if (tareas.length) await Promise.all(tareas);
+        }
+
+        window.limpiarSalasManual = async function() {
+            const ok = window.confirm('MODO DE PRUEBA: se borrarán TODAS las salas de Firebase, incluso las que aparezcan en espera o jugando. ¿Vaciar todas las salas ahora?');
+            if (!ok) return;
+            const btn = document.getElementById('btn-limpiar-salas');
+            const textoOriginal = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '⏳ VACIANDO SALAS...'; }
+            try {
+                const snap = await get(ref(db, 'salas'));
+                const total = snap.exists() ? Object.keys(snap.val() || {}).length : 0;
+                if (!total) {
+                    window.mostrarToast('✅ La lista de salas ya está vacía');
+                    return;
+                }
+                // Reset total del nodo de salas. Ideal para limpiar las salas de prueba acumuladas.
+                await remove(ref(db, 'salas'));
+                window.salaIdActual = null;
+                window.miPuesto = null;
+                window.esMultijugador = false;
+                window.mostrarToast(`✅ ${total} salas eliminadas. Firebase quedó limpio.`);
+            } catch (error) {
+                console.error('Error vaciando salas:', error);
+                window.mostrarToast('❌ Firebase no permitió borrar las salas. Revisa permiso de escritura en /salas.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = textoOriginal; }
+            }
+        };
+
+        function iniciarListadoSalasPublicas() {
+            const salasRef = ref(db, 'salas');
+            onValue(salasRef, (snapshot) => {
+                const cont = document.getElementById('lista-salas-publicas');
+                const estado = document.getElementById('estado-lista-salas');
+                if (!cont) return;
+                const salas = snapshot.val() || {};
+                limpiarSalasAbandonadas(salas);
+                const filas = Object.entries(salas)
+                    .filter(([codigo, sala]) => {
+                        if (!sala || sala.publica === false || (sala.estado !== 'esperando' && sala.estado !== 'jugando')) return false;
+                        const jugadoresSala = sala.jugadores || {};
+                        // Una sala vieja/cerrada suele quedar en Firebase con todos sus asientos como bots/desconectados.
+                        // Solo publicamos salas que todavía tengan por lo menos un jugador humano conectado.
+                        const tieneHumanoConectado = Object.values(jugadoresSala).some(j => j && j.isBot !== true && j.conectado !== false);
+                        return tieneHumanoConectado;
+                    })
+                    .map(([codigo, sala]) => {
+                        const jugadoresSala = sala.jugadores || {};
+                        let humanos = 0, bots = 0, espacios = 0;
+                        for (let i = 1; i <= 4; i++) {
+                            const j = jugadoresSala[i];
+                            if (!j) espacios++;
+                            else if (j.isBot === true || j.conectado === false) bots++;
+                            else humanos++;
+                        }
+                        const cupos = bots + espacios;
+                        return { codigo, sala, humanos, bots, espacios, cupos };
+                    })
+                    .sort((a,b) => (b.cupos - a.cupos) || ((b.sala.creadaEn || 0) - (a.sala.creadaEn || 0)));
+
+                estado.textContent = filas.length ? filas.length + (filas.length === 1 ? ' sala visible' : ' salas visibles') : 'Sin salas';
+                if (!filas.length) {
+                    cont.innerHTML = '<div class="sin-salas">No hay salas públicas ahora mismo. Puedes crear una.</div>';
+                    return;
+                }
+                cont.innerHTML = '';
+                filas.forEach(item => {
+                    const disponible = item.cupos > 0;
+                    const fila = document.createElement('div');
+                    fila.className = 'sala-publica';
+                    const detalleBots = item.bots > 0 ? ` · ${item.bots} bot${item.bots > 1 ? 's' : ''} reemplazable${item.bots > 1 ? 's' : ''}` : '';
+                    fila.innerHTML = `
+                        <div class="sala-publica-info">
+                            <div><span class="sala-publica-codigo">${item.codigo}</span></div>
+                            <div class="sala-publica-detalle">♟ ${item.humanos}/4 Jugadores${detalleBots} | <span class="${item.sala.estado === 'jugando' ? 'estado-jugando' : 'estado-esperando'}">${item.sala.estado === 'jugando' ? 'Jugando' : 'Esperando'}</span></div>
+                        </div>
+                        <button type="button" class="btn-entrar-sala-lista" ${disponible ? '' : 'disabled'}>${disponible ? 'ENTRAR' : 'LLENA'}</button>`;
+                    const btn = fila.querySelector('button');
+                    if (disponible) btn.addEventListener('click', () => window.prepararEntradaSala(item.codigo));
+                    cont.appendChild(fila);
+                });
+            }, (error) => {
+                console.error(error);
+                const estado = document.getElementById('estado-lista-salas');
+                const cont = document.getElementById('lista-salas-publicas');
+                if (estado) estado.textContent = 'No disponible';
+                if (cont) cont.innerHTML = '<div class="sin-salas">No se pudo cargar la lista. Revisa las reglas de lectura de Firebase.</div>';
+            });
+        }
+        iniciarListadoSalasPublicas();
+
         function escucharCambiosSala(codigoSala) {
             const salaRef = ref(db, 'salas/' + codigoSala);
             
@@ -2924,7 +3215,8 @@
                 const datos = snapshot.val();
                 if (!datos) return;
                 
-                window.datosSala = datos; 
+                window.datosSala = datos;
+                renderLobbyPro(datos); 
 
                 if (datos.metaPuntos && window.getConfiguracionJuego().metaPuntos !== datos.metaPuntos) {
                     window.setMetaPuntos(datos.metaPuntos);
@@ -2947,7 +3239,7 @@
                     document.getElementById('lobby-jugadores').innerHTML = htmlJugadores;
                     window.jugadoresConectados = contadorJugadores; 
 
-                    if (window.miPuesto === 1) {
+                    {
                         const btnRed = document.getElementById('btn-empezar-red');
                         const btnSolo = document.getElementById('btn-empezar-solo');
                         
@@ -2967,9 +3259,8 @@
                             btnRed.style.display = 'none';
                             btnSolo.style.display = 'none';
                         }
-                    } else {
-                        document.getElementById('lobby-mensaje').innerText = "Esperando a que el creador inicie la partida...";
                     }
+                    document.getElementById('lobby-mensaje').innerText = contadorJugadores > 1 ? "Cualquier jugador puede iniciar la partida." : "Esperando más jugadores o inicia con bots.";
                 }
 
                 if (datos.jugadores) { mapearJugadoresEnMesa(datos.jugadores, window.miPuesto); }
