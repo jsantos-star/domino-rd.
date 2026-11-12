@@ -1,4 +1,4 @@
-const CACHE_NAME = 'domino-rd-cache-v1';
+const CACHE_NAME = 'domino-rd-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,23 +8,29 @@ const urlsToCache = [
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
-// Instalar el Service Worker y guardar en caché los archivos base
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Interceptar las peticiones para servir desde el caché si no hay red
+// Borrar cachés viejos (el v1 que tiene el error)
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) return caches.delete(cache);
+        })
+      );
+    })
+  );
+});
+
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Devuelve el archivo del caché si existe, si no, lo busca en la red
-        return response || fetch(event.request);
-      })
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
