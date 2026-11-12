@@ -709,6 +709,9 @@
                         <button type="button" class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
                             <span>👤</span> JUGAR VS IA
                         </button>
+                        <button type="button" id="btn-instalar-pwa" class="btn-secundario" style="display: none; background: rgba(0, 255, 136, 0.15); border-color: #00ff88; color: #00ff88;" onclick="iniciarInstalacionManual()">
+                            <span>📱</span> INSTALAR APP
+                        </button>
                         <button type="button" class="btn-iniciar-partida" style="background: linear-gradient(45deg, #00bcd4, #005ce6); margin-top: 0;" onclick="abrirModalMultijugador()">
                             <span>🌐</span> MULTIJUGADOR
                         </button>
@@ -3362,18 +3365,54 @@ ${urlConSala}
     </script>
 
     <script>
+    // 1. REGISTRO DEL SERVICE WORKER
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(registration => {
-            console.log('ServiceWorker registrado con éxito:', registration.scope);
-            })
-            .catch(error => {
-            console.log('Fallo al registrar el ServiceWorker:', error);
-            });
+            .then(reg => console.log('SW Registrado'))
+            .catch(err => mostrarToast('Error en SW: ' + err));
         });
     }
+
+    // 2. RASTREADOR DE INSTALACIÓN
+    let promptInstalacion;
+    const btnInstalar = document.getElementById('btn-instalar-pwa');
+
+    // El navegador avisa que la app cumple los requisitos
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); // Evita que salga el banner automático de Chrome
+        promptInstalacion = e;
+        if (btnInstalar) btnInstalar.style.display = 'flex'; // Muestra nuestro botón
+        mostrarToast("✅ PWA detectada y lista para instalar");
+    });
+
+    // 3. FUNCIÓN AL TOCAR NUESTRO BOTÓN
+    async function iniciarInstalacionManual() {
+        if (!promptInstalacion) {
+        mostrarToast("⚠️ Error: El prompt no está listo.");
+        return;
+        }
+        mostrarToast("⏳ Iniciando instalación...");
+        
+        // Muestra el cuadro nativo del celular
+        promptInstalacion.prompt();
+        
+        // Espera a ver qué elige el usuario
+        const { outcome } = await promptInstalacion.userChoice;
+        if (outcome === 'accepted') {
+        mostrarToast("✅ Aceptaste la instalación");
+        } else {
+        mostrarToast("❌ Cancelaste la instalación");
+        }
+        promptInstalacion = null;
+        if (btnInstalar) btnInstalar.style.display = 'none';
+    }
+
+    // 4. CONFIRMACIÓN FINAL
+    window.addEventListener('appinstalled', () => {
+        mostrarToast("🎉 ¡App instalada con éxito en tu celular!");
+    });
     </script>
-    
+
 </body>
 </html>
