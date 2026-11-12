@@ -3,6 +3,8 @@ const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
+  './icono-192.png',
+  './icono-512.png',
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
