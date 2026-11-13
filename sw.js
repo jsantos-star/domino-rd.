@@ -1,36 +1,32 @@
-const CACHE_NAME = 'domino-rd-cache-v4';
-const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icono-192.png',
-  './icono-512.png',
-  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
-];
-
+/* Dominó RD — actualización PWA. Cambiar versión al publicar una nueva edición. */
+const CACHE_NAME = 'domino-rd-cache-v7';
+const APP_FILES = ['./', './index.html', './manifest.json', './icono-192.png', './icono-512.png'];
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
 });
-
-// Borrar cachés viejos (el v1 que tiene el error)
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) return caches.delete(cache);
-        })
-      );
-    })
-  );
+  event.waitUntil(Promise.all([
+    caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('domino-rd-cache-') && k !== CACHE_NAME).map(k => caches.delete(k)))),
+    self.clients.claim()
+  ]));
+});
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).then(response => {
+      if (response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then(cache => cache.put('./index.html',copy)); }
+      return response;
+    }).catch(async () => (await caches.match(request)) || (await caches.match('./index.html')) || Response.error()));
+    return;
+  }
+  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+    if (response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then(cache => cache.put(request,copy)); }
+    return response;
+  })));
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
