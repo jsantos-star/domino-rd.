@@ -6,11 +6,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#070a10">
+    <meta name="theme-color" content="#071b14">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./icono-192.png">
 
-    <title>Dominó RD</title>
+    <title>DOMI-DO</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -792,7 +792,7 @@
             }
         }
     
-        /* DOMINÓ RD: IDENTIDAD DE JUGADORES ALINEADA CON SUS FICHAS */
+        /* DOMI-DO: IDENTIDAD DE JUGADORES ALINEADA CON SUS FICHAS */
         /* Rivales laterales: avatar y nombre ENCIMA de su columna vertical. */
         #pos-j2, #pos-j4 {
             top: 50% !important;
@@ -843,7 +843,7 @@
         }
 
     
-        /* DOMINÓ RD · BORDE DE MESA PREMIUM, MADERA REALISTA SIN IMÁGENES */
+        /* DOMI-DO · BORDE DE MESA PREMIUM, MADERA REALISTA SIN IMÁGENES */
         .escenario-mesa { padding: 10px !important; }
         .zona-tapete {
             border: 9px solid #573014 !important;
@@ -879,7 +879,7 @@
         }
 
 
-        /* DOMINÓ RD · ACABADO SOBRIO Y PORTAFICHAS EMPOTRADOS */
+        /* DOMI-DO · ACABADO SOBRIO Y PORTAFICHAS EMPOTRADOS */
         .zona-tapete {
             border-color: #472b19 !important;
             box-shadow: 0 0 0 1px #8a663d, 0 0 0 3px #21160f,
@@ -1003,7 +1003,7 @@
         }
 
     
-/* ACABADO FINAL DOMINÓ RD */
+/* ACABADO FINAL DOMI-DO */
 /* El marcador desciende exactamente 1px sin modificar su tamaño. */
 #mini-marcador { margin-top: 2px !important; }
 /* Indicador de turno discreto, sin cambiar la posición del avatar. */
@@ -1018,7 +1018,7 @@
 #zoom-container .ficha-mesa.rd-ultima-colocada { animation: rdFichaAsienta .23s ease-out both; }
 
 
-/* DOMINO RD: sala multijugador responsive y desplazable en móviles */
+/* DOMI-DO: sala multijugador responsive y desplazable en móviles */
 #pantalla-bienvenida { box-sizing:border-box; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; justify-content:flex-start; padding: max(10px, env(safe-area-inset-top)) 10px max(14px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
 #pantalla-bienvenida .caja-bienvenida { box-sizing:border-box; flex-shrink:0; width:min(100%,540px); max-width:540px; padding:clamp(12px,3vw,22px); gap:10px; margin:auto; }
 #ui-sala-espera { min-width:0; }
@@ -1060,9 +1060,9 @@
 <body class="ficha-blanco mesa-verde">
 <style>
 #rd-splash-pwa{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 50% 35%,#1d4631,#071b14 75%);color:white;display:none;align-items:center;justify-content:center;text-align:center;font-family:system-ui,Arial,sans-serif;transition:opacity .35s ease}
-#rd-splash-pwa .rd-splash-logo{font-size:64px}#rd-splash-pwa h1{font-size:clamp(28px,8vw,43px);margin:12px 0 6px;font-weight:900}#rd-splash-pwa h1 span{color:#f2384b}#rd-splash-pwa p{color:#f5cc76;font-weight:700}#rd-splash-pwa small{display:block;color:#c6d5cb;margin-top:12px}.rd-splash-ring{height:34px;width:34px;border-radius:50%;border:4px solid #2a503d;border-top-color:#4be1a5;animation:rdSplashSpin .8s linear infinite;margin:23px auto 0}@keyframes rdSplashSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.rd-splash-ring{animation:none}}
+#rd-splash-pwa .rd-splash-imagen{width:116px;height:116px;object-fit:contain;border-radius:25px;box-shadow:0 8px 32px #0009}#rd-splash-pwa h1{font-size:clamp(28px,8vw,43px);margin:12px 0 6px;font-weight:900}#rd-splash-pwa h1 span{color:#f2384b}#rd-splash-pwa p{color:#f5cc76;font-weight:700}#rd-splash-pwa small{display:block;color:#c6d5cb;margin-top:12px}.rd-splash-ring{height:34px;width:34px;border-radius:50%;border:4px solid #2a503d;border-top-color:#4be1a5;animation:rdSplashSpin .8s linear infinite;margin:23px auto 0}@keyframes rdSplashSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.rd-splash-ring{animation:none}}
 </style>
-<div id="rd-splash-pwa" role="status" aria-label="Preparando Dominó RD"><div><div class="rd-splash-logo">🎲🇩🇴</div><h1>DOMINÓ <span>RD</span></h1><p>¡Bienvenido a la mesa!</p><div class="rd-splash-ring"></div><small>Abriendo el juego...</small><small>🏝️ La Isla del Dominó RD</small></div></div>
+<div id="rd-splash-pwa" role="status" aria-label="Preparando DOMI-DO"><div><img class="rd-splash-imagen" src="./icono-192.png" alt="Logo DOMI-DO"><h1>DOMI-<span>DO</span></h1><p>¡Bienvenido a la mesa!</p><div class="rd-splash-ring"></div><small>Abriendo el juego...</small><small>🏝️ La Isla de DOMI-DO</small></div></div>
 <script>
 (function(){
  var app=window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: fullscreen)').matches||window.navigator.standalone===true;
@@ -1089,7 +1089,7 @@
 </style>
 <div id="rd-arena" class="oculto" role="dialog" aria-modal="true">
 <div class="rd-arena-panel">
-<h2 style="text-align:center;color:#f8cc64;margin:3px">🏆 LA ISLA DEL DOMINÓ RD</h2>
+<h2 style="text-align:center;color:#f8cc64;margin:3px">🏆 LA ISLA DE DOMI-DO</h2>
 <div style="text-align:center;font-size:12px">🇩🇴 Copa del Patio · 4 parejas · Semifinal y final</div>
 <div id="rd-arena-contenido"></div>
 <div class="rd-arena-actions">
@@ -1154,7 +1154,8 @@
                     <rect x="375" width="150" height="600" fill="#ffffff"/>
                     <rect y="225" width="900" height="150" fill="#ffffff"/>
                 </svg>
-                <h1>Dominó <span>RD</span></h1>
+                <img src="./icono-192.png" alt="DOMI-DO" style="display:block;width:104px;height:104px;object-fit:contain;border-radius:22px;margin:0 auto 10px;box-shadow:0 6px 22px #0008">
+                <h1>DOMI-<span>DO</span></h1>
                 
                 <!-- CONTENEDOR 1: MENÚ PRINCIPAL -->
                 <div id="ui-menu-principal" style="width: 100%;">
@@ -1164,7 +1165,7 @@
                         <button type="button" class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
                             <span>👤</span> JUGAR VS IA
                         </button>
-                        <button type="button" class="btn-iniciar-partida" style="background:linear-gradient(110deg,#95651a,#f4c65c);color:#201508" onclick="rdArena.abrir()">🏆 LA ISLA DEL DOMINÓ RD · TORNEOS IA</button>
+                        <button type="button" class="btn-iniciar-partida" style="background:linear-gradient(110deg,#95651a,#f4c65c);color:#201508" onclick="rdArena.abrir()">🏆 LA ISLA DE DOMI-DO · TORNEOS IA</button>
                         <button type="button" id="btn-instalar-pwa" class="btn-secundario" style="display: none; background: rgba(0, 255, 136, 0.15); border-color: #00ff88; color: #00ff88;" onclick="iniciarInstalacionManual()">
                             <span>📱</span> INSTALAR APP
                         </button>
@@ -1191,7 +1192,7 @@
                                 <span>ℹ️</span> CRÉDITOS
                             </button>
                         </div>
-                        <div class="version-inicio">DOMINÓ RD · BETA 1.0 🇩🇴</div>
+                        <div class="version-inicio">DOMI-DO · BETA 1.0 🇩🇴</div>
                     </div>
                 </div>
 
@@ -1283,7 +1284,7 @@
                     <!-- ANIMACIÓN DE TRANQUE GIGANTE -->
                     <div id="animacion-tranque">🔒</div>
 
-                    <div class="marca-agua"><span>🇩🇴</span>Dominó RD</div>
+                    <div class="marca-agua"><span>🇩🇴</span>DOMI-DO</div>
                     <div id="zoom-container"></div>
 
                     <div id="banner-ganador-mano" class="domino">
@@ -1373,7 +1374,7 @@
         <aside class="panel-anotacion" id="panel-anotacion">
             <div class="header-libreta">
                 <button type="button" class="btn-cerrar-libreta" onclick="toggleLibreta()">✕</button>
-                <h1>Dominó <span>RD</span></h1>
+                <h1>DOMI-<span>DO</span></h1>
                 <div class="meta-puntos" id="lbl-meta" onclick="toggleModalAjustes()" title="Toca para cambiar meta">Meta: 200 pts</div>
             </div>
             <div class="marcador-global">
@@ -1443,8 +1444,8 @@
                     </div>
                 </div>
 
-                <section class="isla-online-card" aria-label="La Isla del Dominó RD">
-                    <div class="isla-online-heading">🏝️ LA ISLA DEL DOMINÓ RD</div>
+                <section class="isla-online-card" aria-label="La Isla de DOMI-DO">
+                    <div class="isla-online-heading">🏝️ LA ISLA DE DOMI-DO</div>
                     <div class="isla-online-sub">🏆 Torneos con jugadores reales · Inscripciones</div>
                     <div class="isla-online-buttons">
                         <button type="button" onclick="islaOnline.abrir('crear')">🏆 CREAR TORNEO</button>
@@ -1483,7 +1484,7 @@
         <!-- MODAL DE AYUDA / REGLAS -->
         <div id="modal-ayuda" class="oculto">
             <div class="tarjeta-ajustes" style="max-width: 460px;">
-                <h2>📖 Reglas del Dominó RD</h2>
+                <h2>📖 Reglas de DOMI-DO</h2>
                 <div class="contenido-texto">
                     <p><strong>🔹 Salida Obligatoria:</strong> En la primera mano, debe salir el jugador que tenga el Doble 6. Si nadie lo tiene, sale el creador de la sala con cualquier ficha.</p>
                     <p><strong>🌟 Capicúa (+30 pts):</strong> Si logras ganar la mano colocando una ficha que encaje en ambos extremos de la mesa, ¡tu equipo gana 30 puntos adicionales!</p>
@@ -1499,12 +1500,12 @@
         <!-- MODAL DE CREDITOS -->
         <div id="modal-creditos" class="oculto">
             <div class="tarjeta-ajustes">
-                <h2>ℹ️ Acerca de Dominó RD</h2>
+                <h2>ℹ️ Acerca de DOMI-DO</h2>
                 <div class="contenido-texto" style="text-align: center;">
                     <p>Mesa oficial virtual de Dominó Dominicano con sistema de puntuación clásico (Capicúa, Tranque y Pases).</p>
                     <div class="creditos-info">
                         Desarrollado y Creado por:
-                        <span>Javier Santos 😎</span>
+                        <span>Tu Nombre Aquí 😎</span>
                     </div>
                     <p style="font-size: 11px; margin-top: 10px;">Versión 12.1 - Menú Flotante Moderno</p>
                 </div>
@@ -2046,7 +2047,7 @@
                     puntos = sala.metaPuntos || puntos;
                 }
             } catch (e) { console.warn('No se pudieron leer los datos de invitación', e); }
-            const texto = `🎲 INVITACIÓN A DOMINÓ RD 🇩🇴
+            const texto = `🎲 INVITACIÓN A DOMI-DO 🇩🇴
 
 🏆 DESAFÍO DE DOMINÓ\n${anfitrion} te invita a una partida a ${puntos} puntos.
 
@@ -2056,7 +2057,7 @@ ${urlConSala}
 
 ¿Aceptas el reto? 🎲🔥\n¡La mesa te espera!`;
             if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
-                navigator.share({ title: `Invitación a Dominó RD · Mesa ${codigo}`, text: texto }).catch(() => copiarAlPortapapeles(texto));
+                navigator.share({ title: `Invitación a DOMI-DO · Mesa ${codigo}`, text: texto }).catch(() => copiarAlPortapapeles(texto));
             } else copiarAlPortapapeles(texto);
         };
 
@@ -4198,12 +4199,12 @@ window.islaOnline=(()=>{
  function textoInvitacion(){
   if(!torneoActual)return '';
   const enlace=location.protocol==='https:'&&location.hostname!=='localhost'?location.origin+location.pathname:'';
-  return '🏝️🏆 INVITACIÓN A TORNEO — LA ISLA DEL DOMINÓ RD 🇩🇴\\n\\n'
+  return '🏝️🏆 INVITACIÓN A TORNEO — LA ISLA DE DOMI-DO 🇩🇴\\n\\n'
    +'🎲 '+torneoActual.nombre+'\\n'
    +'👥 '+torneoActual.parejas+' parejas ('+(torneoActual.parejas*2)+' jugadores)\\n'
    +'🏆 Eliminación directa\\n'
    +'🎟️ Código: '+torneoActual.codigo+'\\n\\n'
-   +'Entra a Dominó RD → Multijugador → La Isla → Unirme a torneo e introduce el código.'
+   +'Entra a DOMI-DO → Multijugador → La Isla → Unirme a torneo e introduce el código.'
    +(enlace?'\\n\\n🔗 Abre el juego: '+enlace:'');
  }
  function mostrarTorneo(codigo,datos){
@@ -4222,7 +4223,7 @@ window.islaOnline=(()=>{
   if(!torneoActual)return;
   const texto=textoInvitacion();
   try{
-   if(navigator.share){await navigator.share({title:'🏆 La Isla del Dominó RD',text:texto});return}
+   if(navigator.share){await navigator.share({title:'🏆 La Isla de DOMI-DO',text:texto});return}
    await navigator.clipboard.writeText(texto);status('✅ Invitación copiada. Pégala en WhatsApp o donde quieras.');
   }catch(e){if(e.name!=='AbortError')status('No se pudo compartir automáticamente. Puedes copiar el código.')}
  }
@@ -4274,9 +4275,9 @@ window.islaOnline=(()=>{
 .rd-update-actions button:first-child{background:#f0c86d;color:#261b0d}
 .rd-update-actions button:last-child{background:#305343;color:white}
 </style>
-<div id="rd-aviso-actualizacion" role="dialog" aria-label="Actualización de Dominó RD disponible" hidden>
+<div id="rd-aviso-actualizacion" role="dialog" aria-label="Actualización de DOMI-DO disponible" hidden>
  <strong>🎲 ¡Nueva versión disponible!</strong>
- <p>Dominó RD tiene mejoras listas para instalar. Guarda tu partida antes de actualizar: el juego se reiniciará.</p>
+ <p>DOMI-DO tiene mejoras listas para instalar. Guarda tu partida antes de actualizar: el juego se reiniciará.</p>
  <div class="rd-update-actions">
   <button type="button" onclick="rdActualizarApp()">⬇️ ACTUALIZAR</button>
   <button type="button" onclick="rdPosponerActualizacion()">Más tarde</button>
