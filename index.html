@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./icono-192.png">
 
-    <title>Dominó RD 0921</title>
+    <title>Dominó RD</title>
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -160,16 +160,47 @@
         .btn-h-reglas { border-left-color: #ff1744; color: #ff1744; background: linear-gradient(90deg, rgba(255, 23, 68, 0.15) 0%, transparent 100%); }
         .btn-h-creditos { border-left-color: #2196f3; color: #2196f3; background: linear-gradient(90deg, rgba(33, 150, 243, 0.15) 0%, transparent 100%); }
 
-        /* MINI MARCADOR EN MESA ACTUALIZADO */
-        #mini-marcador {
-            position: absolute; top: 12px; left: 12px; 
-            background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.15); 
-            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #ccc; 
-            z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.6); backdrop-filter: blur(4px); 
-            display: flex; gap: 10px; align-items: center; cursor: pointer; transition: transform 0.2s;
+
+        /* Mesa panorámica: marcador fuera del recorrido de la rama superior izquierda. */
+        @media (min-width: 1100px) and (orientation: landscape) {
+            #mini-marcador { left: auto !important; right: 110px !important; top: 12px !important; }
         }
-        #mini-marcador:active { transform: scale(0.95); }
-        #mini-marcador span { white-space: nowrap; }
+        /* Mantener las fichas nítidas durante el ajuste del tablero. */
+        #zoom-container { transition: transform .18s ease-out; }
+
+        /* MARCADOR PREMIUM DE MESA: compacto, legible y sin tapar la cadena */
+        #mini-marcador {
+            position: absolute; top: 12px; left: 12px;
+            display: flex; align-items: center; gap: 6px;
+            padding: 5px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(9,20,39,.94), rgba(17,28,47,.91));
+            border: 1px solid rgba(255,255,255,.19);
+            box-shadow: 0 5px 16px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.08);
+            color: #fff; z-index: 100; cursor: pointer;
+            max-width: calc(100% - 24px);
+            font-family: inherit;
+        }
+        #mini-marcador .score-chip {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-width: 54px; padding: 5px 9px; border-radius: 10px;
+            line-height: 1.15; white-space: nowrap;
+        }
+        #mini-marcador .score-caption {
+            font-size: 9px; font-weight: 800; letter-spacing: .65px;
+            text-transform: uppercase; opacity: .94;
+        }
+        #mini-marcador .score-value { font-size: 19px; font-weight: 900; font-variant-numeric: tabular-nums; }
+        #mini-marcador .score-meta { background: rgba(255,191,43,.12); border: 1px solid rgba(255,191,43,.27); color: #ffd16b; }
+        #mini-marcador .score-nos { background: rgba(25,168,245,.15); border: 1px solid rgba(42,189,255,.3); color: #65d4ff; }
+        #mini-marcador .score-ellos { background: rgba(239,66,85,.14); border: 1px solid rgba(255,92,110,.27); color: #ff8e9b; }
+        #mini-marcador .score-sep { color: rgba(255,255,255,.48); font-size: 10px; font-weight: 900; }
+        #mini-marcador:active { filter: brightness(1.18); }
+        @media (max-width: 520px) {
+            #mini-marcador { top: 8px; left: 8px; gap: 3px; padding: 4px; border-radius: 11px; }
+            #mini-marcador .score-chip { min-width: 44px; padding: 4px 6px; }
+            #mini-marcador .score-caption { font-size: 8px; letter-spacing: .2px; }
+            #mini-marcador .score-value { font-size: 16px; }
+        }
 
         .escenario-mesa { position: relative; flex: 1; width: 100%; height: 100%; padding: 6px; display: flex; justify-content: center; align-items: center; }
         .zona-tapete {
@@ -271,8 +302,54 @@
         .timer-ring .progress { stroke: #00bcd4; stroke-dasharray: 132; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
 
         .turno-activo .avatar { border-color: #00bcd4; box-shadow: 0 0 14px #00bcd4; transform: scale(1.12); }
-        .avatar-ganador-ronda .avatar { border-color: #ffd700 !important; box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important; animation: latirGanador 0.7s infinite alternate ease-in-out !important; }
+        .avatar-ganador-ronda .avatar { border-color: #ffd700 !important; box-shadow: 0 0 22px 6px #ffd700, 0 0 35px rgba(255, 215, 0, 0.8) !important; animation: brilloAvatarFijo 0.85s infinite alternate ease-in-out !important; transform: none !important; }
+        @keyframes brilloAvatarFijo { from { filter: brightness(1); } to { filter: brightness(1.3); } }
         @keyframes latirGanador { from { transform: scale(1.1); } to { transform: scale(1.28); } }
+
+        /* MARCO LUMINOSO EN LA ESQUINA DEL JUGADOR GANADOR */
+        .jugador-flotante.esquina-ganadora,
+        .avatar-nosotros-pill.esquina-ganadora {
+            z-index: 220 !important; isolation: isolate;
+        }
+        .jugador-flotante.esquina-ganadora::after,
+        .avatar-nosotros-pill.esquina-ganadora::after {
+            content: ''; position: absolute; inset: -10px -13px;
+            border: 3px solid #ffd700; border-radius: 16px;
+            pointer-events: none; z-index: 30;
+            box-shadow: 0 0 9px #ffd700, 0 0 22px 5px rgba(255,215,0,.78),
+                        inset 0 0 16px rgba(255,215,0,.24);
+            animation: pulsoEsquina 0.72s ease-in-out infinite alternate;
+        }
+        .jugador-flotante.esquina-ganadora.tipo-capicua::after,
+        .avatar-nosotros-pill.esquina-ganadora.tipo-capicua::after {
+            border-color: #ff3ca6;
+            box-shadow: 0 0 10px #ff3ca6, 0 0 24px 6px rgba(255,60,166,.8),
+                        inset 0 0 16px rgba(255,60,166,.25);
+        }
+        .jugador-flotante.esquina-ganadora.tipo-tranque::after,
+        .avatar-nosotros-pill.esquina-ganadora.tipo-tranque::after {
+            border-color: #ff4b4b;
+            box-shadow: 0 0 10px #ff4b4b, 0 0 24px 6px rgba(255,75,75,.8),
+                        inset 0 0 16px rgba(255,75,75,.25);
+        }
+        @keyframes pulsoEsquina { from { opacity: .62; filter: brightness(.9); } to { opacity: 1; filter: brightness(1.45); } }
+
+        /* MENSAJES DEL CHAT QUE APARECEN SOBRE LA MESA */
+        #chat-flotante-layer { position: absolute; inset: 0; z-index: 180; pointer-events: none; overflow: hidden; }
+        .chat-flotante {
+            position: absolute; left: 50%; top: 22%; transform: translate(-50%, 12px) scale(.94);
+            width: max-content; max-width: min(78%, 360px); padding: 8px 13px; border-radius: 15px;
+            color: #fff; background: rgba(8, 14, 25, .88); border: 1px solid rgba(0, 210, 235, .8);
+            box-shadow: 0 5px 22px rgba(0,0,0,.42), 0 0 14px rgba(0,188,212,.22);
+            font-size: 12px; line-height: 1.35; text-align: left; opacity: 0;
+            animation: entradaChatFlotante .28s ease forwards, salidaChatFlotante .45s ease 4.1s forwards;
+            overflow-wrap: anywhere;
+        }
+        .chat-flotante .chat-flotante-autor { display: block; color: #48e5f3; font-size: 10px; font-weight: 900; margin-bottom: 3px; }
+        .chat-flotante.mio { border-color: rgba(255,215,0,.85); }
+        .chat-flotante.mio .chat-flotante-autor { color: #ffd86b; }
+        @keyframes entradaChatFlotante { to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+        @keyframes salidaChatFlotante { to { opacity: 0; transform: translate(-50%, -12px) scale(.96); } }
 
         .avatar-paso .avatar { border-color: #ff3333 !important; box-shadow: 0 0 22px 6px #ff3333 !important; animation: vibrarPaso 0.15s infinite alternate ease-in-out !important; }
         .avatar-paso .ficha, .avatar-paso .ficha-dorso { border-color: #ff3333 !important; box-shadow: 0 0 10px #ff3333 !important; }
@@ -391,6 +468,32 @@
         }
         .ficha-mesa.vertical { width: 50px !important; height: 100px !important; flex-direction: column; }
         .ficha-mesa.horizontal { width: 100px !important; height: 50px !important; flex-direction: row; }
+        /* RESALTADO DE LA PUNTA GANADORA EN LA CADENA DE FICHAS */
+        .ficha-mesa.ficha-punta-ganadora {
+            z-index: 260 !important;
+            outline: 3px solid #ffe066;
+            outline-offset: 3px;
+            box-shadow: 0 0 10px 4px rgba(255, 215, 0, .95),
+                        0 0 25px 9px rgba(255, 190, 0, .68),
+                        3px 6px 12px rgba(0,0,0,.75),
+                        inset 2px 2px 5px rgba(255,255,255,.8);
+            animation: pulsoFichaGanadora .95s ease-in-out infinite alternate;
+        }
+        .ficha-mesa.ficha-punta-ganadora.tipo-capicua {
+            outline-color: #ff55b8;
+            box-shadow: 0 0 12px 4px rgba(255, 60, 166, .98),
+                        0 0 27px 9px rgba(255, 60, 166, .7);
+        }
+        .ficha-mesa.ficha-punta-ganadora.tipo-tranque {
+            outline-color: #ff5555;
+            box-shadow: 0 0 12px 4px rgba(255, 65, 65, .98),
+                        0 0 27px 9px rgba(255, 65, 65, .7);
+        }
+        @keyframes pulsoFichaGanadora {
+            from { filter: brightness(1); outline-offset: 2px; }
+            to { filter: brightness(1.25); outline-offset: 5px; }
+        }
+
         .mitad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 2px; align-items: center; justify-items: center; }
         
         .linea-divisoria { background: rgba(0,0,0,0.8); height: 3px; width: 90%; margin: 0 auto; border-radius: 2px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.4); position: relative; }
@@ -643,17 +746,21 @@
 
         /* CHAT PANEL */
         .panel-chat {
-            position: absolute; top: 0; left: 0; height: 100%; width: 300px; background: #131926; border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 16px; box-shadow: 10px 0 35px rgba(0,0,0,0.85); z-index: 300; transform: translateX(-100%); transition: transform 0.28s ease;
+            position: absolute; top: 0; left: 0; height: 100%; width: 300px;
+            background: rgba(8, 14, 25, 0.30) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+            border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; padding: 16px;
+            box-shadow: 5px 0 18px rgba(0,0,0,0.12); z-index: 300; transform: translateX(-100%); transition: transform 0.28s ease;
         }
         .panel-chat.abierta { transform: translateX(0); }
-        .chat-mensajes { flex: 1; overflow-y: auto; background: #0b0f19; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .panel-chat .header-libreta { background: transparent !important; }
+        .chat-mensajes { flex: 1; overflow-y: auto; background: rgba(4, 9, 18, 0.10) !important; border-radius: 10px; border: 0 !important; padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
         .chat-mensajes::-webkit-scrollbar { width: 3px; } .chat-mensajes::-webkit-scrollbar-thumb { background: #2a3143; border-radius: 3px; }
         .msg-burbuja { font-size: 13px; padding: 8px 12px; border-radius: 14px; max-width: 85%; line-height: 1.3; }
         .msg-burbuja.mio { background: rgba(0, 188, 212, 0.15); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid var(--azul-rd);}
         .msg-burbuja.otro { background: rgba(255, 255, 255, 0.1); color: #ccc; align-self: flex-start; border-bottom-left-radius: 4px; }
         .msg-autor { font-size: 10px; color: #888; margin-bottom: 3px; font-weight: bold;}
         .chat-input-area { display: flex; gap: 6px; }
-        .chat-input-area input { flex: 1; background: #0b0f19; border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; color: #fff; padding: 10px 14px; font-size: 13px; outline: none; }
+        .chat-input-area input { flex: 1; background: rgba(5, 10, 18, 0.62); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; color: #fff; padding: 10px 14px; font-size: 13px; outline: none; }
         .chat-input-area input:focus { border-color: var(--azul-rd); }
         .chat-input-area button { background: linear-gradient(45deg, #00bcd4, #005ce6); color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 14px; box-shadow: 0 4px 10px rgba(0,188,212,0.4);}
         .chat-input-area button:active { transform: scale(0.92); }
@@ -684,11 +791,352 @@
                 font-size: 20px; 
             }
         }
-    </style>
+    
+        /* DOMINÓ RD: IDENTIDAD DE JUGADORES ALINEADA CON SUS FICHAS */
+        /* Rivales laterales: avatar y nombre ENCIMA de su columna vertical. */
+        #pos-j2, #pos-j4 {
+            top: 50% !important;
+            bottom: auto !important;
+            transform: translateY(-50%) !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            width: 74px;
+            z-index: 110;
+        }
+        #pos-j4 { left: 10px !important; right: auto !important; }
+        #pos-j2 { right: 10px !important; left: auto !important; }
+        #pos-j2 .avatar-wrap, #pos-j4 .avatar-wrap {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 2px !important;
+            flex-shrink: 0;
+        }
+        #pos-j2 .fichas-ocultas.v, #pos-j4 .fichas-ocultas.v {
+            flex-direction: column !important;
+            align-items: center;
+            gap: 2px;
+            max-height: calc(100dvh - 160px);
+        }
+        #pos-j2 .nombre-tag, #pos-j4 .nombre-tag {
+            text-align: center; max-width: 74px; overflow: hidden;
+            text-overflow: ellipsis; font-size: 10px;
+        }
+        /* El compadre mantiene el avatar arriba, con su mano horizontal debajo. */
+        #pos-j3 {
+            top: 9px !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 5px !important;
+        }
+        /* Nosotros: avatar y nombre a un lado de las fichas de la mano. */
+        .zona-nosotros-dock { align-items: center !important; gap: 9px !important; }
+        .zona-nosotros-dock #pos-j1 { align-self: center; }
+        /* Los globos de los rivales se abren hacia el centro, sin tapar su mano. */
+        #pos-j4 .burbuja-estado { top: 6px; left: calc(100% + 6px); right: auto; transform: none; }
+        #pos-j2 .burbuja-estado { top: 6px; right: calc(100% + 6px); left: auto; transform: none; }
+        @media (max-height: 440px) {
+            #pos-j2, #pos-j4 { gap: 4px !important; }
+            #pos-j2 .avatar-wrap, #pos-j4 .avatar-wrap { gap: 0 !important; }
+            #pos-j2 .fichas-ocultas.v, #pos-j4 .fichas-ocultas.v { gap: 1px; }
+        }
+
+    
+        /* DOMINÓ RD · BORDE DE MESA PREMIUM, MADERA REALISTA SIN IMÁGENES */
+        .escenario-mesa { padding: 10px !important; }
+        .zona-tapete {
+            border: 9px solid #573014 !important;
+            border-radius: 27px !important;
+            background: var(--tapete-fondo) !important;
+            box-shadow:
+                0 0 0 2px #bf8a3c,
+                0 0 0 5px #24140e,
+                0 0 0 7px #002868,
+                0 0 0 9px #ce1126,
+                0 10px 26px rgba(0,0,0,.7),
+                inset 0 0 0 2px rgba(243,195,98,.58),
+                inset 0 0 0 7px rgba(32,15,7,.75),
+                inset 0 0 32px 13px rgba(0,0,0,.42) !important;
+        }
+        .zona-tapete::before {
+            content: ''; position: absolute; inset: 5px; border-radius: 14px;
+            border: 1px solid rgba(243,193,98,.36);
+            box-shadow: inset 0 0 10px rgba(0,0,0,.5), 0 0 4px rgba(255,206,114,.15);
+            pointer-events: none; z-index: 2;
+        }
+        .zona-tapete::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            border-radius: 17px;
+            background: linear-gradient(145deg,rgba(255,221,145,.065),transparent 22%,transparent 75%,rgba(0,0,0,.16));
+            z-index: 1;
+        }
+        /* Fichas y controles quedan por encima del acabado decorativo */
+        #zoom-container { z-index: 5; }
+        @media (max-height: 500px) {
+            .escenario-mesa { padding: 9px !important; }
+            .zona-tapete { border-width: 7px !important; border-radius: 23px !important; }
+        }
+
+
+        /* DOMINÓ RD · ACABADO SOBRIO Y PORTAFICHAS EMPOTRADOS */
+        .zona-tapete {
+            border-color: #472b19 !important;
+            box-shadow: 0 0 0 1px #8a663d, 0 0 0 3px #21160f,
+                0 0 0 5px #002868, 0 0 0 7px #9d2633,
+                0 5px 13px rgba(0,0,0,.36),
+                inset 0 0 0 1px rgba(195,151,87,.33),
+                inset 0 0 0 5px rgba(28,16,10,.64),
+                inset 0 0 19px 8px rgba(0,0,0,.28) !important;
+        }
+        .zona-tapete::before {
+            border-color: rgba(170,128,73,.24) !important;
+            box-shadow: inset 0 0 6px rgba(0,0,0,.28) !important;
+        }
+        .zona-tapete::after { background: linear-gradient(145deg,rgba(255,221,145,.025),transparent 35%,rgba(0,0,0,.08)) !important; }
+        /* Cavidad para la mano propia, como el canal de una mesa real. */
+        #mi-mano {
+            background: linear-gradient(180deg, #101a15 0%, #09100d 35%, #152017 100%) !important;
+            border: 3px solid #583a21 !important;
+            border-top-color: #21140d !important;
+            border-bottom-color: #99714b !important;
+            border-radius: 17px !important;
+            box-shadow: inset 0 6px 12px rgba(0,0,0,.9),
+                        inset 0 -2px 3px rgba(193,151,95,.23),
+                        0 2px 5px rgba(0,0,0,.3) !important;
+            backdrop-filter: none !important;
+        }
+        /* Cavidades pequeñas bajo las fichas ocultas de los otros jugadores. */
+        #mano-j2, #mano-j4, #mano-j3 {
+            position: relative;
+            padding: 5px 6px;
+            background: linear-gradient(145deg, #0a140e, #1c2a1c);
+            border: 2px solid #5b3d25;
+            border-top-color: #24160d;
+            border-bottom-color: #997047;
+            border-radius: 10px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,.75),
+                        inset 0 -1px 2px rgba(184,143,87,.16),
+                        0 2px 4px rgba(0,0,0,.24);
+            flex-shrink: 0;
+        }
+        #mano-j2, #mano-j4 { padding: 5px 7px; }
+        #mano-j3 { padding: 6px 8px; }
+        /* Brillo del ganador más suave, sin cambiar su posición. */
+        .avatar-ganador-ronda .avatar {
+            box-shadow: 0 0 9px 2px rgba(255,215,0,.66), 0 0 15px rgba(255,215,0,.32) !important;
+        }
+        .jugador-flotante.esquina-ganadora::after,
+        .avatar-nosotros-pill.esquina-ganadora::after {
+            box-shadow: 0 0 7px rgba(255,215,0,.7), 0 0 13px rgba(255,215,0,.35),
+                        inset 0 0 7px rgba(255,215,0,.12) !important;
+        }
+        @media (max-height: 500px) {
+            #mano-j2, #mano-j4 { padding: 3px 5px; }
+            #mano-j3 { padding: 4px 6px; }
+            #mi-mano { border-width: 2px !important; }
+        }
+
+    
+        /* FICHAS MÁS PRESENTES: canal poco profundo y mayor contraste */
+        #mi-mano {
+            background: linear-gradient(180deg,#1d3023 0%,#16251b 50%,#243a2a 100%) !important;
+            border-top-color: #4a3220 !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,.48),
+                        inset 0 -1px 2px rgba(207,165,101,.20),
+                        0 3px 8px rgba(0,0,0,.30) !important;
+        }
+        #mi-mano .ficha:not(.jugable) { opacity: .86; }
+        #mi-mano .ficha { box-shadow: 1px 3px 7px rgba(0,0,0,.44), inset 1px 1px 3px rgba(255,255,255,.7); }
+        #mano-j2, #mano-j3, #mano-j4 {
+            background: linear-gradient(145deg,#1a2a1c,#253827);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,.43),0 2px 4px rgba(0,0,0,.24);
+        }
+        #zoom-container .ficha-mesa { filter: brightness(1.055) contrast(1.045); }
+
+    
+        /* Mano propia compacta: siete fichas visibles sin invadir la mesa. */
+        #mi-mano {
+            gap: clamp(3px, .45vw, 6px) !important;
+            padding: 7px 9px 5px !important;
+            max-width: min(790px, calc(100vw - 125px)) !important;
+            justify-content: center !important;
+            align-items: flex-end !important;
+            transform: none !important;
+            overflow-x: auto !important;
+            scrollbar-width: thin;
+        }
+        #mi-mano .ficha {
+            width: clamp(34px, 5.2vw, 43px) !important;
+            height: clamp(65px, 10.4vw, 80px) !important;
+            padding: 3px !important;
+            flex: 0 0 auto !important;
+            border-radius: 5px;
+        }
+        #mi-mano .ficha .mitad { gap: 1px; padding: 1px; }
+        #mi-mano .ficha .punto { width: clamp(6px, .75vw, 8px); height: clamp(6px, .75vw, 8px); }
+        #mi-mano .ficha.jugable { transform: translateY(-2px); }
+        #mi-mano .ficha.jugable:hover { transform: translateY(-5px); }
+        #mi-mano .ficha.seleccionada { transform: translateY(-9px); }
+        .zona-nosotros-dock { gap: 7px !important; }
+        @media (max-height: 450px) {
+            #mi-mano .ficha { height: clamp(59px, 18vh, 76px) !important; width: clamp(32px, 9vh, 41px) !important; }
+            #mi-mano { padding: 6px 8px 4px !important; }
+        }
+
+
+        /* Mejor visibilidad de las fichas disponibles, sin mover el portafichas */
+        #mi-mano .ficha.jugable {
+            opacity: 1 !important;
+            border: 2px solid #39ffac !important;
+            box-shadow: 0 0 0 2px rgba(10, 255, 147, .35),
+                        0 0 15px 4px rgba(0, 255, 125, .76),
+                        inset 1px 1px 3px rgba(255,255,255,.85) !important;
+            filter: brightness(1.12) contrast(1.08);
+            transform: translateY(-3px);
+        }
+        #mi-mano .ficha:not(.jugable):not(.seleccionada) { opacity: .66 !important; filter: brightness(.86); }
+        #mi-mano.turno-inactivo .ficha:not(.jugable) { opacity: 1 !important; filter: none; }
+        #mi-mano .ficha.seleccionada {
+            border: 2px solid #65eaff !important;
+            box-shadow: 0 0 16px 4px rgba(0,200,255,.8) !important;
+        }
+
+    
+/* ACABADO FINAL DOMINÓ RD */
+/* El marcador desciende exactamente 1px sin modificar su tamaño. */
+#mini-marcador { margin-top: 2px !important; }
+/* Indicador de turno discreto, sin cambiar la posición del avatar. */
+.jugador-flotante.turno-activo .avatar-circulo,
+.avatar-nosotros-pill.turno-activo .avatar-circulo,
+.jugador-flotante.turno-activo .avatar,
+.avatar-nosotros-pill.turno-activo .avatar {
+    box-shadow: 0 0 0 2px #26e5e1, 0 0 13px rgba(38,229,225,.65) !important;
+}
+/* Entrada suave únicamente de la última ficha jugada. */
+@keyframes rdFichaAsienta { from { opacity:.75; filter:brightness(1.28); } to { opacity:1; filter:brightness(1); } }
+#zoom-container .ficha-mesa.rd-ultima-colocada { animation: rdFichaAsienta .23s ease-out both; }
+
+
+/* DOMINO RD: sala multijugador responsive y desplazable en móviles */
+#pantalla-bienvenida { box-sizing:border-box; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; justify-content:flex-start; padding: max(10px, env(safe-area-inset-top)) 10px max(14px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
+#pantalla-bienvenida .caja-bienvenida { box-sizing:border-box; flex-shrink:0; width:min(100%,540px); max-width:540px; padding:clamp(12px,3vw,22px); gap:10px; margin:auto; }
+#ui-sala-espera { min-width:0; }
+#ui-sala-espera #lobby-pro { margin:2px 0 6px; }
+#ui-sala-espera .lobby-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#ui-sala-espera .asiento-pro { min-width:0; min-height:52px; padding:8px; gap:6px; }
+#ui-sala-espera .asiento-avatar { width:29px; font-size:21px; flex-shrink:0; }
+#ui-sala-espera .asiento-nombre { font-size:11px; }
+#ui-sala-espera .acciones-pro { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#ui-sala-espera .btn-pro { min-width:0; min-height:39px; padding:8px 5px; font-size:10px; }
+#ui-sala-espera #lobby-codigo { overflow-wrap:anywhere; font-size:clamp(17px,4.7vw,24px); letter-spacing:.5px!important; }
+#ui-sala-espera #lobby-mensaje { margin:5px 0 9px!important; }
+#ui-sala-espera #lobby-jugadores { box-sizing:border-box; padding:10px!important; margin-bottom:9px!important; max-height:130px; overflow-y:auto; }
+#ui-sala-espera #btn-container-empezar { gap:6px!important; }
+@media (max-width:600px) {
+ #pantalla-bienvenida .caja-bienvenida { margin:0 auto; padding:12px; gap:8px; border-radius:15px; }
+ #pantalla-bienvenida .caja-bienvenida h1 { font-size:clamp(20px,6vw,26px); }
+ #pantalla-bienvenida .bandera-svg { width:45px!important; height:29px!important; }
+ #ui-sala-espera .asiento-pro { min-height:46px; padding:7px 6px; }
+ #ui-sala-espera .asiento-avatar { width:25px; font-size:19px; }
+ #ui-sala-espera .asiento-nombre { font-size:10px; }
+ #ui-sala-espera .asiento-estado { font-size:9px; }
+ #ui-sala-espera .lobby-resumen { margin:5px 0; }
+}
+@media (max-width:340px) { #ui-sala-espera .lobby-grid { grid-template-columns:1fr; } }
+@media (max-height:520px) and (orientation:landscape) {
+ #pantalla-bienvenida .caja-bienvenida { margin:0 auto; }
+ #ui-sala-espera #lobby-jugadores { max-height:75px; }
+}
+</style>
 </head>
 <body class="ficha-blanco mesa-verde">
+<style>
+#rd-splash-pwa{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 50% 35%,#1d4631,#071b14 75%);color:white;display:none;align-items:center;justify-content:center;text-align:center;font-family:system-ui,Arial,sans-serif;transition:opacity .35s ease}
+#rd-splash-pwa .rd-splash-logo{font-size:64px}#rd-splash-pwa h1{font-size:clamp(28px,8vw,43px);margin:12px 0 6px;font-weight:900}#rd-splash-pwa h1 span{color:#f2384b}#rd-splash-pwa p{color:#f5cc76;font-weight:700}#rd-splash-pwa small{display:block;color:#c6d5cb;margin-top:12px}.rd-splash-ring{height:34px;width:34px;border-radius:50%;border:4px solid #2a503d;border-top-color:#4be1a5;animation:rdSplashSpin .8s linear infinite;margin:23px auto 0}@keyframes rdSplashSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.rd-splash-ring{animation:none}}
+</style>
+<div id="rd-splash-pwa" role="status" aria-label="Preparando Dominó RD"><div><div class="rd-splash-logo">🎲🇩🇴</div><h1>DOMINÓ <span>RD</span></h1><p>¡La mesa está lista!</p><div class="rd-splash-ring"></div><small>Preparando tu partida...</small><small>🏝️ La Isla del Dominó RD</small></div></div>
+<script>
+(function(){
+ var app=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+ if(!app)return;
+ var splash=document.getElementById('rd-splash-pwa');splash.style.display='flex';
+ var inicio=Date.now(),cerrado=false;
+ function cerrar(){if(cerrado)return;cerrado=true;setTimeout(function(){splash.style.opacity='0';setTimeout(function(){splash.remove()},380)},Math.max(0,1200-(Date.now()-inicio)))}
+ if(document.readyState==='complete')cerrar();else window.addEventListener('load',cerrar,{once:true});setTimeout(cerrar,6000);
+})();
+</script>
+
     <div class="contenedor-juego">
         
+<style>
+#rd-arena{position:fixed;inset:0;z-index:100000;background:#03120bf2;display:flex;align-items:center;justify-content:center;padding:12px;color:#f9ebc9}
+#rd-arena.oculto{display:none!important}
+.rd-arena-panel{width:min(630px,96vw);max-height:92vh;overflow:auto;box-sizing:border-box;background:linear-gradient(140deg,#214b32,#081c13);border:2px solid #d5a44d;border-radius:18px;padding:16px;box-shadow:0 18px 65px #000b}
+.rd-arena-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.rd-arena-card{border:1px solid #987b43;border-radius:10px;background:#061a10;padding:10px;font-size:12px}
+.rd-arena-match{background:#244b32;padding:8px;margin-top:7px;border-radius:8px;line-height:1.6}
+.rd-arena-btn{background:linear-gradient(120deg,#a87824,#f3cc6a);border:0;border-radius:10px;padding:10px 14px;font-weight:900;color:#1b150c;cursor:pointer}
+.rd-arena-btn.alt{background:#315640;color:white}
+.rd-arena-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+</style>
+<div id="rd-arena" class="oculto" role="dialog" aria-modal="true">
+<div class="rd-arena-panel">
+<h2 style="text-align:center;color:#f8cc64;margin:3px">🏆 LA ISLA DEL DOMINÓ RD</h2>
+<div style="text-align:center;font-size:12px">🇩🇴 Copa del Patio · 4 parejas · Semifinal y final</div>
+<div id="rd-arena-contenido"></div>
+<div class="rd-arena-actions">
+<button type="button" class="rd-arena-btn" id="rd-arena-accion" onclick="rdArena.accion()">🎲 Comenzar</button>
+<button type="button" class="rd-arena-btn alt" onclick="rdArena.cerrar()">Cerrar</button>
+<button type="button" class="rd-arena-btn alt" id="rd-arena-reiniciar" onclick="rdArena.reiniciar()">Nuevo torneo</button>
+</div>
+<p style="font-size:11px;text-align:center;color:#c4c9b9">Modo local contra IA, sin premios en dinero. El multijugador real necesitará servidor y resultados validados.</p>
+</div></div>
+<style>
+.isla-online-card{margin:12px 0;padding:14px;border:1.5px solid #e2ae4a;border-radius:15px;background:linear-gradient(135deg,#2e2413,#132d27);box-shadow:0 0 22px #d9a33125}
+.isla-online-heading{font-size:clamp(17px,4vw,23px);font-weight:900;text-align:center;color:#ffd271}
+.isla-online-sub{text-align:center;font-size:12px;color:#f2dcb0;margin:5px 0 12px}
+.isla-online-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.isla-online-buttons button{padding:12px 5px;border:0;border-radius:10px;font-weight:900;font-size:12px;background:linear-gradient(130deg,#c28b28,#ffd371);color:#251b0c}
+.isla-online-buttons button+button{background:linear-gradient(130deg,#bc3045,#ff6580);color:white}
+.isla-online-note{color:#c7c7bc;font-size:10px;line-height:1.4;margin-top:10px;text-align:center}
+#isla-online-modal{position:fixed;inset:0;z-index:110000;background:#020e0bdc;display:flex;align-items:center;justify-content:center;padding:12px;color:white}
+#isla-online-modal.oculto{display:none!important}
+.isla-online-dialog{width:min(460px,96vw);max-height:88vh;overflow:auto;padding:18px;background:#13241f;border:2px solid #e0b85c;border-radius:18px;box-sizing:border-box}
+.isla-online-dialog label{display:block;font-size:12px;margin:10px 0 5px}
+.isla-online-dialog input,.isla-online-dialog select{box-sizing:border-box;width:100%;background:#091512;color:white;border:1px solid #64806e;border-radius:9px;padding:11px;font-size:14px}
+.isla-online-dialog button{padding:11px;border:0;border-radius:10px;background:#f0c464;color:#231608;font-weight:bold}
+.isla-online-dialog .isla-row{display:flex;gap:8px;margin-top:12px}
+#isla-online-status{font-size:12px;color:#f4d08b;min-height:18px;margin-top:10px}
+@media(max-width:370px){.isla-online-buttons{grid-template-columns:1fr}}
+</style>
+<div id="isla-online-modal" class="oculto" role="dialog" aria-modal="true" aria-label="Torneos online">
+ <div class="isla-online-dialog">
+  <h2 style="text-align:center;color:#ffd371;margin:0 0 6px">🏝️ LA ISLA</h2>
+  <p style="text-align:center;font-size:12px;color:#d4cbb4">Torneos online · Etapa de inscripción</p>
+  <div id="isla-crear">
+   <label>Nombre del torneo</label><input id="isla-nombre-torneo" maxlength="48" placeholder="Copa de mi barrio">
+   <label>Cantidad de parejas</label><select id="isla-parejas"><option value="4">4 parejas · 8 jugadores</option><option value="8">8 parejas · 16 jugadores</option><option value="16">16 parejas · 32 jugadores</option></select>
+   <button type="button" style="width:100%;margin-top:12px" onclick="islaOnline.crear()">🏆 Crear torneo en Firebase</button>
+  </div>
+  <div id="isla-unirse" style="display:none">
+   <label>Código del torneo</label><input id="isla-codigo" maxlength="16" placeholder="ISLA-XXXX" style="text-transform:uppercase">
+   <button type="button" style="width:100%;margin-top:12px" onclick="islaOnline.unirse()">🎟️ Inscribirme</button>
+  </div>
+  <div id="isla-torneo-compartir" style="display:none;border:1px solid #c69b43;background:#102c22;border-radius:12px;padding:12px;margin-top:12px">
+   <div style="font-size:12px;color:#f0d6a2;text-align:center">🏆 CÓDIGO DE TU TORNEO</div>
+   <div style="display:flex;gap:8px;align-items:center;margin:8px 0">
+    <strong id="isla-codigo-visible" style="font-size:clamp(19px,5vw,26px);letter-spacing:1px;color:#ffd56b;flex:1;text-align:center;overflow-wrap:anywhere"></strong>
+    <button type="button" onclick="islaOnline.copiar()">📋 Copiar</button>
+   </div>
+   <button type="button" style="width:100%;background:linear-gradient(110deg,#0d8c52,#38d98d);color:white" onclick="islaOnline.compartir()">📤 COMPARTIR INVITACIÓN</button>
+   <p id="isla-invitacion-preview" style="font-size:11px;color:#e3dfcc;white-space:pre-line;line-height:1.5;margin:10px 0 0"></p>
+  </div>
+  <div id="isla-online-status" role="status"></div>
+  <div class="isla-row"><button type="button" style="flex:1;background:#355044;color:white" onclick="islaOnline.cerrar()">Cerrar</button><button type="button" style="flex:1" onclick="islaOnline.abrir('unirse')">Ingresar código</button></div>
+  <p style="font-size:11px;color:#c5c4ba">La inscripción es real en Firebase. El emparejamiento, los resultados verificados y las partidas de torneo se habilitarán en una siguiente fase.</p>
+ </div>
+</div>
         <!-- PANTALLA DE BIENVENIDA -->
         <div id="pantalla-bienvenida">
             <div class="caja-bienvenida">
@@ -709,6 +1157,7 @@
                         <button type="button" class="btn-iniciar-partida" onclick="comenzarDesdeBienvenida()" style="margin-top: 0;">
                             <span>👤</span> JUGAR VS IA
                         </button>
+                        <button type="button" class="btn-iniciar-partida" style="background:linear-gradient(110deg,#95651a,#f4c65c);color:#201508" onclick="rdArena.abrir()">🏆 LA ISLA DEL DOMINÓ RD · TORNEOS IA</button>
                         <button type="button" id="btn-instalar-pwa" class="btn-secundario" style="display: none; background: rgba(0, 255, 136, 0.15); border-color: #00ff88; color: #00ff88;" onclick="iniciarInstalacionManual()">
                             <span>📱</span> INSTALAR APP
                         </button>
@@ -745,8 +1194,8 @@
                     <div id="lobby-pro"><div id="lobby-asientos" class="lobby-grid"></div><div id="lobby-resumen" class="lobby-resumen">Preparando la mesa...</div><div class="acciones-pro"><button type="button" id="btn-listo-pro" class="btn-pro btn-listo" onclick="window.toggleListo()">✅ ESTOY LISTO</button><button type="button" class="btn-pro btn-invitar" onclick="window.compartirCodigoSala()">🔗 INVITAR</button><button type="button" class="btn-pro btn-revancha" onclick="window.solicitarRevancha()">🔥 PEDIR REVANCHA</button><button type="button" class="btn-pro btn-invitar" onclick="window.mostrarRankingSala()">🏆 RANKING</button></div><div id="ranking-mini" class="ranking-mini" style="display:none"></div></div>
 
                     
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; margin-bottom: 5px;">
-                        <h2 style="color: #00bcd4; margin: 0;">Sala: <span id="lobby-codigo" style="color: #ffd700; letter-spacing: 2px;">---</span></h2>
+                    <div class="rd-lobby-codigo-bar" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 5px; margin-bottom: 3px; flex-wrap:wrap;">
+                        <h2 style="color: #00bcd4; margin: 0; font-size:clamp(16px,4.5vw,21px);">Sala: <span id="lobby-codigo" style="color: #ffd700; letter-spacing: 2px;">---</span></h2>
                         <button type="button" onclick="window.compartirCodigoSala()" style="background: rgba(0, 188, 212, 0.2); border: 1px solid var(--azul-rd); color: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: all 0.2s;" onactive="this.style.transform='scale(0.95)'">
                             <span>🔗</span> Copiar
                         </button>
@@ -807,6 +1256,7 @@
         <div class="area-principal">
             <main class="escenario-mesa">
                 <div class="zona-tapete" id="mesa-tapete">
+                    <div id="chat-flotante-layer" aria-live="polite"></div>
                     
                     <!-- CAJA DE FICHAS SOBRANTES -->
                     <div id="zona-sobrantes" style="display: none;" onclick="window.robarFicha()">
@@ -816,11 +1266,11 @@
 
                     <!-- MINI MARCADOR EN LA ESQUINA DINÁMICO -->
                     <div id="mini-marcador" onclick="toggleLibreta()" title="Toca para ver el desglose completo">
-                        <span style="color: #00bcd4;">Meta: <span id="mini-meta">200</span></span>
-                        <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
-                        <span><span id="lbl-mini-nos">Nos</span>: <span id="mini-pts-nos" style="color: #fff;">0</span></span>
-                        <span style="width: 1px; height: 12px; background: rgba(255,255,255,0.2);"></span>
-                        <span><span id="lbl-mini-ellos">Ellos</span>: <span id="mini-pts-ellos" style="color: #fff;">0</span></span>
+                        <div class="score-chip score-meta"><span class="score-caption">🏆 META</span><span class="score-value" id="mini-meta">200</span></div>
+                        <span class="score-sep">•</span>
+                        <div class="score-chip score-nos"><span class="score-caption" id="lbl-mini-nos">NOS</span><span class="score-value" id="mini-pts-nos">0</span></div>
+                        <span class="score-sep">VS</span>
+                        <div class="score-chip score-ellos"><span class="score-caption" id="lbl-mini-ellos">ELLOS</span><span class="score-value" id="mini-pts-ellos">0</span></div>
                     </div>
 
                     <!-- ANIMACIÓN DE TRANQUE GIGANTE -->
@@ -944,7 +1394,7 @@
                 <h1>Chat <span>Mesa</span></h1>
             </div>
             <div class="chat-mensajes" id="chat-mensajes">
-                <div style="text-align: center; color: #666; font-size: 10px; margin-top: auto;">Inicia la conversación</div>
+                <div class="chat-vacio" style="text-align: center; color: rgba(255,255,255,.55); font-size: 10px; margin-top: auto;">Inicia la conversación</div>
             </div>
             <form class="chat-input-area" onsubmit="window.enviarMensajeChat(event)">
                 <input type="text" id="input-chat" placeholder="Escribe un mensaje..." autocomplete="off">
@@ -986,6 +1436,15 @@
                     </div>
                 </div>
 
+                <section class="isla-online-card" aria-label="La Isla del Dominó RD">
+                    <div class="isla-online-heading">🏝️ LA ISLA DEL DOMINÓ RD</div>
+                    <div class="isla-online-sub">🏆 Torneos con jugadores reales · Inscripciones</div>
+                    <div class="isla-online-buttons">
+                        <button type="button" onclick="islaOnline.abrir('crear')">🏆 CREAR TORNEO</button>
+                        <button type="button" onclick="islaOnline.abrir('unirse')">🎟️ UNIRME A TORNEO</button>
+                    </div>
+                    <div class="isla-online-note">Torneos online en preparación: creación e inscripción en Firebase. Las partidas de eliminatoria aún no se asignan automáticamente.</div>
+                </section>
                 <div class="salas-publicas-wrap">
                     <div class="salas-publicas-header">
                         <strong>🎲 Salas disponibles</strong>
@@ -1178,7 +1637,11 @@
         let puntosNosotros = 0; let puntosEllos = 0; let metaPuntos = 200;
         let temaFichaActual = 'blanco'; let temaMesaActual = 'verde';
         let dificultadIA = 'medio'; 
-        let ultimoGanador = null; 
+        let ultimoGanador = null;
+        let ultimaPuntaJugada = null;
+        let puntaGanadoraMesa = null;
+        let tipoVictoriaPuntaMesa = 'domino';
+ 
         let fichaCentro = null; let ramaIzquierda = []; let ramaDerecha = [];
         let extremoIzquierdo = null; let extremoDerecho = null;
         let turnoActual = 1; let juegoTerminado = false; let pasesConsecutivos = 0; 
@@ -1266,16 +1729,45 @@
 
         window.recibirMensajeChatLocal = function(autor, msg, esMio) {
             const container = document.getElementById('chat-mensajes');
+            const panel = document.getElementById('panel-chat');
+            const vacio = container.querySelector('.chat-vacio');
+            if (vacio) vacio.remove();
+
+            // Historial del panel: usar textContent para que mensajes de jugadores no ejecuten HTML.
             const div = document.createElement('div');
             div.className = 'msg-burbuja ' + (esMio ? 'mio' : 'otro');
-            div.innerHTML = `<div class="msg-autor">${autor}</div><div>${msg}</div>`;
+            const autorEl = document.createElement('div');
+            autorEl.className = 'msg-autor';
+            autorEl.textContent = autor || 'Jugador';
+            const mensajeEl = document.createElement('div');
+            mensajeEl.textContent = msg || '';
+            div.appendChild(autorEl);
+            div.appendChild(mensajeEl);
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
-            
-            const panel = document.getElementById('panel-chat');
+
+            // Mensaje emergente visible para todos, incluso con el chat cerrado.
+            const layer = document.getElementById('chat-flotante-layer');
+            if (layer) {
+                const flotante = document.createElement('div');
+                flotante.className = 'chat-flotante' + (esMio ? ' mio' : '');
+                const autorFloat = document.createElement('span');
+                autorFloat.className = 'chat-flotante-autor';
+                autorFloat.textContent = autor || 'Jugador';
+                const textoFloat = document.createElement('span');
+                textoFloat.textContent = msg || '';
+                flotante.appendChild(autorFloat);
+                flotante.appendChild(textoFloat);
+                // Alterna ligeramente la altura si llegan varios mensajes seguidos.
+                const activos = layer.querySelectorAll('.chat-flotante').length;
+                flotante.style.top = (20 + (activos % 3) * 9) + '%';
+                layer.appendChild(flotante);
+                setTimeout(() => flotante.remove(), 4700);
+            }
+
             if (!panel.classList.contains('abierta') && !esMio) {
                 document.querySelectorAll('.notif-dot').forEach(d => d.classList.add('activa'));
-                playSonido('tick'); 
+                playSonido('tick');
             }
         };
 
@@ -1504,6 +1996,7 @@
                 salidaObligatoria = partidaDB.salidaObligatoria;
                 
                 fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
+            ultimaPuntaJugada = null; puntaGanadoraMesa = null; tipoVictoriaPuntaMesa = 'domino';
                 juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; esPrimerTurnoDespuesDeSalida = false;
                 historialPases = { 1: [], 2: [], 3: [], 4: [] };
                 jugadorSalida = turnoActual; 
@@ -2006,6 +2499,11 @@ ${urlConSala}
             let parte1 = Number(ficha[0]), parte2 = Number(ficha[1]);
             if (dir === 'L' || dir === 'U') { parte1 = Number(ficha[1]); parte2 = Number(ficha[0]); }
             divFicha.innerHTML = `${generarHTMLMitad(parte1)}<div class="linea-divisoria"></div>${generarHTMLMitad(parte2)}`;
+            if (!juegoTerminado && ultimaPuntaJugada &&
+                ((ultimaPuntaJugada === 'der' && typeof ramaDerecha !== 'undefined' && ramaDerecha.length && ficha === ramaDerecha[ramaDerecha.length-1]) ||
+                 (ultimaPuntaJugada === 'izq' && typeof ramaIzquierda !== 'undefined' && ramaIzquierda.length && ficha === ramaIzquierda[ramaIzquierda.length-1]))) {
+                divFicha.classList.add('rd-ultima-colocada');
+            }
             contenedor.appendChild(divFicha);
         }
 
@@ -2067,23 +2565,85 @@ ${urlConSala}
             return bounds;
         }
 
+        // La ficha viaja desde la mano del jugador real hasta su destino.
+        let rdVueloPendiente = null;
+        let rdOrigenFichaSeleccionada = null;
+        function rdAnimarFichaDesdeJugador(idJugador, ficha, destino) {
+            if (!destino || !destino.isConnected) return;
+            const origen = idJugador === 1
+                ? document.querySelector('#mi-mano .ficha.seleccionada')
+                : document.getElementById(`mano-j${idJugador}`);
+            const a = rdOrigenFichaSeleccionada || (origen && origen.getBoundingClientRect()) || (document.getElementById(`pos-j${idJugador}`) && document.getElementById(`pos-j${idJugador}`).getBoundingClientRect());
+            const b = destino.getBoundingClientRect();
+            if (!a) return;
+            if (!a.width || !b.width) return;
+            // El contenedor de la mesa tiene zoom CSS: conservar el tamaño NATIVO
+            // de la ficha y escalar todo el conjunto (marco blanco + puntos).
+            const anchoNativo = destino.offsetWidth;
+            const altoNativo = destino.offsetHeight;
+            const escala = Math.min(b.width / anchoNativo, b.height / altoNativo);
+            const clon = destino.cloneNode(true);
+            clon.classList.remove('rd-ultima-colocada', 'ficha-punta-ganadora');
+            // --ficha-bg está definido en el tema de la mesa; fuera de ella
+            // el clon no hereda esa variable y por eso antes solo se veían puntos.
+            const estilo = getComputedStyle(destino);
+            clon.style.setProperty('background', estilo.background, 'important');
+            clon.style.setProperty('background-color', estilo.backgroundColor, 'important');
+            clon.style.setProperty('box-shadow', estilo.boxShadow, 'important');
+            clon.style.setProperty('border', estilo.border, 'important');
+            clon.style.setProperty('border-radius', estilo.borderRadius, 'important');
+            clon.style.setProperty('filter', 'none', 'important');
+            clon.style.setProperty('animation', 'none', 'important');
+            clon.style.setProperty('transition', 'none', 'important');
+            clon.style.setProperty('left', '0px', 'important');
+            clon.style.setProperty('top', '0px', 'important');
+            clon.style.setProperty('width', anchoNativo + 'px', 'important');
+            clon.style.setProperty('height', altoNativo + 'px', 'important');
+            clon.style.setProperty('transform', 'none', 'important');
+            const envoltura = document.createElement('div');
+            envoltura.style.cssText = `position:fixed;left:${a.left+a.width/2}px;top:${a.top+a.height/2}px;width:0;height:0;z-index:9999;pointer-events:none;overflow:visible;`;
+            const escalaFicha = document.createElement('div');
+            escalaFicha.style.cssText = `position:absolute;left:${-anchoNativo/2}px;top:${-altoNativo/2}px;width:${anchoNativo}px;height:${altoNativo}px;transform:scale(${escala});transform-origin:center;`;
+            escalaFicha.appendChild(clon);
+            envoltura.appendChild(escalaFicha);
+            document.body.appendChild(envoltura);
+            destino.style.visibility = 'hidden';
+            const dx = (b.left+b.width/2)-(a.left+a.width/2);
+            const dy = (b.top+b.height/2)-(a.top+a.height/2);
+            const movimiento = envoltura.animate([
+                { transform: 'translate(0px, 0px)', opacity: 1 },
+                { transform: `translate(${dx}px, ${dy}px)`, opacity: 1 }
+            ], { duration: 480, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+            movimiento.finished.catch(() => {}).then(() => {
+                envoltura.remove();
+                if (destino.isConnected) destino.style.visibility = '';
+            });
+        }
+
         function renderizarMesa() {
             const contenedorZoom = document.getElementById('zoom-container'); contenedorZoom.innerHTML = '';
             if (!fichaCentro) return;
 
             const tapete = document.getElementById('mesa-tapete'); const anchoTapete = tapete.clientWidth; const altoTapete = tapete.clientHeight;
             const esPantallaPequeña = window.innerHeight < 500 || window.innerWidth < 800;
-            const paddingTop = esPantallaPequeña ? 60 : 120; const paddingBottom = esPantallaPequeña ? 130 : 200; const paddingSide = esPantallaPequeña ? 50 : 100;   
+            // Reservas adaptables: dejan espacio a las manos sin alejar la cadena.
+            const esPanoramica = anchoTapete >= 1050 && anchoTapete / Math.max(altoTapete, 1) > 1.65;
+            const paddingTop = esPanoramica ? 122 : (esPantallaPequeña ? 96 : 110);
+            const paddingBottom = esPanoramica ? 67 : (esPantallaPequeña ? 75 : 115);
+            const paddingSide = esPanoramica ? 48 : (esPantallaPequeña ? 40 : 65);
 
             let areaSeguraW = Math.max(50, anchoTapete - (paddingSide * 2)); let areaSeguraH = Math.max(50, altoTapete - paddingTop - paddingBottom);
-            const centroSeguroX = paddingSide + (areaSeguraW / 2); const centroSeguroY = paddingTop + (areaSeguraH / 2);
+            const centroSeguroX = paddingSide + (areaSeguraW / 2); const centroSeguroY = paddingTop + (areaSeguraH / 2) + Math.min(11, areaSeguraH * .035);
 
             const bounds = calcularCadenaBounds();
-            const anchoCadena = (bounds.maxX - bounds.minX) + 40; const altoCadena = (bounds.maxY - bounds.minY) + 40;
+            const anchoCadena = (bounds.maxX - bounds.minX) + 16; const altoCadena = (bounds.maxY - bounds.minY) + 16;
             const centroCadenaX = (bounds.minX + bounds.maxX) / 2; const centroCadenaY = (bounds.minY + bounds.maxY) / 2;
 
             let escalaW = areaSeguraW / anchoCadena; let escalaH = areaSeguraH / altoCadena;
-            let escalaOptima = Math.min(escalaW, escalaH, 1.3); let zoomMinimo = esPantallaPequeña ? 0.45 : 0.35; escalaOptima = Math.max(zoomMinimo, escalaOptima);
+            // Evita el zoom mínimo forzado que puede sacar fichas de la mesa.
+            // El tamaño crece solo cuando cabe la cadena completa.
+            let escalaOptima = Math.min(escalaW, escalaH, esPanoramica ? 1.72 : 1.52);
+            escalaOptima = Math.max(0.16, escalaOptima);
 
             const transX = centroSeguroX - (centroCadenaX * escalaOptima); const transY = centroSeguroY - (centroCadenaY * escalaOptima);
             contenedorZoom.style.transform = `translate(${transX}px, ${transY}px) scale(${escalaOptima})`; contenedorZoom.style.transformOrigin = '0 0';
@@ -2100,11 +2660,47 @@ ${urlConSala}
             let jointIzq = iniciaNosotros ? { x: 0, y: -h/2, dir: 'U' } : { x: -w/2, y: 0, dir: 'L' };
 
             let zIndexG = 11;
-            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, (f, cx, cy, dir) => { drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++); });
+            trazarRama(ramaDerecha, jointDer, true, iniciaNosotros, (f, cx, cy, dir) => {
+                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
+                if (ramaDerecha.length && f === ramaDerecha[ramaDerecha.length - 1] &&
+                    (puntaGanadoraMesa === 'der' || puntaGanadoraMesa === 'ambas')) {
+                    const fichaPunta = contenedorZoom.lastElementChild;
+                    fichaPunta.classList.add('ficha-punta-ganadora', `tipo-${tipoVictoriaPuntaMesa}`);
+                }
+            });
             zIndexG = 100;
-            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, (f, cx, cy, dir) => { drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++); });
+            trazarRama(ramaIzquierda, jointIzq, false, iniciaNosotros, (f, cx, cy, dir) => {
+                drawFichaOrientada(f, cx, cy, dir, contenedorZoom, zIndexG++);
+                if (ramaIzquierda.length && f === ramaIzquierda[ramaIzquierda.length - 1] &&
+                    (puntaGanadoraMesa === 'izq' || puntaGanadoraMesa === 'ambas')) {
+                    const fichaPunta = contenedorZoom.lastElementChild;
+                    fichaPunta.classList.add('ficha-punta-ganadora', `tipo-${tipoVictoriaPuntaMesa}`);
+                }
+            });
+
+            // Si la cadena todavía no tiene fichas en una de las ramas, el extremo es la ficha central.
+            if (puntaGanadoraMesa === 'ambas') {
+                if (!ramaDerecha.length) {
+                    const centro = contenedorZoom.querySelector('.ficha-mesa');
+                    if (centro) centro.classList.add('ficha-punta-ganadora', 'tipo-tranque');
+                }
+                if (!ramaIzquierda.length) {
+                    const centro = contenedorZoom.querySelector('.ficha-mesa');
+                    if (centro) centro.classList.add('ficha-punta-ganadora', 'tipo-tranque');
+                }
+            }
 
             puntaIzqCoords = { x: jointIzq.x, y: jointIzq.y }; puntaDerCoords = { x: jointDer.x, y: jointDer.y };
+            if (rdVueloPendiente) {
+                const vuelo = rdVueloPendiente;
+                rdVueloPendiente = null;
+                const fichas = contenedorZoom.querySelectorAll('.ficha-mesa');
+                const destino = vuelo.esCentro ? fichas[0] :
+                    (vuelo.lado === 'izq' ? fichas[fichas.length - 1] : fichas[1 + ramaDerecha.length - 1]);
+                if (destino) rdAnimarFichaDesdeJugador(vuelo.jugador, vuelo.ficha, destino);
+                rdOrigenFichaSeleccionada = null;
+            }
+
 
             if (esperandoSeleccionPunta) {
                 const marcadorDer = document.createElement('div'); marcadorDer.className = 'marcador-punta'; marcadorDer.style.left = jointDer.x + 'px'; marcadorDer.style.top = jointDer.y + 'px'; marcadorDer.onpointerdown = (e) => { e.stopPropagation(); ejecutarEleccion(false); }; contenedorZoom.appendChild(marcadorDer);
@@ -2160,6 +2756,7 @@ ${urlConSala}
             else { ptsEllosEl.classList.add('resaltado'); ptsNosotrosEl.classList.remove('resaltado'); estadisticas.derrotas++; }
             estadisticas.puntosTotales += puntosNosotros; guardarEstadisticasLocal();
             modal.classList.remove('oculto');
+            if(window.rdArena) window.rdArena.registrarResultado(ganadorEquipo);
             if (ganadorEquipo === 1) lanzarConfeti(4);
         }
 
@@ -2197,7 +2794,7 @@ ${urlConSala}
 
         function finalizarMano(ganador, porTranque = false, esCapicua = false) {
             juegoTerminado = true; limpiarBurbujas(); ocultarToast(); detenerTemporizador();
-            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda'); }
+            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-paso', 'avatar-ganador-ronda', 'esquina-ganadora', 'tipo-capicua', 'tipo-tranque'); }
             
             let sumaPuntosMano = 0;
             window.asientosActivosLocales.forEach(i => sumaPuntosMano += sumarMano(jugadores[i]));
@@ -2227,10 +2824,19 @@ ${urlConSala}
                 if (esCapicua) { sumaPuntosMano += 30; tipoVictoria = "¡CAPICÚA! 🌟"; claseBanner = "capicua"; sacudirMesa(); if(equipoGanador === 1) { estadisticas.capicuas++; guardarEstadisticasLocal(); } }
             }
 
+            puntaGanadoraMesa = porTranque ? 'ambas' : (ultimaPuntaJugada || 'der');
+            tipoVictoriaPuntaMesa = claseBanner;
             if (equipoGanador === 1) puntosNosotros += sumaPuntosMano; else puntosEllos += sumaPuntosMano;
             agregarRondaHistorial(equipoGanador, sumaPuntosMano);
-            const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`); if (ganadorWrap) ganadorWrap.classList.add('avatar-ganador-ronda');
-            mostrarBannerEspecial(`🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'}`, claseBanner, 0);
+            const ganadorWrap = document.getElementById(`pos-j${jGanadorFinal}`);
+            if (ganadorWrap) {
+                ganadorWrap.classList.add('avatar-ganador-ronda', 'esquina-ganadora');
+                if (claseBanner === 'capicua') ganadorWrap.classList.add('tipo-capicua');
+                if (claseBanner === 'tranque') ganadorWrap.classList.add('tipo-tranque');
+            }
+            const frasesVictoriaRD = claseBanner === 'capicua' ? ['¡CAPICÚA, QUÉ JUGADÓN!', '¡ESO ES DOMINÓ DEL BUENO!'] : claseBanner === 'tranque' ? ['¡SE TRANCO LA MESA!', '¡A CONTAR LAS FICHAS!'] : ['¡SE ACABÓ LA MANO!', '¡QUÉ CLASE DE JUGADA!', '¡DOMINÓ DEL BUENO!'];
+            const fraseRD = frasesVictoriaRD[Math.floor(Math.random() * frasesVictoriaRD.length)];
+            mostrarBannerEspecial(`🏆 ${tipoVictoria} Ganó ${nombresJugadores[jGanadorFinal]}`, `+${sumaPuntosMano} Puntos para Equipo ${equipoGanador === 1 ? 'Nosotros' : 'Ellos'} · ${fraseRD}`, claseBanner, 0);
             if (equipoGanador === 1) lanzarConfeti(1.5);
 
             // CONTROL DE RACHAS (EN FUEGO)
@@ -2512,6 +3118,12 @@ ${urlConSala}
         }
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
+            // Capturar la posición de la ficha EXACTA antes de quitarla de la mano.
+            const manoOrigen = document.getElementById(idJugador === 1 ? 'mi-mano' : `mano-j${idJugador}`);
+            const fichaOrigen = manoOrigen && manoOrigen.children[index];
+            rdOrigenFichaSeleccionada = fichaOrigen ? fichaOrigen.getBoundingClientRect() : (manoOrigen ? manoOrigen.getBoundingClientRect() : null);
+            rdVueloPendiente = { jugador: idJugador, ficha: ficha.slice(), esCentro: !fichaCentro, lado: colocarIzquierda ? 'izq' : 'der' };
+
             playSonido('ficha'); 
             let a = Number(ficha[0]); let b = Number(ficha[1]); 
             if (a === b) sacudirMesa(); // Efecto visual y sensorial "Golpe Seco" para los dobles
@@ -2522,6 +3134,7 @@ ${urlConSala}
                 salidaObligatoria = false; esPrimerTurnoDespuesDeSalida = true; 
                 paseSalidaActivo = false;
             } else {
+                ultimaPuntaJugada = colocarIzquierda ? 'izq' : 'der';
                 if (colocarIzquierda) {
                     if (a === extremoIzquierdo) { ramaIzquierda.push([a, b]); extremoIzquierdo = b; } else { ramaIzquierda.push([b, a]); extremoIzquierdo = a; }
                 } else {
@@ -2534,7 +3147,7 @@ ${urlConSala}
             pasesConsecutivos = 0; 
             jugadores[idJugador].splice(index, 1); ultimoJugadorEnJugar = idJugador; 
             
-            if (jugadores[idJugador].length === 0) { finalizarMano(idJugador, false, esCapicua); return; }
+            if (jugadores[idJugador].length === 0) { renderizarMesa(); finalizarMano(idJugador, false, esCapicua); return; }
             limpiarBurbujas(); ocultarToast(); renderizarManos(); renderizarMesa(); avanzarTurno();
         }
 
@@ -2641,7 +3254,7 @@ ${urlConSala}
 
         function iniciarManoConAnimacion(esNuevaPartida = false) {
             document.getElementById('btn-siguiente').style.display = 'none'; document.getElementById('banner-ganador-mano').style.display = 'none';
-            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso'); }
+            for (let i = 1; i <= 4; i++) { const wrap = document.getElementById(`pos-j${i}`); if (wrap) wrap.classList.remove('avatar-ganador-ronda', 'avatar-paso', 'esquina-ganadora', 'tipo-capicua', 'tipo-tranque'); }
             limpiarBurbujas(); ocultarToast(); detenerTemporizador();
             document.getElementById('mi-mano').innerHTML = ''; document.getElementById('mano-j2').innerHTML = '';
             document.getElementById('mano-j3').innerHTML = ''; document.getElementById('mano-j4').innerHTML = '';
@@ -2663,6 +3276,7 @@ ${urlConSala}
 
         function ejecutarLogicaRepartoLocal() {
             fichaCentro = null; ramaIzquierda = []; ramaDerecha = []; extremoIzquierdo = null; extremoDerecho = null;
+            ultimaPuntaJugada = null; puntaGanadoraMesa = null; tipoVictoriaPuntaMesa = 'domino';
             juegoTerminado = false; pasesConsecutivos = 0; esperandoSeleccionPunta = false; ultimoJugadorEnJugar = null; 
             esPrimerTurnoDespuesDeSalida = false; paseSalidaActivo = false;
             historialPases = { 1: [], 2: [], 3: [], 4: [] };
@@ -2754,7 +3368,7 @@ ${urlConSala}
     <!-- SCRIPT 2: MÓDULO MULTIJUGADOR FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, push, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue, push, onDisconnect, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
@@ -2770,6 +3384,58 @@ ${urlConSala}
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Torneos online: lectura remota previa para evitar abortar transacciones
+        // cuando el caché local de Firebase devuelve null antes de cargar el servidor.
+        window.islaFirebase = {
+            async crear(nombre, parejas, jugador) {
+                for (let intento = 0; intento < 5; intento++) {
+                    const codigo = 'ISLA-' + Math.random().toString(36).slice(2,8).toUpperCase();
+                    const ruta = ref(db, 'torneos_isla/' + codigo);
+                    const existente = await get(ruta);
+                    if (existente.exists()) continue;
+                    const result = await runTransaction(ruta, actual => {
+                        if (actual !== null) return;
+                        return {
+                            nombre, parejas, estado:'inscripciones', creadoEn:Date.now(),
+                            participantes: { [jugador.id]: { nombre:jugador.nombre, unidoEn:Date.now() } }
+                        };
+                    }, {applyLocally:false});
+                    if (result.committed) return codigo;
+                }
+                throw Error('No se pudo generar un código único. Inténtalo nuevamente.');
+            },
+            async consultar(codigo) {
+                const snap = await get(ref(db,'torneos_isla/'+codigo));
+                if (!snap.exists()) throw Error('No existe ese torneo en Firebase. Verifica el código y que uses el mismo proyecto.');
+                return snap.val();
+            },
+            async unirse(codigo, jugador) {
+                const ruta = ref(db,'torneos_isla/'+codigo);
+                // get() fuerza una consulta al servidor y precarga el nodo para la transacción.
+                const snap = await get(ruta);
+                if (!snap.exists()) throw Error('No existe ese torneo en Firebase. Verifica el código.');
+                const torneo = snap.val();
+                if (torneo.estado !== 'inscripciones') throw Error('Las inscripciones están cerradas.');
+                let motivo = 'No se pudo registrar.';
+                const result = await runTransaction(ruta, actual => {
+                    if (actual === null) {
+                        // No abortar por caché inicial vacío: el servidor validará el nodo.
+                        return actual;
+                    }
+                    if (actual.estado !== 'inscripciones') {motivo='Inscripciones cerradas.';return;}
+                    const inscritos = actual.participantes || {};
+                    if (!inscritos[jugador.id] && Object.keys(inscritos).length >= Number(actual.parejas)*2) {
+                        motivo='El torneo está lleno.';return;
+                    }
+                    inscritos[jugador.id] = {nombre:jugador.nombre,unidoEn:Date.now()};
+                    return {...actual, participantes:inscritos};
+                }, {applyLocally:false});
+                if (!result.committed) throw Error(motivo);
+                const resultado = result.snapshot.val();
+                if (!resultado || !resultado.participantes?.[jugador.id]) throw Error('No se confirmó la inscripción. Inténtalo otra vez.');
+                return resultado;
+            }
+        };
         window.salaIdActual = null;
         window.miPuesto = 1; 
         window.esMultijugador = false;
@@ -3414,5 +4080,142 @@ ${urlConSala}
     });
     </script>
 
+<script>
+window.rdArena=(()=>{
+ const KEY='domino_rd_arena_v1', teams=['Tú + Compadre','Los Trancadores','Los Capicúas','Los Maestros'];
+ let state=null;const el=id=>document.getElementById(id);
+ function fresh(){return {version:1,phase:'ready',semis:[null,null],final:null}}
+ function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x&&x.version===1?x:null}catch(e){return null}}
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+ function render(){
+  state=state||load()||fresh();
+  const [a,b]=state.semis, opp=b===null?'Por definir':teams[b===0?2:3];
+  const msg={ready:'¡La copa está esperando a sus campeones!',playingSemi:'⚔️ Semifinal en curso',finalReady:'🔥 ¡Clasificaste a la gran final!',playingFinal:'👑 Gran final en curso',champion:'🏆 ¡CAMPEONES DEL PATIO!',out:'¡Buen torneo! La revancha te espera.'}[state.phase]||'';
+  el('rd-arena-contenido').innerHTML=`<p style="text-align:center;color:#f3d182;font-weight:bold">${msg}</p>
+  <div class="rd-arena-grid">
+  <div class="rd-arena-card"><b>⚔️ SEMIFINALES</b><div class="rd-arena-match">${teams[0]}<br>VS ${teams[1]}<br><small>${a===null?'Pendiente':'🏅 '+teams[a]}</small></div>
+  <div class="rd-arena-match">${teams[2]}<br>VS ${teams[3]}<br><small>${b===null?'Pendiente':'🏅 '+opp}</small></div></div>
+  <div class="rd-arena-card"><b>👑 GRAN FINAL</b><div class="rd-arena-match">${a===null?'Por definir':teams[a]}<br>VS ${opp}<br><small>${state.final===null?'Pendiente':'🏆 '+(state.final===0?teams[0]:opp)}</small></div><p>Meta: 100 puntos<br>Eliminación directa</p></div></div>`;
+  const btn=el('rd-arena-accion');
+  btn.textContent=state.phase==='ready'?'🎲 Jugar semifinal':state.phase==='finalReady'?'🔥 Jugar gran final':'▶️ Volver al juego';
+  btn.style.display=['champion','out'].includes(state.phase)?'none':'';
+  el('rd-arena-reiniciar').style.display=state.phase==='ready'?'none':'';
+ }
+ function abrir(){state=load()||fresh();render();el('rd-arena').classList.remove('oculto')}
+ function cerrar(){el('rd-arena').classList.add('oculto')}
+ function reiniciar(){if(['playingSemi','playingFinal'].includes(state.phase)&&!confirm('¿Abandonar el torneo actual?'))return;state=fresh();save();render()}
+ function startMatch(){
+  cerrar();window.esMultijugador=false;
+  if(typeof guardarAjustesVariables==='function')guardarAjustesVariables();
+  metaPuntos=100;puntosNosotros=0;puntosEllos=0;ultimoGanador=null;
+  el('ptos-lat-nosotros').textContent='0';el('ptos-lat-ellos').textContent='0';
+  el('historial-nosotros').innerHTML='';el('historial-ellos').innerHTML='';
+  el('modal-victoria').classList.add('oculto');
+  if(typeof window.actualizarMiniMarcador==='function')window.actualizarMiniMarcador();
+  const welcome=el('pantalla-bienvenida');welcome.style.display='none';welcome.classList.add('desvanecer');
+  juegoIniciado=true;iniciarManoConAnimacion(true);
+ }
+ function accion(){
+  state=state||load()||fresh();
+  if(state.phase==='ready'){state.phase='playingSemi';save();startMatch()}
+  else if(state.phase==='finalReady'){state.phase='playingFinal';save();startMatch()}
+  else cerrar();
+ }
+ function registrarResultado(winner){
+  state=state||load();
+  if(!state||window.esMultijugador||!['playingSemi','playingFinal'].includes(state.phase))return;
+  if(state.phase==='playingSemi'){
+   state.semis[0]=winner===1?0:1;
+   state.semis[1]=Math.random()<.5?0:1; // La otra semifinal se simula localmente.
+   state.phase=winner===1?'finalReady':'out';
+  }else{
+   state.final=winner===1?0:1;state.phase=winner===1?'champion':'out';
+  }
+  save();setTimeout(()=>{render();el('rd-arena').classList.remove('oculto')},1100);
+ }
+ return {abrir,cerrar,reiniciar,accion,registrarResultado};
+})();
+</script>
+<script>
+window.islaOnline=(()=>{
+ const el=id=>document.getElementById(id);
+ function perfil(){
+  const nombre=(el('input-nombre-red')?.value||'').trim();
+  if(!nombre)throw Error('Escribe primero tu nombre en el perfil multijugador.');
+  let id=localStorage.getItem('isla_jugador_id');
+  if(!id){id='u'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('isla_jugador_id',id)}
+  return {id,nombre};
+ }
+ function status(t){el('isla-online-status').textContent=t}
+ let torneoActual=null;
+ function textoInvitacion(){
+  if(!torneoActual)return '';
+  const enlace=location.protocol==='https:'&&location.hostname!=='localhost'?location.origin+location.pathname:'';
+  return '🏝️🏆 INVITACIÓN A TORNEO — LA ISLA DEL DOMINÓ RD 🇩🇴\\n\\n'
+   +'🎲 '+torneoActual.nombre+'\\n'
+   +'👥 '+torneoActual.parejas+' parejas ('+(torneoActual.parejas*2)+' jugadores)\\n'
+   +'🏆 Eliminación directa\\n'
+   +'🎟️ Código: '+torneoActual.codigo+'\\n\\n'
+   +'Entra a Dominó RD → Multijugador → La Isla → Unirme a torneo e introduce el código.'
+   +(enlace?'\\n\\n🔗 Abre el juego: '+enlace:'');
+ }
+ function mostrarTorneo(codigo,datos){
+  torneoActual={codigo,nombre:datos.nombre,parejas:Number(datos.parejas)};
+  try{localStorage.setItem('isla_ultimo_torneo',JSON.stringify(torneoActual))}catch(e){}
+  el('isla-torneo-compartir').style.display='block';
+  el('isla-codigo-visible').textContent=codigo;
+  el('isla-invitacion-preview').textContent=textoInvitacion();
+ }
+ async function copiar(){
+  if(!torneoActual)return;
+  try{await navigator.clipboard.writeText(torneoActual.codigo);status('✅ Código copiado: '+torneoActual.codigo)}
+  catch(e){const temp=document.createElement('textarea');temp.value=torneoActual.codigo;document.body.appendChild(temp);temp.select();const ok=document.execCommand('copy');temp.remove();status(ok?'✅ Código copiado.':'Selecciona el código para copiarlo.')}
+ }
+ async function compartir(){
+  if(!torneoActual)return;
+  const texto=textoInvitacion();
+  try{
+   if(navigator.share){await navigator.share({title:'🏆 La Isla del Dominó RD',text:texto});return}
+   await navigator.clipboard.writeText(texto);status('✅ Invitación copiada. Pégala en WhatsApp o donde quieras.');
+  }catch(e){if(e.name!=='AbortError')status('No se pudo compartir automáticamente. Puedes copiar el código.')}
+ }
+
+ function abrir(modo){
+  el('isla-online-modal').classList.remove('oculto');
+  el('isla-crear').style.display=modo==='crear'?'block':'none';
+  el('isla-unirse').style.display=modo==='crear'?'none':'block';
+  status('');
+  const ultimo=(()=>{try{return JSON.parse(localStorage.getItem('isla_ultimo_torneo'))}catch(e){return null}})();
+  if(ultimo&&ultimo.codigo)mostrarTorneo(ultimo.codigo,ultimo);
+  else el('isla-torneo-compartir').style.display='none';
+ }
+ function cerrar(){el('isla-online-modal').classList.add('oculto')}
+ async function crear(){
+  try{
+   const jugador=perfil(),nombre=el('isla-nombre-torneo').value.trim();
+   if(nombre.length<3)throw Error('Escribe un nombre para el torneo.');
+   if(!window.islaFirebase)throw Error('Firebase todavía no está disponible. Abre el juego desde tu web.');
+   status('Creando torneo...');
+   const codigo=await window.islaFirebase.crear(nombre,Number(el('isla-parejas').value),jugador);
+   el('isla-codigo').value=codigo;
+   abrir('unirse');
+   mostrarTorneo(codigo,{nombre,parejas:Number(el('isla-parejas').value)});
+   status('🏆 Torneo creado. Comparte la invitación con tus jugadores.');
+  }catch(e){status('⚠️ '+(e.code==='PERMISSION_DENIED'||/permission.denied/i.test(e.message)?'Firebase rechazó el acceso a torneos_isla. Hay que revisar las reglas de seguridad de la base de datos.':e.message))}
+ }
+ async function unirse(){
+  try{
+   const jugador=perfil(),codigo=el('isla-codigo').value.trim().toUpperCase();
+   if(!/^ISLA-[A-Z0-9]{6}$/.test(codigo))throw Error('Código inválido. Ejemplo: ISLA-ABC123');
+   if(!window.islaFirebase)throw Error('Firebase todavía no está disponible.');
+   status('Inscribiendo...');
+   const t=await window.islaFirebase.unirse(codigo,jugador);
+   mostrarTorneo(codigo,t);
+   status('✅ Inscrito en '+t.nombre+' · '+Object.keys(t.participantes||{}).length+'/'+(t.parejas*2)+' jugadores.');
+  }catch(e){status('⚠️ '+(e.code==='PERMISSION_DENIED'||/permission.denied/i.test(e.message)?'Firebase rechazó el acceso a torneos_isla. Hay que revisar las reglas de seguridad de la base de datos.':e.message))}
+ }
+ return {abrir,cerrar,crear,unirse,copiar,compartir};
+})();
+</script>
 </body>
 </html>
