@@ -1,7 +1,7 @@
 {
-  "name": "Dominó RD",
-  "short_name": "Dominó RD",
-  "description": "Juego de Dominó Dominicano virtual con multijugador.",
+  "name": "DOMI-DO — Dominó Dominicano",
+  "short_name": "DOMI-DO",
+  "description": "DOMI-DO: el dominó se vive aquí. Juega contra la IA, con amigos y en La Isla.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
