@@ -1,5 +1,5 @@
 /* DOMI-DO — actualización PWA. Cambiar versión al publicar una nueva edición. */
-const CACHE_NAME = 'domino-rd-cache-v10';
+const CACHE_NAME = 'domino-rd-cache-v11';
 const APP_FILES = ['./', './index.html', './manifest.json', './icono-192.png', './icono-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
