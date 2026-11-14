@@ -1119,6 +1119,40 @@ body.mesa-isla .zona-tapete { border-color:#9b7132; box-shadow:0 0 0 2px #e8c879
 #pantalla-bienvenida .inicio-subtitulo {margin:0 auto 3px}
 @media(max-width:390px){#pantalla-bienvenida .inicio-accesos .btn-secundario{font-size:10px}#pantalla-bienvenida .inicio-emblema{width:56px;height:56px;font-size:27px}}
 
+
+        /* DOMI-DO: marcador de parejas visible en toda la mesa */
+        #mini-marcador { max-width: min(96vw, 620px); gap: 5px; }
+        #mini-marcador .score-chip { min-width: 0; flex: 0 1 auto; }
+        #mini-marcador .score-caption {
+            font-size: clamp(9px, 1.4vw, 13px);
+            letter-spacing: 0; text-transform: none;
+            white-space: normal; overflow-wrap: anywhere;
+            text-align: center; max-width: 185px;
+        }
+        @media (max-width: 520px) {
+            #mini-marcador { max-width: calc(100vw - 18px); gap: 3px; }
+            #mini-marcador .score-chip { padding: 4px 5px; }
+            #mini-marcador .score-caption { font-size: 9px; max-width: 104px; }
+            #mini-marcador .score-value { font-size: 16px; }
+        }
+
+
+/* DOMI-DO: ficha recién robada que ya puede jugarse */
+#mi-mano .ficha.robo-jugable {
+  outline: 3px solid #00ff9c !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 12px 4px rgba(0,255,156,.8), 0 0 24px rgba(0,255,156,.5) !important;
+  animation: domidoRoboListo 1.15s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 5;
+}
+@keyframes domidoRoboListo {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mi-mano .ficha.robo-jugable { animation: none; }
+}
 </style>
 <style>
 /* Inicio PWA: centrar menú en pantallas altas, desplazar en pantallas cortas */
@@ -1277,6 +1311,12 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
 #pantalla-bienvenida .inicio-logo-oficial {display:block;width:clamp(112px,29vw,170px);height:auto;aspect-ratio:1;object-fit:contain;border-radius:21%;flex-shrink:0;filter:drop-shadow(0 6px 12px rgba(0,0,0,.32));}
 @media(max-height:750px){#pantalla-bienvenida .inicio-logo-oficial{width:clamp(95px,22vh,135px)}}
 @media(prefers-reduced-motion:reduce){#pantalla-bienvenida .inicio-logo-oficial{animation:none}}
+</style>
+<style id="rd-selector-puntas-css">
+#rd-selector-puntas{position:absolute;z-index:130;bottom:clamp(92px,13vh,145px);left:50%;transform:translateX(-50%);display:none;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;width:max-content;max-width:94%;padding:9px 12px;border-radius:16px;border:1px solid #50e6a4;background:rgba(8,22,29,.94);box-shadow:0 5px 24px #0009;color:#fff;font-size:13px;font-weight:800;pointer-events:auto}
+#rd-selector-puntas button{border:1px solid #2cf0a1;border-radius:11px;background:#0c6b55;color:white;font:inherit;min-height:43px;padding:8px 12px;cursor:pointer;touch-action:manipulation}
+#rd-selector-puntas button:active{background:#10a67b}
+@media(max-width:650px){#rd-selector-puntas{bottom:92px;font-size:12px;padding:7px;gap:5px}#rd-selector-puntas span{width:100%;text-align:center}#rd-selector-puntas button{min-height:44px}}
 </style>
 </head>
 <body class="ficha-blanco mesa-verde">
@@ -2093,6 +2133,19 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
         window.getFichaCentro = () => fichaCentro;
         window.iniciarTemporizadorGlobal = iniciarTemporizador;
         window.turnoIA = turnoIA;
+        // El controlador de bots puede cambiar sin reiniciar la partida.
+        let rdBotTurnoPendiente = false;
+        let rdUltimoBotSolicitado = 0;
+        window.rdSolicitarTurnoBot = function() {
+            if (rdBotTurnoPendiente || window.rdReproduciendo || Date.now()-rdUltimoBotSolicitado<3500 || !window.getJuegoIniciado?.() || juegoTerminado ||
+                !window.esBotLocal[turnoActual] || !window.rdSoyControladorBots?.()) return;
+            rdBotTurnoPendiente = true;
+            rdUltimoBotSolicitado = Date.now();
+            setTimeout(() => {
+                rdBotTurnoPendiente = false;
+                if (!juegoTerminado && window.esBotLocal[turnoActual] && window.rdSoyControladorBots?.()) turnoIA();
+            }, 1800);
+        };
 
         window.datosSala = {}; 
         window.esBotLocal = { 1: false, 2: false, 3: false, 4: false };
@@ -2122,6 +2175,17 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
             document.getElementById('mini-pts-ellos').innerText = puntosEllos;
         };
         
+        window.rdRestaurarMarcador = function(equipoImpar, equipoPar) {
+            if (!Number.isFinite(Number(equipoImpar)) || !Number.isFinite(Number(equipoPar))) return;
+            const impar = Number(window.miPuesto || 1) % 2 === 1;
+            puntosNosotros = Number(impar ? equipoImpar : equipoPar);
+            puntosEllos = Number(impar ? equipoPar : equipoImpar);
+            const nos = document.getElementById('ptos-lat-nosotros');
+            const ellos = document.getElementById('ptos-lat-ellos');
+            if (nos) nos.innerText = String(puntosNosotros);
+            if (ellos) ellos.innerText = String(puntosEllos);
+            window.actualizarMiniMarcador();
+        };
         window.resetearPuntosRed = function() {
             puntosNosotros = 0; puntosEllos = 0; ultimoGanador = null;
             document.getElementById('ptos-lat-nosotros').innerText = `0`; document.getElementById('ptos-lat-ellos').innerText = `0`;
@@ -2194,6 +2258,12 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
             playSonido('ficha'); 
             let f = window.sobrantes.shift();
             jugadores[idJugador].push(f);
+            // Identificar exclusivamente la ficha recién robada, sin alterar las reglas.
+            if (idJugador === 1) {
+                const a = Number(f[0]), b = Number(f[1]);
+                const valida = !fichaCentro || a === extremoIzquierdo || b === extremoIzquierdo || a === extremoDerecho || b === extremoDerecho;
+                window.domidoFichaRobadaJugable = valida ? jugadores[1].length - 1 : -1;
+            }
             
             renderizarManos();
             window.renderizarSobrantes();
@@ -2227,7 +2297,7 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
             }
         };
 
-        window.iniciarManoMultijugadorDesdeFirebase = function(partidaDB) {
+        window.iniciarManoMultijugadorDesdeFirebase = function(partidaDB, incorporacionEnCurso = false, alTerminar = null) {
             document.getElementById('btn-siguiente').style.display = 'none'; 
             document.getElementById('banner-ganador-mano').style.display = 'none';
             window.bloqueoRed = false; 
@@ -2241,14 +2311,23 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
             window.actualizarModoFuego();
             
             const overlay = document.getElementById('pantalla-barajar'); 
-            overlay.classList.remove('oculto');
-            crearAnimacionFichas(); playSonidoBarajar();
+            if (!incorporacionEnCurso) {
+                overlay.classList.remove('oculto');
+                crearAnimacionFichas(); playSonidoBarajar();
+            } else {
+                // Relevo en vivo: no mostrar barajado ni repartir una mano nueva.
+                overlay.classList.add('oculto');
+            }
             
             window.asientosActivosLocales = (partidaDB.asientosActivos || [1,2,3,4]).map(seat => {
                 let offset = seat - window.miPuesto;
                 if (offset < 0) offset += 4;
                 return offset + 1;
             }).sort((a,b) => a - b);
+
+            // Los asientos activos se determinan al recibir la mano de Firebase.
+            // Actualizar el marcador después de conocerlos evita nombres fantasma.
+            if (typeof window.actualizarUIAvatares === 'function') window.actualizarUIAvatares();
 
             setTimeout(() => { 
                 overlay.classList.add('oculto');
@@ -2274,8 +2353,14 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
                 renderizarManos(); 
                 renderizarMesa(); 
                 window.renderizarSobrantes();
-                iniciarTurnoNormal();
-            }, 2000);
+                // Al incorporarse a una mano iniciada, primero reconstruir las jugadas
+                // históricas; solo después habilitar el turno y los controles.
+                if (incorporacionEnCurso && typeof alTerminar === 'function') {
+                    alTerminar();
+                } else {
+                    iniciarTurnoNormal();
+                }
+            }, incorporacionEnCurso ? 0 : 2000);
         };
 
         window.despacharJugada = function(ficha, idJugador, index, colocarIzquierda, esCapicua) {
@@ -2297,27 +2382,32 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
         window.compartirCodigoSala = async function() {
             const codigo = document.getElementById('lobby-codigo').innerText;
             if (!codigo || codigo === '---') return;
-            const urlBasica = window.location.origin + window.location.pathname;
-            const urlConSala = `${urlBasica}?sala=${encodeURIComponent(codigo)}&invitacion=1`;
             let anfitrion = 'Un jugador';
             let puntos = metaPuntos || 200;
-            try {
-                const snap = await get(ref(db, 'salas/' + codigo));
-                if (snap.exists()) {
-                    const sala = snap.val();
-                    anfitrion = sala.creadorNombre || (sala.jugadores && sala.jugadores[1] && sala.jugadores[1].nombre) || anfitrion;
-                    puntos = sala.metaPuntos || puntos;
-                }
-            } catch (e) { console.warn('No se pudieron leer los datos de invitación', e); }
-            const texto = `🎲 INVITACIÓN A DOMI-DO 🇩🇴
+            // Los datos de Firebase se reciben en el módulo y se exponen mediante datosSala.
+            // No usar db/ref/get aquí: pertenecen al scope del script type="module".
+            const sala = window.datosSala || {};
+            anfitrion = sala.creadorNombre || (sala.jugadores && sala.jugadores[1] && sala.jugadores[1].nombre) || anfitrion;
+            puntos = sala.metaPuntos || puntos;
+            const texto = `🎲 INVITACIÓN OFICIAL A DOMI-DO 🇩🇴
 
-🏆 DESAFÍO DE DOMINÓ\n${anfitrion} te invita a una partida a ${puntos} puntos.
+🏆 ¡DESAFÍO DE DOMINÓ!
+${anfitrion} te invita a jugar una partida a ${puntos} puntos.
 
-Mesa: ${codigo}
-Para participar, abre el enlace, escribe tu nombre y pulsa ENTRAR A LA PARTIDA:
-${urlConSala}
+🎯 CÓDIGO DE SALA: ${codigo}
 
-¿Aceptas el reto? 🎲🔥\n¡La mesa te espera!`;
+Para participar:
+1️⃣ Abre DOMI-DO desde tu aplicación o navegador.
+2️⃣ Entra a JUGAR EN LÍNEA.
+3️⃣ Busca la sección «Salas disponibles» y localiza la sala ${codigo}.
+4️⃣ Pulsa ENTRAR en esa sala para ocupar un puesto libre.
+
+Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
+
+👥 Puedes jugar con hasta 4 personas; el anfitrión puede completar los puestos vacíos con bots.
+
+¿Aceptas el reto? 🎲🔥
+¡EL DOMINÓ SE VIVE AQUÍ! 🇩🇴`;
             if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
                 navigator.share({ title: `Invitación a DOMI-DO · Mesa ${codigo}`, text: texto }).catch(() => copiarAlPortapapeles(texto));
             } else copiarAlPortapapeles(texto);
@@ -2486,19 +2576,32 @@ ${urlConSala}
             document.getElementById('avatar-j3').innerText = avataresJugadores[3]; 
             document.getElementById('avatar-j4').innerText = avataresJugadores[4];
 
-            // ACTUALIZAR NOMBRES EN LOS MARCADORES
-            let n1 = nombresJugadores[1].split(" ")[0]; // Solo el primer nombre para que no se vea gigante en celulares
-            let n2 = nombresJugadores[2].split(" ")[0];
-            
+            // Marcador: únicamente participantes de los puestos activos.
+            // Los bots se muestran solo cuando ocupan realmente un puesto activo.
+            // En partidas de dos jugadores no se inventan compañeros ni rivales.
+            const activos = (window.esMultijugador && Array.isArray(window.asientosActivosLocales))
+                ? window.asientosActivosLocales : [1, 2, 3, 4];
+            const nombreDe = (puesto) => {
+                const nombre = String(nombresJugadores[puesto] || '').trim();
+                if (!nombre) return '';
+                if (window.esMultijugador && window.rdPuestosReales && !window.rdPuestosReales[puesto]) return '';
+                return nombre;
+            };
+            const nombreEquipo = (puestos, corto) => puestos
+                .filter(p => activos.includes(p))
+                .map(nombreDe).filter(Boolean)
+                .map(n => corto ? n.split(/\s+/)[0] : n)
+                .join(' y ');
+            const equipoNos = nombreEquipo([1, 3], true);
+            const equipoEllos = nombreEquipo([2, 4], true);
             const miniNos = document.getElementById('lbl-mini-nos');
             const miniEllos = document.getElementById('lbl-mini-ellos');
-            if(miniNos) miniNos.innerText = n1;
-            if(miniEllos) miniEllos.innerText = n2;
-
+            if (miniNos) { miniNos.textContent = equipoNos || 'Equipo 1'; miniNos.title = nombreEquipo([1, 3], false); }
+            if (miniEllos) { miniEllos.textContent = equipoEllos || 'Equipo 2'; miniEllos.title = nombreEquipo([2, 4], false); }
             const panelNos = document.getElementById('lbl-panel-nos');
             const panelEllos = document.getElementById('lbl-panel-ellos');
-            if(panelNos) panelNos.innerText = nombresJugadores[1] + " y " + nombresJugadores[3];
-            if(panelEllos) panelEllos.innerText = nombresJugadores[2] + " y " + nombresJugadores[4];
+            if (panelNos) panelNos.textContent = nombreEquipo([1, 3], false) || 'Equipo 1';
+            if (panelEllos) panelEllos.textContent = nombreEquipo([2, 4], false) || 'Equipo 2';
         }
 
         function accionBotonAjustes() { 
@@ -2562,6 +2665,10 @@ ${urlConSala}
             detenerTemporizador();
             
             if (esperandoSeleccionPunta) {
+                if (index === indexSeleccionado) {
+                    mostrarToast('Elige el extremo izquierdo o derecho de la mesa.');
+                    return;
+                }
                 esperandoSeleccionPunta = false;
                 fichaSeleccionada = null;
                 indexSeleccionado = null;
@@ -2718,6 +2825,11 @@ ${urlConSala}
                 }
 
                 if (esperandoSeleccionPunta && index === indexSeleccionado) divFicha.classList.add('seleccionada');
+                // Resaltar la ficha obtenida de la caja si puede colocarse ahora.
+                if (turnoActual === 1 && puedeJugar && index === window.domidoFichaRobadaJugable && !juegoTerminado) {
+                    divFicha.classList.add('robo-jugable');
+                    divFicha.setAttribute('aria-label', 'Ficha robada lista para jugar');
+                }
                 
                 divFicha.innerHTML = `${generarHTMLMitad(Number(ficha[0]))}<div class="linea-divisoria"></div>${generarHTMLMitad(Number(ficha[1]))}`;
                 
@@ -2891,8 +3003,31 @@ ${urlConSala}
             });
         }
 
+        // Selector accesible fuera del zoom: permite elegir ambos extremos incluso
+        // cuando los aros quedan cerca de las esquinas de la mesa.
+        function rdActualizarSelectorPuntas() {
+            let panel = document.getElementById('rd-selector-puntas');
+            if (!panel) {
+                panel = document.createElement('div');
+                panel.id = 'rd-selector-puntas';
+                panel.setAttribute('role', 'group');
+                panel.setAttribute('aria-label', 'Elegir extremo de la cadena');
+                panel.innerHTML = '<span>¿Dónde colocar la ficha?</span><button type="button" data-lado="izq">⬅ Izquierda</button><button type="button" data-lado="der">Derecha ➡</button>';
+                panel.addEventListener('click', function(e) {
+                    const boton = e.target.closest('button[data-lado]');
+                    if (!boton || !esperandoSeleccionPunta || !fichaSeleccionada) return;
+                    e.preventDefault(); e.stopPropagation();
+                    ejecutarEleccion(boton.dataset.lado === 'izq');
+                    rdActualizarSelectorPuntas();
+                });
+                document.getElementById('mesa-tapete').appendChild(panel);
+            }
+            panel.style.display = esperandoSeleccionPunta && fichaSeleccionada ? 'flex' : 'none';
+        }
+
         function renderizarMesa() {
             const contenedorZoom = document.getElementById('zoom-container'); contenedorZoom.innerHTML = '';
+            rdActualizarSelectorPuntas();
             if (!fichaCentro) return;
 
             const tapete = document.getElementById('mesa-tapete'); const anchoTapete = tapete.clientWidth; const altoTapete = tapete.clientHeight;
@@ -2974,8 +3109,8 @@ ${urlConSala}
 
 
             if (esperandoSeleccionPunta) {
-                const marcadorDer = document.createElement('div'); marcadorDer.className = 'marcador-punta'; marcadorDer.style.left = jointDer.x + 'px'; marcadorDer.style.top = jointDer.y + 'px'; marcadorDer.onpointerdown = (e) => { e.stopPropagation(); ejecutarEleccion(false); }; contenedorZoom.appendChild(marcadorDer);
-                const marcadorIzq = document.createElement('div'); marcadorIzq.className = 'marcador-punta'; marcadorIzq.style.left = jointIzq.x + 'px'; marcadorIzq.style.top = jointIzq.y + 'px'; marcadorIzq.onpointerdown = (e) => { e.stopPropagation(); ejecutarEleccion(true); }; contenedorZoom.appendChild(marcadorIzq);
+                const marcadorDer = document.createElement('div'); marcadorDer.className = 'marcador-punta'; marcadorDer.style.left = jointDer.x + 'px'; marcadorDer.style.top = jointDer.y + 'px'; marcadorDer.onpointerdown = (e) => { e.preventDefault(); e.stopPropagation(); ejecutarEleccion(false); }; contenedorZoom.appendChild(marcadorDer);
+                const marcadorIzq = document.createElement('div'); marcadorIzq.className = 'marcador-punta'; marcadorIzq.style.left = jointIzq.x + 'px'; marcadorIzq.style.top = jointIzq.y + 'px'; marcadorIzq.onpointerdown = (e) => { e.preventDefault(); e.stopPropagation(); ejecutarEleccion(true); }; contenedorZoom.appendChild(marcadorIzq);
             }
         }
 
@@ -3052,7 +3187,15 @@ ${urlConSala}
 
         function revisarPuntos() {
             document.getElementById('ptos-lat-nosotros').innerText = `${puntosNosotros}`; document.getElementById('ptos-lat-ellos').innerText = `${puntosEllos}`;
-            window.actualizarMiniMarcador(); 
+            window.actualizarMiniMarcador();
+            // Persistir puntuación acumulada por equipos absolutos (puestos 1+3 / 2+4).
+            // Solo el controlador publica puntos; nunca durante la reconstrucción.
+            if (window.esMultijugador && window.salaIdActual && window.rdSoyControladorBots?.() &&
+                !window.rdHidratandoPartida && !window.rdReproduciendo && window.rdPublicarMarcador) {
+                const impar = Number(window.miPuesto) % 2 === 1;
+                window.rdPublicarMarcador(impar ? puntosNosotros : puntosEllos,
+                                         impar ? puntosEllos : puntosNosotros);
+            }
             
             if (puntosNosotros >= metaPuntos || puntosEllos >= metaPuntos) {
                 juegoTerminado = true; detenerTemporizador();
@@ -3142,7 +3285,11 @@ ${urlConSala}
                 tiempoRestante--;
                 if(progressCircle) { const offset = 132 - (tiempoRestante / segundos) * 132; progressCircle.style.strokeDashoffset = offset; if(tiempoRestante <= 3) progressCircle.style.stroke = '#ff1744';  }
                 if (tiempoRestante > 0 && tiempoRestante <= 3) { playSonido('tick'); }
-                if (tiempoRestante <= 0) { detenerTemporizador(); playSonido('timeout'); jugadaAutomaticaHumano(); }
+                if (tiempoRestante <= 0) {
+                    detenerTemporizador();
+                    if (esperandoSeleccionPunta) return; // No interrumpir la elección de la punta.
+                    playSonido('timeout'); jugadaAutomaticaHumano();
+                }
             }, 1000);
         }
 
@@ -3278,7 +3425,7 @@ ${urlConSala}
                         if (turnoActual === 1) {
                             mostrarToast("Toca las fichas de la caja para robar.");
                             iniciarTemporizador(15);
-                        } else if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                        } else if (window.esBotLocal[turnoActual] && window.rdSoyControladorBots?.()) {
                             setTimeout(() => window.turnoIA(), 1500);
                         } else {
                             mostrarBurbuja(turnoActual, "Pensando...", "pensando");
@@ -3298,7 +3445,7 @@ ${urlConSala}
                             setTimeout(() => {
                                 if (!window.bloqueoRed) { window.bloqueoRed = true; window.enviarPaseFirebase(); }
                             }, 1200);
-                        } else if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                        } else if (window.esBotLocal[turnoActual] && window.rdSoyControladorBots?.()) {
                             setTimeout(() => {
                                 let absoluteSeat = window.miPuesto + (turnoActual - 1);
                                 if (absoluteSeat > 4) absoluteSeat -= 4;
@@ -3315,7 +3462,7 @@ ${urlConSala}
                 if (window.esMultijugador && turnoActual !== 1) { 
                     resaltarTurnoActivo();
                     mostrarBurbuja(turnoActual, "Pensando...", "pensando");
-                    if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                    if (window.esBotLocal[turnoActual] && window.rdSoyControladorBots?.()) {
                         setTimeout(window.turnoIA, 2500);
                     }
                     return; 
@@ -3338,7 +3485,7 @@ ${urlConSala}
                 if (!window.esMultijugador) {
                     setTimeout(window.turnoIA, 2500); 
                 } else {
-                    if (window.esBotLocal[turnoActual] && window.miPuesto === 1) {
+                    if (window.esBotLocal[turnoActual] && window.rdSoyControladorBots?.()) {
                         setTimeout(window.turnoIA, 2500);
                     }
                 }
@@ -3355,7 +3502,7 @@ ${urlConSala}
             if (salidaObligatoria && !fichaCentro) { if (Number(ficha[0]) !== 6 || Number(ficha[1]) !== 6) { if (idJugador === 1) mostrarToast("Debes salir con el doble 6."); return; } }
             
             detenerTemporizador();
-            if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); iniciarTurnoNormal(); }
+            if (esperandoSeleccionPunta) { esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null; renderizarManos(); renderizarMesa(); }
 
             let a = Number(ficha[0]); let b = Number(ficha[1]);
             let puedeIzq = (!fichaCentro) ? true : (a === extremoIzquierdo || b === extremoIzquierdo);
@@ -3366,12 +3513,15 @@ ${urlConSala}
             let esCapicua = false;
             if (jugadores[idJugador].length === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) esCapicua = true;
 
-            if (idJugador === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho) {
-                esperandoSeleccionPunta = true; fichaSeleccionada = ficha; indexSeleccionado = index; fichaSeleccionada.esCapicua = esCapicua;
-                renderizarManos(); renderizarMesa(); 
-                mostrarToast("Toca el aro verde donde colocarla");
-                iniciarTemporizador(15); 
-                return; 
+            if (idJugador === 1 && fichaCentro && puedeIzq && puedeDer && extremoIzquierdo !== extremoDerecho && preferirIzquierda === null) {
+                esperandoSeleccionPunta = true;
+                fichaSeleccionada = [a, b]; // Copia independiente: no modificar la ficha original.
+                indexSeleccionado = index;
+                fichaSeleccionada.esCapicua = esCapicua;
+                detenerTemporizador(); // No jugar automáticamente mientras se elige el extremo.
+                renderizarManos(); renderizarMesa();
+                mostrarToast("Elige una punta verde o pulsa Izquierda / Derecha");
+                return;
             }
 
             let ponerIzquierda = false;
@@ -3382,10 +3532,26 @@ ${urlConSala}
         }
 
         function ejecutarEleccion(esIzquierda) {
-            esperandoSeleccionPunta = false; ocultarToast(); detenerTemporizador();
-            let esCapicua = fichaSeleccionada.esCapicua || false;
-            window.despacharJugada(fichaSeleccionada, 1, indexSeleccionado, esIzquierda, esCapicua);
-            fichaSeleccionada = null; indexSeleccionado = null;
+            if (!esperandoSeleccionPunta || !fichaSeleccionada || indexSeleccionado === null) return;
+            if (juegoTerminado || turnoActual !== 1 || (window.esMultijugador && window.bloqueoRed)) return;
+            const ficha = [Number(fichaSeleccionada[0]), Number(fichaSeleccionada[1])];
+            const index = indexSeleccionado;
+            const esCapicua = !!fichaSeleccionada.esCapicua;
+            // Validar de nuevo por si la cadena cambió mientras el jugador elegía.
+            const punta = esIzquierda ? extremoIzquierdo : extremoDerecho;
+            if (fichaCentro && ficha[0] !== punta && ficha[1] !== punta) {
+                esperandoSeleccionPunta = false; fichaSeleccionada = null; indexSeleccionado = null;
+                renderizarManos(); renderizarMesa();
+                mostrarToast('La punta cambió. Selecciona de nuevo tu ficha.');
+                return;
+            }
+            esperandoSeleccionPunta = false;
+            fichaSeleccionada = null;
+            indexSeleccionado = null;
+            ocultarToast(); detenerTemporizador();
+            const panelPuntas = document.getElementById('rd-selector-puntas');
+            if (panelPuntas) panelPuntas.style.display = 'none';
+            window.despacharJugada(ficha, 1, index, esIzquierda, esCapicua);
         }
 
         function procesarJugadaFinal(ficha, idJugador, index, colocarIzquierda, esCapicua = false) {
@@ -3505,6 +3671,7 @@ ${urlConSala}
 
         function turnoIA() {
             if (juegoTerminado) return;
+            if (window.esMultijugador && (window.rdReproduciendo || !window.esBotLocal[turnoActual] || !window.rdSoyControladorBots?.())) return;
             let manoIA = jugadores[turnoActual];
             let validas = [];
 
@@ -3772,7 +3939,29 @@ ${urlConSala}
                 if(!nombreRed) nombreRed = "Jugador 1";
                 let avatarRed = document.getElementById('input-avatar-red').value;
 
-                const codigo = "MESA-" + Math.floor(100 + Math.random() * 900);
+                // Códigos DO-100 a DO-9999; creación atómica sin sobrescribir salas existentes.
+                // Los números se asignan aleatoriamente, no son una secuencia correlativa.
+                // Crear anfitrión con identidad independiente de otras pestañas.
+                sessionStorage.setItem('dominoRD_uid_instancia', 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14));
+                sessionStorage.removeItem('dominoRD_sesion_instancia');
+                let codigo = null;
+                let salaCreada = false;
+                const configLocal = window.getConfiguracionJuego();
+                for (let intento = 0; intento < 24 && !salaCreada; intento++) {
+                    const candidato = 'DO-' + String(Math.floor(100 + Math.random() * 9900)).padStart(3, '0');
+                    const ruta = ref(db, 'salas/' + candidato);
+                    const resultado = await runTransaction(ruta, actual => {
+                        if (actual !== null) return;
+                        return {
+                            estado:'esperando', creadaEn:Date.now(), creadorNombre:nombreRed,
+                            ultimaActividad:Date.now(), publica:true,
+                            metaPuntos:configLocal.metaPuntos, modoRobar:configLocal.modoRobar,
+                            jugadores:{1:{nombre:nombreRed,avatar:avatarRed,listo:true,isBot:false,conectado:true,uid:obtenerUidJugador()}}
+                        };
+                    }, {applyLocally:false});
+                    if (resultado.committed) {codigo=candidato;salaCreada=true;}
+                }
+                if (!salaCreada) throw Error('No fue posible crear una sala única');
                 window.salaIdActual = codigo;
                 window.miPuesto = 1; 
                 window.esMultijugador = true;
@@ -3782,23 +3971,9 @@ ${urlConSala}
                 document.getElementById('ui-sala-espera').style.display = 'flex';
                 document.getElementById('lobby-codigo').innerText = codigo;
 
-                const configLocal = window.getConfiguracionJuego();
-                const salaRef = ref(db, 'salas/' + codigo);
-                
-                await set(salaRef, {
-                    estado: 'esperando',
-                    creadaEn: Date.now(),
-                    creadorNombre: nombreRed,
-                    ultimaActividad: Date.now(),
-                    publica: true,
-                    metaPuntos: configLocal.metaPuntos,
-                    modoRobar: configLocal.modoRobar,
-                    jugadores: { 1: { nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false, conectado: true, uid: obtenerUidJugador() } }
-                });
-
                 // GESTIÓN DE DESCONEXIÓN: Si el creador se desconecta, se convierte en bot para no trabar la mesa
                 const miJugadorRef = ref(db, 'salas/' + codigo + '/jugadores/1');
-                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true, nombre: 'Bot sustituto', avatar: '🤖', listo: true });
+                await onDisconnect(miJugadorRef).update({ conectado: false });
 
                 escucharCambiosSala(codigo);
             } catch (error) { window.mostrarToast("Error creando sala."); }
@@ -3830,17 +4005,54 @@ ${urlConSala}
                 if (!snapshot.exists()) { window.mostrarToast("La sala no existe"); return; }
 
                 const datosSala = snapshot.val();
-                const jugadoresSala = datosSala.jugadores || {};
-                let asientoLibre = null;
-                for (let i = 1; i <= 4; i++) {
-                    const jugador = jugadoresSala[i];
-                    if (!jugador || jugador.isBot === true || jugador.conectado === false) {
-                        asientoLibre = i;
-                        break;
-                    }
+                if (!['esperando','jugando'].includes(datosSala.estado)) {
+                    window.mostrarToast('La sala no admite jugadores ahora.');
+                    return;
                 }
-                if (!asientoLibre) { window.mostrarToast("Sala completa. No hay bots para reemplazar."); return; }
+                // Reserva atómica: dos invitados simultáneos no pueden tomar el mismo puesto.
+                let asientoLibre = null;
+                // Cada entrada explícita es un jugador nuevo. Las pestañas duplicadas pueden
+                // heredar sessionStorage, por eso NO reutilizamos el UID ni un asiento previo.
+                const uidInvitado = 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14);
+                const salaReservaRef = ref(db, 'salas/' + val);
+                const reserva = await runTransaction(salaReservaRef, sala => {
+                    if (!sala || !['esperando','jugando'].includes(sala.estado)) return;
+                    const jugadores = sala.jugadores || {};
+                    // Nunca quitar el puesto a un humano conectado. Durante la partida,
+                    // un invitado ocupa un bot temporal o un puesto de bot disponible.
+                    const orden = [2,3,4,1];
+                    const asiento = sala.estado === 'jugando'
+                        ? orden.find(i => jugadores[i] && (jugadores[i].isBot === true || jugadores[i].conectado === false))
+                        : [2,3,4].find(i => !jugadores[i]);
+                    if (!asiento) return;
+                    asientoLibre = asiento;
+                    // Relevo limpio: el nuevo humano reemplaza los datos de identidad
+                    // del bot, sin conservar nombreOriginal/uid del jugador saliente.
+                    // La mano, las acciones y la puntuación permanecen en sala.partida.
+                    jugadores[asiento] = {
+                        nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false,
+                        botTemporal: false, conectado: true, uid: uidInvitado,
+                        ultimaConexion: Date.now()
+                    };
+                    // El nombre del creador también debe reflejar al ocupante actual
+                    // si el relevo corresponde al puesto 1.
+                    if (asiento === 1) sala.creadorNombre = nombreRed;
+                    sala.jugadores = jugadores;
+                    sala.ultimaActividad = Date.now();
+                    return sala;
+                }, {applyLocally:false});
+                if (!reserva.committed || !asientoLibre) {
+                    window.mostrarToast('La sala está completa o no se pudo reservar un puesto.');
+                    return;
+                }
+                // Releer el puesto propio tras el commit para evitar depender de reintentos.
+                const asientosConfirmados = reserva.snapshot.val()?.jugadores || {};
+                asientoLibre = [1,2,3,4].find(i => asientosConfirmados[i]?.uid === uidInvitado && asientosConfirmados[i]?.nombre === nombreRed);
+                if (!asientoLibre) throw Error('No se pudo confirmar el asiento reservado');
 
+                // Persistir la nueva identidad solo DESPUÉS de confirmar la reserva.
+                sessionStorage.setItem('dominoRD_uid_instancia', uidInvitado);
+                sessionStorage.removeItem('dominoRD_sesion_instancia');
                 window.salaIdActual = val;
                 window.miPuesto = asientoLibre;
                 window.esMultijugador = true;
@@ -3849,23 +4061,24 @@ ${urlConSala}
                 document.getElementById('ui-sala-espera').style.display = 'flex';
                 document.getElementById('lobby-codigo').innerText = val;
 
-                await update(ref(db, 'salas/' + val + '/jugadores/' + asientoLibre), {
-                    nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false,
-                    conectado: true, reemplazoBot: !!jugadoresSala[asientoLibre], uid: obtenerUidJugador()
-                });
-                await update(ref(db, 'salas/' + val), { ultimaActividad: Date.now() });
+                // La reserva de puesto y la marca de actividad se guardaron atómicamente.
                 const miJugadorRef = ref(db, 'salas/' + val + '/jugadores/' + asientoLibre);
-                onDisconnect(miJugadorRef).update({ conectado: false, isBot: true, nombre: 'Bot sustituto', avatar: '🤖', listo: true });
+                await onDisconnect(miJugadorRef).update({ conectado: false });
+                if (datosSala.estado === 'jugando') {
+                    window.rdEntrandoEnCurso = true;
+                    window.ultimaManoJugada = 0;
+                }
                 escucharCambiosSala(val);
                 window.mostrarToast(datosSala.estado === 'jugando' ? "Entraste reemplazando un bot 🤖" : "Te uniste a la sala");
             } catch(error) {
                 console.error(error);
-                window.mostrarToast("Error uniéndose a la sala.");
+                window.mostrarToast("No se pudo entrar: " + (error.code === "PERMISSION_DENIED" ? "revisa permisos de Firebase" : (error.message || "error de conexión")));
             }
         };
 
         window.iniciarPartidaRed = async function(esNuevaPartida = false, rellenarBots = true) {
             if (!window.miPuesto || !window.salaIdActual || !window.datosSala) return;
+            if (window.miPuesto !== 1) { window.mostrarToast('Solo el anfitrión puede iniciar la partida.'); return; }
             
             let asientosDb = Object.keys(window.datosSala.jugadores).map(Number);
             
@@ -3922,6 +4135,7 @@ ${urlConSala}
             await update(salaRef, { 
                 estado: 'jugando',
                 acciones: null,
+                ...(esNuevaPartida ? { marcador: { equipoImpar: 0, equipoPar: 0, actualizadoEn: Date.now() } } : {}),
                 partida: {
                     numeroMano: nuevaMano,
                     esNuevaPartida: esNuevaPartida,
@@ -3938,11 +4152,28 @@ ${urlConSala}
             }); 
         };
 
+        window.rdPublicarMarcador = async function(impar, par) {
+            if (!window.salaIdActual) return;
+            try {
+                await update(ref(db, 'salas/' + window.salaIdActual), {
+                    'marcador/equipoImpar': impar,
+                    'marcador/equipoPar': par,
+                    'marcador/actualizadoEn': Date.now()
+                });
+            } catch (e) { console.warn('No se pudo guardar el marcador', e); }
+        };
         window.enviarJugadaFirebase = async function(ficha, colocarIzquierda, esCapicua) {
             try {
                 const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
                 const nuevaAccion = push(accionesRef);
+                const accionId = nuevaAccion.key;
                 await set(nuevaAccion, { tipo: 'JUGAR', puestoAbsoluto: window.miPuesto, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+                // Si el evento de Firebase no vuelve, avisar sin duplicar la jugada.
+                setTimeout(() => {
+                    if (window.bloqueoRed && window.rdUltimaAccionConfirmada !== accionId && window.esMultijugador) {
+                        window.mostrarToast('La jugada no se sincronizó. Comprueba tu conexión y vuelve a abrir la sala.');
+                    }
+                }, 9000);
             } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
         };
 
@@ -4025,11 +4256,11 @@ ${urlConSala}
         }
         async function comprobarContinuarInicio(){
             try{
-                const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;
+                const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;
                 const ses=JSON.parse(raw);if(!ses.codigo||Date.now()-(ses.fecha||0)>24*60*60*1000)return;
                 const snap=await get(ref(db,`salas/${ses.codigo}`));if(!snap.exists())return;
                 const sala=snap.val(),j=sala.jugadores&&sala.jugadores[ses.puesto];
-                if(j&&(j.uid===ses.uid||j.isBot===true||j.conectado===false)){
+                if(j&&j.uid===ses.uid&&!j.isBot){
                     const b=document.getElementById('btn-continuar-inicio'),d=document.getElementById('detalle-continuar');
                     if(b)b.style.display='block';if(d)d.textContent=`${ses.codigo} · Tu puesto ${ses.puesto} está disponible`;
                 }
@@ -4038,28 +4269,33 @@ ${urlConSala}
         onValue(ref(db,'salas'),snap=>actualizarInicioDinamico(snap.val()||{}));
         comprobarContinuarInicio();
 
+        // Cada pestaña/instancia tiene identidad propia. localStorage se comparte entre pestañas
+        // del mismo navegador y anteriormente hacía que el invitado sobrescribiera al anfitrión.
         function obtenerUidJugador(){
-            let uid=localStorage.getItem('dominoRD_uid');
-            if(!uid){uid='u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9);localStorage.setItem('dominoRD_uid',uid)}
+            let uid=sessionStorage.getItem('dominoRD_uid_instancia');
+            if(!uid){
+                uid='u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12);
+                sessionStorage.setItem('dominoRD_uid_instancia',uid);
+            }
             return uid;
         }
-        function guardarSesionSala(codigo,puesto,nombre,avatar){localStorage.setItem('dominoRD_sesion',JSON.stringify({codigo,puesto,nombre,avatar,uid:obtenerUidJugador(),fecha:Date.now()}));}
+        function guardarSesionSala(codigo,puesto,nombre,avatar){sessionStorage.setItem('dominoRD_sesion_instancia',JSON.stringify({codigo,puesto,nombre,avatar,uid:obtenerUidJugador(),fecha:Date.now()}));}
         function renderLobbyPro(datos){
             const box=document.getElementById('lobby-asientos'); if(!box)return;
             let humanos=0,bots=0,listos=0; box.innerHTML='';
             for(let i=1;i<=4;i++){const j=(datos.jugadores||{})[i];const d=document.createElement('div');d.className='asiento-pro'+(i===window.miPuesto?' yo':'');
                 if(!j){d.innerHTML=`<div class="asiento-avatar">➕</div><div class="asiento-info"><div class="asiento-nombre">Puesto ${i}</div><div class="asiento-estado estado-offline">Esperando jugador...</div></div>`}
-                else{const bot=j.isBot===true||j.conectado===false;if(bot)bots++;else humanos++;if(j.listo||bot)listos++;const estado=bot?'🤖 Bot disponible':(j.conectado===false?'⚫ Desconectado':j.listo?'✅ Listo':'🟢 En línea');const cl=bot?'estado-bot':j.listo?'estado-ready':'estado-online';d.innerHTML=`<div class="asiento-avatar">${j.avatar||'🎲'}</div><div class="asiento-info"><div class="asiento-nombre">${j.nombre||'Jugador'}${i===window.miPuesto?' · Tú':''}</div><div class="asiento-estado ${cl}">${estado}</div></div>`}
+                else{const bot=j.isBot===true;const desconectado=!bot&&j.conectado===false;if(bot)bots++;else humanos++;if(j.listo||bot)listos++;const estado=bot?'🤖 Bot':(desconectado?'⚫ Desconectado':j.listo?'✅ Listo':'🟢 En línea');const cl=bot?'estado-bot':desconectado?'estado-offline':j.listo?'estado-ready':'estado-online';d.innerHTML=`<div class="asiento-avatar">${j.avatar||'🎲'}</div><div class="asiento-info"><div class="asiento-nombre">${j.nombre||'Jugador'}${i===window.miPuesto?' · Tú':''}</div><div class="asiento-estado ${cl}">${estado}</div></div>`}
                 box.appendChild(d)}
             const r=document.getElementById('lobby-resumen');if(r)r.textContent=`${humanos} jugador${humanos===1?'':'es'} · ${bots} bot${bots===1?'':'s'} · ${Math.max(0,4-humanos-bots)} espacio${Math.max(0,4-humanos-bots)===1?'':'s'} · ${listos}/4 listos`;
             const me=(datos.jugadores||{})[window.miPuesto];const b=document.getElementById('btn-listo-pro');if(b&&me)b.textContent=me.listo?'⏳ NO ESTOY LISTO':'✅ ESTOY LISTO';
-            if(window.salaIdActual&&window.miPuesto&&me&&!me.isBot)guardarSesionSala(window.salaIdActual,window.miPuesto,me.nombre,me.avatar);
+            if(window.salaIdActual&&window.miPuesto&&me&&!me.isBot&&me.uid===obtenerUidJugador())guardarSesionSala(window.salaIdActual,window.miPuesto,me.nombre,me.avatar);
         }
         window.toggleListo=async function(){if(!window.salaIdActual||!window.miPuesto)return;const me=window.datosSala?.jugadores?.[window.miPuesto];await update(ref(db,`salas/${window.salaIdActual}/jugadores/${window.miPuesto}`),{listo:!(me&&me.listo),ultimaConexion:Date.now()});};
         window.solicitarRevancha=async function(){if(!window.salaIdActual||!window.miPuesto)return;await set(ref(db,`salas/${window.salaIdActual}/revancha/${window.miPuesto}`),{acepta:true,nombre:window.datosSala?.jugadores?.[window.miPuesto]?.nombre||'Jugador',timestamp:Date.now()});window.mostrarToast('🔥 Solicitud de revancha enviada');};
         window.mostrarRankingSala=async function(){const el=document.getElementById('ranking-mini');if(!el)return;el.style.display=el.style.display==='none'?'block':'none';if(el.style.display==='none')return;const snap=await get(ref(db,'ranking'));const arr=Object.values(snap.val()||{}).sort((a,b)=>(b.puntos||0)-(a.puntos||0)).slice(0,5);el.innerHTML='<h4>🏆 Ranking semanal</h4>'+(arr.length?arr.map((x,i)=>`<div class="ranking-fila"><span>${i+1}. ${x.nombre||'Jugador'}</span><b>${x.puntos||0} pts</b></div>`).join(''):'<div class="ranking-fila"><span>Aún no hay puntuaciones</span></div>');};
-        window.reconectarJugador=async function(){const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;const ses=JSON.parse(raw);const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(!j||j.uid===ses.uid||j.isBot||j.conectado===false){window.salaIdActual=ses.codigo;window.miPuesto=ses.puesto;window.esMultijugador=true;await update(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`),{nombre:ses.nombre,avatar:ses.avatar,uid:ses.uid,isBot:false,conectado:true,listo:true});escucharCambiosSala(ses.codigo);document.getElementById('ui-menu-principal').style.display='none';document.getElementById('ui-sala-espera').style.display='flex';window.mostrarToast('✅ Recuperaste tu asiento');}};
-        (async()=>{try{const raw=localStorage.getItem('dominoRD_sesion');if(!raw)return;const ses=JSON.parse(raw);if(Date.now()-ses.fecha>24*60*60*1000)return;const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&(j.uid===ses.uid||j.isBot||j.conectado===false)){const c=document.getElementById('reconexion-card');if(c)c.style.display='block';}}catch(e){console.warn(e)}})();
+        window.reconectarJugador=async function(){const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;const ses=JSON.parse(raw);const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&j.uid===ses.uid&&!j.isBot){window.salaIdActual=ses.codigo;window.miPuesto=ses.puesto;window.esMultijugador=true;await update(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`),{nombre:ses.nombre,avatar:ses.avatar,uid:ses.uid,isBot:false,conectado:true,listo:true});escucharCambiosSala(ses.codigo);document.getElementById('ui-menu-principal').style.display='none';document.getElementById('ui-sala-espera').style.display='flex';window.mostrarToast('✅ Recuperaste tu asiento');}};
+        (async()=>{try{const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;const ses=JSON.parse(raw);if(Date.now()-ses.fecha>24*60*60*1000)return;const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&j.uid===ses.uid&&!j.isBot){const c=document.getElementById('reconexion-card');if(c)c.style.display='block';}}catch(e){console.warn(e)}})();
 
         const TIEMPO_LIMPIEZA_SALA = 15 * 60 * 1000; // 15 minutos sin humanos
         let ultimaLimpiezaSalas = 0;
@@ -4128,7 +4364,7 @@ ${urlConSala}
                 limpiarSalasAbandonadas(salas);
                 const filas = Object.entries(salas)
                     .filter(([codigo, sala]) => {
-                        if (!sala || sala.publica === false || (sala.estado !== 'esperando' && sala.estado !== 'jugando')) return false;
+                        if (!sala || sala.publica === false || !['esperando','jugando'].includes(sala.estado)) return false;
                         const jugadoresSala = sala.jugadores || {};
                         // Una sala vieja/cerrada suele quedar en Firebase con todos sus asientos como bots/desconectados.
                         // Solo publicamos salas que todavía tengan por lo menos un jugador humano conectado.
@@ -4144,7 +4380,7 @@ ${urlConSala}
                             else if (j.isBot === true || j.conectado === false) bots++;
                             else humanos++;
                         }
-                        const cupos = bots + espacios;
+                        const cupos = sala.estado === 'jugando' ? bots : espacios;
                         return { codigo, sala, humanos, bots, espacios, cupos };
                     })
                     .sort((a,b) => (b.cupos - a.cupos) || ((b.sala.creadaEn || 0) - (a.sala.creadaEn || 0)));
@@ -4159,7 +4395,7 @@ ${urlConSala}
                     const disponible = item.cupos > 0;
                     const fila = document.createElement('div');
                     fila.className = 'sala-publica';
-                    const detalleBots = item.bots > 0 ? ` · ${item.bots} bot${item.bots > 1 ? 's' : ''} reemplazable${item.bots > 1 ? 's' : ''}` : '';
+                    const detalleBots = ` · 🤖 ${item.bots} bot${item.bots === 1 ? '' : 's'} · 🪑 ${item.espacios} libre${item.espacios === 1 ? '' : 's'}`;
                     fila.innerHTML = `
                         <div class="sala-publica-info">
                             <div><span class="sala-publica-codigo">${item.codigo}</span></div>
@@ -4167,7 +4403,25 @@ ${urlConSala}
                         </div>
                         <button type="button" class="btn-entrar-sala-lista" ${disponible ? '' : 'disabled'}>${disponible ? 'ENTRAR' : 'LLENA'}</button>`;
                     const btn = fila.querySelector('button');
-                    if (disponible) btn.addEventListener('click', () => window.prepararEntradaSala(item.codigo));
+                    if (disponible) btn.addEventListener('click', async () => {
+                        // El botón del listado debe entrar realmente, no limitarse a rellenar el código.
+                        if (btn.disabled) return;
+                        btn.disabled = true;
+                        const original = btn.textContent;
+                        btn.textContent = 'ENTRANDO...';
+                        try {
+                            const nombre = document.getElementById('input-nombre-red');
+                            if (!nombre || !nombre.value.trim()) {
+                                window.prepararEntradaSala(item.codigo);
+                                window.mostrarToast('Escribe tu nombre para entrar a esta sala.');
+                                if (nombre) nombre.focus();
+                                return;
+                            }
+                            await window.unirseSalaReal(item.codigo);
+                        } finally {
+                            if (btn.isConnected) { btn.disabled = false; btn.textContent = original; }
+                        }
+                    });
                     cont.appendChild(fila);
                 });
             }, (error) => {
@@ -4179,6 +4433,36 @@ ${urlConSala}
             });
         }
         iniciarListadoSalasPublicas();
+
+        // Sustitución temporal: un humano que pierde conexión conserva su mano,
+        // pero su asiento pasa a control de IA. Los cambios son atómicos.
+        let rdControlBotOcupado = false;
+        window.rdSoyControladorBots = () => {
+            const js = window.datosSala?.jugadores || {};
+            const activos = [1,2,3,4].filter(i => js[i] && !js[i].isBot && js[i].conectado !== false);
+            return activos.length > 0 && activos[0] === window.miPuesto;
+        };
+        async function rdSustituirDesconectados(codigo, datos) {
+            if (datos.estado !== 'jugando' || !window.rdSoyControladorBots() || rdControlBotOcupado) return;
+            if (![1,2,3,4].some(i => datos.jugadores?.[i] && !datos.jugadores[i].isBot && datos.jugadores[i].conectado === false)) return;
+            rdControlBotOcupado = true;
+            try {
+                await runTransaction(ref(db, 'salas/' + codigo + '/jugadores'), js => {
+                    if (!js) return;
+                    let cambio = false;
+                    for (const i of [1,2,3,4]) {
+                        const j = js[i];
+                        if (j && j.conectado === false && !j.isBot) {
+                            js[i] = {...j, isBot:true, botTemporal:true, nombreOriginal:j.nombre, avatarOriginal:j.avatar,
+                                nombre:'🤖 Relevo puesto ' + i, avatar:'🤖', listo:true};
+                            cambio = true;
+                        }
+                    }
+                    return cambio ? js : undefined;
+                }, {applyLocally:false});
+            } catch(e) { console.warn('No se pudo activar el bot temporal',e); }
+            finally { rdControlBotOcupado = false; }
+        }
 
         function escucharCambiosSala(codigoSala) {
             const salaRef = ref(db, 'salas/' + codigoSala);
@@ -4220,7 +4504,15 @@ ${urlConSala}
                 if (!datos) return;
                 
                 window.datosSala = datos;
-                renderLobbyPro(datos); 
+                renderLobbyPro(datos);
+                if (datos.marcador && !window.rdHidratandoPartida && window.rdRestaurarMarcador) {
+                    window.rdRestaurarMarcador(datos.marcador.equipoImpar, datos.marcador.equipoPar);
+                }
+                rdSustituirDesconectados(codigoSala, datos);
+                // Recalcular controlador cuando se desconecta el anfitrión.
+                if (datos.estado === 'jugando' && window.rdSoyControladorBots()) {
+                    window.rdSolicitarTurnoBot?.();
+                } 
 
                 if (datos.metaPuntos && window.getConfiguracionJuego().metaPuntos !== datos.metaPuntos) {
                     window.setMetaPuntos(datos.metaPuntos);
@@ -4248,23 +4540,25 @@ ${urlConSala}
                         const btnSolo = document.getElementById('btn-empezar-solo');
                         
                         if (contadorJugadores === 4) {
-                            btnRed.style.display = 'block';
+                            btnRed.style.display = window.miPuesto === 1 ? 'block' : 'none';
                             btnRed.innerText = "🚀 EMPEZAR PARTIDA";
                             btnRed.style.opacity = '1';
                             btnSolo.style.display = 'none';
                         } else if (contadorJugadores > 1) {
-                            btnRed.style.display = 'block';
-                            btnRed.innerText = "🤖 LLENAR CON BOTS";
+                            btnRed.style.display = window.miPuesto === 1 ? 'block' : 'none';
+                            btnRed.innerText = `🤖 JUGAR ${contadorJugadores} HUMANOS + ${4-contadorJugadores} BOTS`;
                             btnRed.style.opacity = '1';
                             
-                            btnSolo.style.display = 'block';
-                            btnSolo.innerText = `👥 EMPEZAR INCOMPLETO (SIN BOTS)`;
+                            btnSolo.style.display = window.miPuesto === 1 ? 'block' : 'none';
+                            btnSolo.innerText = `👥 INICIAR SOLO CON ${contadorJugadores} JUGADORES`;
                         } else {
-                            btnRed.style.display = 'none';
+                            // El anfitrión también puede comenzar con 3 bots si nadie acepta la invitación.
+                            btnRed.style.display = window.miPuesto === 1 ? 'block' : 'none';
+                            btnRed.innerText = '🤖 JUGAR CON 3 BOTS';
                             btnSolo.style.display = 'none';
                         }
                     }
-                    document.getElementById('lobby-mensaje').innerText = contadorJugadores > 1 ? "Cualquier jugador puede iniciar la partida." : "Esperando más jugadores o inicia con bots.";
+                    document.getElementById('lobby-mensaje').innerText = contadorJugadores > 1 ? "Puedes iniciar la partida o completar con bots." : "Invita a tus amigos o juega con 3 bots.";
                 }
 
                 if (datos.jugadores) { mapearJugadoresEnMesa(datos.jugadores, window.miPuesto); }
@@ -4285,15 +4579,55 @@ ${urlConSala}
                         document.getElementById('ui-sala-espera').style.display = 'none';
                         document.getElementById('pantalla-bienvenida').style.display = 'none';
                         
-                        window.iniciarManoMultijugadorDesdeFirebase(datos.partida);
+                        const esRelevo = !!window.rdEntrandoEnCurso;
+                        if (esRelevo) window.rdHidratandoPartida = true;
+                        window.iniciarManoMultijugadorDesdeFirebase(datos.partida, esRelevo, async () => {
+                            const codigoActual = codigoSala;
+                            try {
+                                // Obtener la historia más reciente, no un snapshot viejo.
+                                const snap = await get(ref(db, 'salas/' + codigoActual));
+                                if (window.salaIdActual !== codigoActual) return;
+                                const actual = snap.val();
+                                if (!actual || actual.estado !== 'jugando' ||
+                                    (actual.partida?.numeroMano || 1) !== manoEnBD) return;
+                                ultimoTimestampAccion = actual.partida.timestampInicio || 0;
+                                window.rdReproduciendo = true;
+                                try { rdAplicarAcciones(actual); }
+                                finally { window.rdReproduciendo = false; }
+                                // Recuperar puntuación acumulada desde Firebase, no desde la sesión local.
+                                if (actual.marcador && window.rdRestaurarMarcador) {
+                                    window.rdRestaurarMarcador(actual.marcador.equipoImpar, actual.marcador.equipoPar);
+                                }
+                                // Mostrar nombres y marcadores del ocupante actual.
+                                if (actual.jugadores) mapearJugadoresEnMesa(actual.jugadores, window.miPuesto);
+                                window.renderizarMesa?.();
+                                window.renderizarManos?.();
+                                window.actualizarUIAvatares?.();
+                                window.mostrarToast('🎲 Continuas la partida donde quedó');
+                            } catch(e) {
+                                console.error('Error reconstruyendo la partida en curso', e);
+                                window.mostrarToast('No se pudo recuperar la mesa. Vuelve a entrar a la sala.');
+                            } finally {
+                                window.rdEntrandoEnCurso = false;
+                                window.rdHidratandoPartida = false;
+                                window.rdSolicitarTurnoBot?.();
+                            }
+                        });
                     }
                 }
 
+                // Nunca aplicar acciones a una mesa aún en reconstrucción.
+                if (!window.rdHidratandoPartida) rdAplicarAcciones(datos);
+            });
+        }
+
+        function rdAplicarAcciones(datos) {
                 if (datos.acciones) {
-                    const listaAcciones = Object.values(datos.acciones).sort((a,b) => a.timestamp - b.timestamp);
+                    const listaAcciones = Object.entries(datos.acciones).sort((a,b) => (a[1].timestamp - b[1].timestamp) || a[0].localeCompare(b[0]));
                     
-                    for (let accion of listaAcciones) {
+                    for (let [accionId, accion] of listaAcciones) {
                         if (accion.timestamp > ultimoTimestampAccion) {
+                            window.rdUltimaAccionConfirmada = accionId;
                             ultimoTimestampAccion = accion.timestamp;
                             
                             if (window.getJuegoIniciado()) {
@@ -4305,6 +4639,8 @@ ${urlConSala}
                                     let indexFicha = window.jugadores[localSeat].findIndex(f => Number(f[0]) === Number(accion.ficha[0]) && Number(f[1]) === Number(accion.ficha[1]));
                                     if (indexFicha !== -1) {
                                         window.procesarJugadaFinalLocal(accion.ficha, localSeat, indexFicha, accion.colocarIzquierda, accion.esCapicua);
+                                    } else if (localSeat === 1) {
+                                        window.mostrarToast('Desfase de fichas: vuelve a abrir la sala antes de seguir jugando.');
                                     }
                                 } else if (accion.tipo === 'PASAR') {
                                     window.ejecutarPase(localSeat);
@@ -4333,7 +4669,7 @@ ${urlConSala}
                                                 }, 1000);
                                             }
                                         }
-                                    } else if (window.miPuesto === 1 && window.esBotLocal[localSeat]) {
+                                    } else if (window.rdSoyControladorBots?.() && window.esBotLocal[localSeat]) {
                                         setTimeout(window.turnoIA, 1000); 
                                     }
                                 }
@@ -4341,22 +4677,26 @@ ${urlConSala}
                         }
                     }
                 }
-            });
         }
 
         function mapearJugadoresEnMesa(jugadoresDB, miPuestoLocal) {
-            window.esBotLocal = { 1: false, 2: false, 3: false, 4: false }; 
+            window.esBotLocal = { 1: false, 2: false, 3: false, 4: false };
+            window.rdPuestosReales = {};
             for (let i = 1; i <= 4; i++) {
                 if (jugadoresDB[i]) {
                     let offset = i - miPuestoLocal;
                     if (offset < 0) offset += 4;
                     let posicionPantalla = offset + 1; 
 
+                    window.rdPuestosReales[posicionPantalla] = true;
                     window.nombresJugadores[posicionPantalla] = jugadoresDB[i].nombre;
                     window.avataresJugadores[posicionPantalla] = jugadoresDB[i].avatar;
                     window.esBotLocal[posicionPantalla] = jugadoresDB[i].isBot === true;
                 }
             }
+            // Refrescar todos los nombres y avatares en la mesa y en AMBOS
+            // marcadores cada vez que Firebase notifique un cambio de ocupante.
+            // No modifica las fichas, los turnos ni los puntos.
             if(window.actualizarUIAvatares) window.actualizarUIAvatares();
         }
     
@@ -4367,8 +4707,8 @@ ${urlConSala}
           const jugador=window.datosSala?.jugadores?.[puesto];
           if(!jugador || jugador.uid !== obtenerUidJugador()) throw new Error('No se pudo verificar tu asiento');
           await update(ref(db,`salas/${codigo}/jugadores/${puesto}`),{nombre,avatar});
-          const raw=localStorage.getItem('dominoRD_sesion');
-          if(raw){try{const ses=JSON.parse(raw);if(ses.codigo===codigo){ses.nombre=nombre;ses.avatar=avatar;localStorage.setItem('dominoRD_sesion',JSON.stringify(ses));}}catch(e){}}
+          const raw=sessionStorage.getItem('dominoRD_sesion_instancia');
+          if(raw){try{const ses=JSON.parse(raw);if(ses.codigo===codigo){ses.nombre=nombre;ses.avatar=avatar;sessionStorage.setItem('dominoRD_sesion_instancia',JSON.stringify(ses));}}catch(e){}}
           return true;
         };
 </script>
