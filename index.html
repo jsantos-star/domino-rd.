@@ -10,7 +10,8 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./icono-192.png">
 
-    <title>DOMI-DO</title>
+    <title>DOMI-DO 1.2 BETA</title>
+    <!-- DOMI-DO 1.2 BETA: autenticación, presencia por conexión y recuperación atómica de asientos. -->
     <!-- Librería para el Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -620,6 +621,25 @@
         .btn-entrar-sala-lista { border:1px solid #00bcd4; background:rgba(0,188,212,.16); color:#fff; border-radius:8px; padding:7px 10px; font-size:10px; font-weight:900; cursor:pointer; }
         .btn-entrar-sala-lista:disabled { opacity:.4; cursor:not-allowed; border-color:#667; }
         .sin-salas { color:#7e8b99; text-align:center; padding:14px 5px; font-size:11px; }
+
+
+        /* DOMI-DO 1.2: buscador y explorador de salas */
+        .rd-busqueda-salas { display:flex; gap:8px; align-items:center; margin:9px 0 10px; }
+        .rd-busqueda-salas input { min-width:0; flex:1; border:1px solid #40566b; border-radius:10px; padding:11px 12px; background:#111d2b; color:#fff; font-size:13px; outline:none; user-select:text; }
+        .rd-busqueda-salas input:focus { border-color:#12d5e9; box-shadow:0 0 0 2px rgba(18,213,233,.15); }
+        .rd-busqueda-salas input::placeholder { color:#8998a9; }
+        .rd-ver-todas { flex-shrink:0; border:1px solid #13cde3; border-radius:10px; background:rgba(10,191,216,.14); color:#75edff; padding:11px 12px; font-size:11px; font-weight:900; cursor:pointer; }
+        .rd-ver-todas:hover { background:rgba(10,191,216,.26); }
+        #rd-modal-todas-salas { position:fixed; inset:0; z-index:9000; display:none; align-items:center; justify-content:center; padding:14px; background:rgba(2,7,15,.9); backdrop-filter:blur(8px); }
+        #rd-modal-todas-salas.rd-visible { display:flex; }
+        .rd-todas-panel { display:flex; flex-direction:column; width:min(96vw,680px); max-height:min(88dvh,800px); background:linear-gradient(145deg,#182638,#0e1724); border:1px solid #355a6c; border-radius:20px; padding:17px; box-shadow:0 20px 70px rgba(0,0,0,.7); }
+        .rd-todas-cabecera { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+        .rd-todas-cabecera h2 { color:#70eaf4; font-size:18px; margin:0; }
+        .rd-cerrar-todas { color:#fff; background:#28384c; border:1px solid #526579; border-radius:9px; font-size:20px; width:38px; height:38px; cursor:pointer; }
+        #rd-estado-todas { color:#a7b5c5; font-size:11px; margin-top:8px; }
+        #rd-lista-todas { display:flex; flex-direction:column; gap:9px; overflow-y:auto; min-height:90px; padding:5px 4px 10px 0; }
+        #rd-lista-todas .sala-publica { flex-shrink:0; }
+        @media(max-width:430px) { .rd-busqueda-salas { flex-wrap:wrap; } .rd-busqueda-salas input { flex-basis:100%; } .rd-ver-todas { width:100%; } .rd-todas-panel { padding:12px; } }
 
         /* SALAS PUBLICAS - DISEÑO MODERNO */
         .salas-publicas-wrap { margin-top:10px; background:transparent; border:0; border-top:1px solid rgba(255,255,255,.12); border-radius:0; padding:14px 0 0; }
@@ -1358,24 +1378,46 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
 @media (max-height:420px){#domido-giro-flotante{width:37px;height:37px;top:5px;right:8px;border-radius:11px}#domido-giro-flotante svg{width:22px;height:22px}}
 </style>
 
+<style id="domido-barajado-visible-2026">
+/* Las 28 fichas ocupan posiciones propias y se mueven desde el centro de la mesa. */
+#pantalla-barajar .zona-revuelta{position:absolute;inset:0;width:100%;height:100%;overflow:hidden!important;display:block;z-index:2;}
+#pantalla-barajar .ficha-revuelta{
+ position:absolute!important;left:50%;top:44%;margin:0!important;
+ width:clamp(29px,3.8vw,42px);height:clamp(47px,6.3vw,67px);
+ transform:translate(-50%,-50%);transform-origin:center center;
+ animation:domidoMezclaVisible 1.35s ease-in-out infinite alternate!important;
+ animation-delay:var(--retraso,0s)!important;
+ opacity:1!important;z-index:var(--orden,1);
+}
+#pantalla-barajar .ficha-revuelta::after{content:'RD';font-size:9px;color:#111;background:#fff;border-radius:2px;font-weight:900;position:relative;z-index:1;padding:0 2px}
+@keyframes domidoMezclaVisible{
+ 0%{transform:translate(calc(-50% + var(--x0,0px)),calc(-50% + var(--y0,0px))) rotate(var(--g0,0deg));}
+ 50%{transform:translate(calc(-50% + var(--x1,0px)),calc(-50% + var(--y1,0px))) rotate(var(--g1,0deg));}
+ 100%{transform:translate(calc(-50% + var(--x2,0px)),calc(-50% + var(--y2,0px))) rotate(var(--g2,0deg));}
+}
+#pantalla-barajar h2{position:absolute!important;top:calc(44% + clamp(76px,14vh,116px));left:50%;transform:translateX(-50%);margin:0!important;z-index:5!important;white-space:nowrap;font-size:clamp(20px,3vw,30px);}
+@media(max-height:400px){#pantalla-barajar .ficha-revuelta{top:42%;}#pantalla-barajar h2{top:calc(42% + 80px)}}
+</style>
 <style id="domido-arranque-estilos">
 #domido-arranque{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 38%,#17314a 0%,#0b1729 48%,#050a13 100%);display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;transition:opacity .45s ease,visibility .45s ease;overflow:hidden}
 #domido-arranque.cerrando{opacity:0;visibility:hidden;pointer-events:none}
 #domido-arranque .arranque-caja{text-align:center;width:min(92vw,390px);display:flex;flex-direction:column;align-items:center;gap:14px}
-#domido-arranque .arranque-emblema{font-size:clamp(54px,17vw,90px);filter:drop-shadow(0 5px 22px rgba(0,188,212,.45));animation:domidoRespirar 1.35s ease-in-out infinite alternate}
+#domido-arranque .arranque-emblema{display:flex;align-items:center;justify-content:center;gap:12px;min-height:126px;filter:drop-shadow(0 5px 22px rgba(0,188,212,.45));animation:domidoRespirar 1.35s ease-in-out infinite alternate}
+#domido-arranque .arranque-bandera{font-size:clamp(58px,16vw,82px);line-height:1}
+#domido-arranque .arranque-domino{width:67px;height:122px;flex:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
 #domido-arranque .arranque-titulo{font-size:clamp(29px,9vw,44px);font-weight:1000;letter-spacing:3px;color:#fff;text-shadow:0 0 24px rgba(0,188,212,.45)}
 #domido-arranque .arranque-titulo span{color:#ff385d}
 #domido-arranque .arranque-texto{font-size:14px;font-weight:800;letter-spacing:1px;color:#e7f5ff}
 #domido-arranque .arranque-pista{font-size:12px;color:#a7bbd0}
 #domido-arranque .arranque-barra{height:7px;width:min(76vw,280px);background:#20364d;border-radius:30px;overflow:hidden;border:1px solid #31516a}
-#domido-arranque .arranque-progreso{height:100%;width:40%;background:linear-gradient(90deg,#00bcd4,#ffe18a,#ff3156);border-radius:30px;animation:domidoCarga 1.3s ease-in-out infinite}
+#domido-arranque .arranque-progreso{height:100%;width:40%;background:linear-gradient(90deg,#00bcd4,#ffe18a,#ff3156);border-radius:30px;animation:domidoCarga 2.8s ease-in-out infinite}
 @keyframes domidoCarga{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
 @keyframes domidoRespirar{to{transform:scale(1.08)}}
 @media(prefers-reduced-motion:reduce){#domido-arranque .arranque-emblema,#domido-arranque .arranque-progreso{animation:none}}
 </style>
 </head>
 <body class="ficha-blanco mesa-verde">
-<div id="domido-arranque" role="status" aria-live="polite" aria-label="Iniciando DOMI-DO"><div class="arranque-caja"><div class="arranque-emblema" aria-hidden="true">🇩🇴🎲</div><div class="arranque-titulo">DOMI<span>-DO</span></div><div class="arranque-texto">INICIANDO JUEGO...</div><div class="arranque-barra"><div class="arranque-progreso"></div></div><div class="arranque-pista">¡El dominó se vive aquí!</div></div></div>
+<div id="domido-arranque" role="status" aria-live="polite" aria-label="Iniciando DOMI-DO"><div class="arranque-caja"><div class="arranque-emblema" aria-label="Bandera dominicana y ficha doble seis"><span class="arranque-bandera" aria-hidden="true">🇩🇴</span><svg class="arranque-domino" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 132" role="img" aria-label="Ficha de dominó doble seis"><defs><linearGradient id="rdFichaBlanca" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#dce5ef"/></linearGradient></defs><rect x="3" y="3" width="66" height="126" rx="9" fill="url(#rdFichaBlanca)" stroke="#b4c1d0" stroke-width="3"/><path d="M9 66H63" stroke="#ce1126" stroke-width="4" stroke-linecap="round"/><circle cx="19" cy="17" r="4.6" fill="#002868"/><circle cx="53" cy="17" r="4.6" fill="#002868"/><circle cx="19" cy="33" r="4.6" fill="#002868"/><circle cx="53" cy="33" r="4.6" fill="#002868"/><circle cx="19" cy="49" r="4.6" fill="#002868"/><circle cx="53" cy="49" r="4.6" fill="#002868"/><circle cx="19" cy="79" r="4.6" fill="#002868"/><circle cx="53" cy="79" r="4.6" fill="#002868"/><circle cx="19" cy="95" r="4.6" fill="#002868"/><circle cx="53" cy="95" r="4.6" fill="#002868"/><circle cx="19" cy="111" r="4.6" fill="#002868"/><circle cx="53" cy="111" r="4.6" fill="#002868"/></svg></div><div class="arranque-titulo">DOMI<span>-DO</span></div><div class="arranque-texto">INICIANDO JUEGO...</div><div class="arranque-barra"><div class="arranque-progreso"></div></div><div class="arranque-pista">¡El dominó se vive aquí!</div></div></div>
 
 <style>
 #rd-splash-pwa{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 50% 35%,#1d4631,#071b14 75%);color:white;display:none;align-items:center;justify-content:center;text-align:center;font-family:system-ui,Arial,sans-serif;transition:opacity .35s ease}
@@ -1477,6 +1519,29 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
   <p style="font-size:11px;color:#c5c4ba">La inscripción es real en Firebase. El emparejamiento, los resultados verificados y las partidas de torneo se habilitarán en una siguiente fase.</p>
  </div>
 </div>
+        <!-- CONFIRMACIÓN DE PARTIDA PENDIENTE: NO BORRA SALAS DE OTROS JUGADORES -->
+        <div id="modal-decision-continuar" role="dialog" aria-modal="true" aria-labelledby="decision-continuar-titulo" style="display:none;position:fixed;inset:0;z-index:10050;align-items:center;justify-content:center;padding:18px;background:rgba(3,9,18,.82);backdrop-filter:blur(9px)">
+          <div class="decision-continuar-panel">
+            <div class="decision-continuar-icono">🁣</div>
+            <h2 id="decision-continuar-titulo">¿Continuar tu partida?</h2>
+            <p>Encontramos una mesa pendiente. ¿Quieres regresar con tus compañeros o quitarla de tu inicio?</p>
+            <div id="decision-continuar-detalle" class="decision-continuar-detalle">Sala online</div>
+            <button type="button" class="decision-continuar-si" onclick="window.confirmarDecisionContinuar()">✅ SÍ, VOLVER A LA MESA</button>
+            <button type="button" class="decision-continuar-no" onclick="window.descartarDecisionContinuar()">✕ NO, QUITAR DE MI INICIO</button>
+            <button type="button" class="decision-continuar-cancelar" onclick="window.cerrarDecisionContinuar()">Cancelar</button>
+          </div>
+        </div>
+<style id="estilos-decision-continuar">
+.decision-continuar-panel{width:min(100%,390px);border:1px solid rgba(61,225,205,.4);border-radius:24px;background:linear-gradient(155deg,#1c2b3b,#0c1524);box-shadow:0 24px 65px rgba(0,0,0,.75),0 0 28px rgba(0,213,214,.14);padding:27px 22px 20px;text-align:center;color:white;max-height:90dvh;overflow-y:auto}
+.decision-continuar-icono{font-size:45px;margin-bottom:9px;filter:drop-shadow(0 0 12px rgba(0,222,235,.45))}
+.decision-continuar-panel h2{font-size:22px;font-weight:900;margin:0 0 9px;color:#f4fafc}
+.decision-continuar-panel p{font-size:13px;line-height:1.5;color:#b9c9d7;margin:0 0 14px}
+.decision-continuar-detalle{border:1px solid rgba(94,212,232,.25);background:rgba(18,63,79,.3);border-radius:12px;padding:11px;margin-bottom:18px;font-size:13px;font-weight:800;color:#8de9f2}
+.decision-continuar-panel button{width:100%;border-radius:14px;padding:14px 10px;font-size:13px;font-weight:900;cursor:pointer;margin-bottom:10px;min-height:47px}
+.decision-continuar-si{border:0;background:linear-gradient(110deg,#11c7bb,#1785dc);color:#fff;box-shadow:0 7px 18px rgba(9,184,205,.25)}
+.decision-continuar-no{border:1px solid rgba(250,122,134,.55);background:rgba(170,44,65,.12);color:#ffb4be}
+.decision-continuar-cancelar{border:0;background:transparent;color:#a9b9c9;margin-bottom:0!important}
+</style>
         <!-- PANTALLA DE BIENVENIDA -->
         <div id="pantalla-bienvenida">
             <div class="caja-bienvenida">
@@ -1781,11 +1846,31 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
                         <strong>🎲 Salas disponibles</strong>
                         <span id="estado-lista-salas" class="estado-salas">Buscando salas...</span>
                     </div>
+                    <div class="rd-busqueda-salas">
+                        <input id="rd-buscar-sala" type="search" placeholder="🔎 Buscar sala (ej. DO-1702)" aria-label="Buscar sala por código" autocomplete="off" spellcheck="false">
+                        <button type="button" class="rd-ver-todas" onclick="window.rdAbrirTodasSalas()">VER TODAS LAS SALAS</button>
+                    </div>
                     <div id="lista-salas-publicas">
                         <div class="sin-salas">Cargando mesas públicas...</div>
                     </div>
                 </div>
                 <button type="button" class="btn-cerrar-ajustes" style="background: #333; color: white; border: none; margin-top: 10px;" onclick="window.cerrarModalMultijugador()">VOLVER</button>
+            </div>
+        </div>
+
+        <!-- EXPLORADOR DE SALAS ONLINE (NO ALTERA LA PARTIDA) -->
+        <div id="rd-modal-todas-salas" role="dialog" aria-modal="true" aria-label="Todas las salas disponibles">
+            <div class="rd-todas-panel">
+                <div class="rd-todas-cabecera">
+                    <h2>🎲 Todas las salas</h2>
+                    <button type="button" class="rd-cerrar-todas" onclick="window.rdCerrarTodasSalas()" aria-label="Cerrar">✕</button>
+                </div>
+                <div class="rd-busqueda-salas">
+                    <input id="rd-buscar-todas" type="search" placeholder="🔎 Escribe el código de la sala" aria-label="Buscar entre todas las salas" autocomplete="off" spellcheck="false">
+                </div>
+                <div id="rd-estado-todas">Cargando salas...</div>
+                <div id="rd-lista-todas"></div>
+                <button type="button" class="btn-cerrar-ajustes" onclick="window.rdCerrarTodasSalas()">CERRAR</button>
             </div>
         </div>
 
@@ -1941,12 +2026,6 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
                         <button type="button" class="btn-opcion btn-color" id="btn-mesa-noche" onclick="cambiarColorMesa('noche')"><span class="muestra-color muestra-m-noche"></span> 🌙 Noche caribeña</button>
                         <button type="button" class="btn-opcion btn-color" id="btn-mesa-isla" onclick="cambiarColorMesa('isla')"><span class="muestra-color muestra-m-isla"></span> 🏆 La Isla</button>
                     </div>
-                </div>
-
-                <div class="grupo-ajuste" style="border:1px solid rgba(255,193,7,.25); background:rgba(255,193,7,.05); border-radius:10px; padding:10px;">
-                    <label style="color:#ffd166;">🧹 Mantenimiento de salas</label>
-                    <div style="font-size:10px;color:#aeb7c4;line-height:1.45;margin:6px 0 9px;">Acceso con PIN. Esta acción borra TODAS las salas, incluso partidas activas. Úsala con precaución.</div>
-                    <button type="button" class="btn-opcion" id="btn-limpiar-salas" style="width:100%;border-color:#ff4d67;color:#ff8293;background:rgba(255,77,103,.10);" onclick="window.limpiarSalasManual()">🔐 VACIAR SALAS (PIN)</button>
                 </div>
 
                 <button type="button" class="btn-cerrar-ajustes" id="btn-guardar-ajustes" style="margin-top: 10px; background: rgba(0, 188, 212, 0.2); border: 1px solid var(--azul-rd); color: white;" onclick="accionBotonAjustes()">
@@ -3234,9 +3313,36 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             if (ganadorEquipo === 1) lanzarConfeti(4);
         }
 
-        function reiniciarPartidaCompleta() {
-            if (window.esMultijugador && window.miPuesto !== 1) {
-                mostrarToast("Esperando al anfitrión para la revancha...");
+        async function reiniciarPartidaCompleta() {
+            // La revancha online debe nacer en Firebase para TODOS los participantes.
+            // No reiniciar la mesa localmente antes de que llegue el nuevo reparto.
+            if (window.esMultijugador) {
+                if (!window.salaIdActual || !window.iniciarPartidaRed) {
+                    mostrarToast('No se encontró la sala. Vuelve a entrar.');
+                    return;
+                }
+                if (window.miPuesto !== 1) {
+                    mostrarToast('Solicitando revancha al anfitrión...');
+                    try {
+                        await window.rdSolicitarRevancha?.();
+                    } catch (e) {
+                        console.error('Solicitud de revancha:', e);
+                        mostrarToast('No se pudo solicitar la revancha.');
+                    }
+                    return;
+                }
+                const boton = document.querySelector('#modal-victoria .btn-jugar-nuevo');
+                if (boton?.disabled) return;
+                if (boton) boton.disabled = true;
+                try {
+                    await window.iniciarPartidaRed(true, false);
+                    mostrarToast('🎲 Revancha iniciada para toda la sala');
+                } catch (e) {
+                    console.error('Error al iniciar revancha:', e);
+                    mostrarToast('No se pudo iniciar la revancha. Revisa la conexión.');
+                } finally {
+                    if (boton) boton.disabled = false;
+                }
                 return;
             }
             
@@ -3800,13 +3906,34 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         }
 
         function crearAnimacionFichas() {
-            const cont = document.getElementById('fichas-animadas'); cont.innerHTML = '';
-            for(let i=0; i<28; i++) {
-                const f = document.createElement('div'); f.className = 'ficha-revuelta';
-                f.style.setProperty('--rx', (Math.random() * 260 - 130)); f.style.setProperty('--ry', (Math.random() * 260 - 130));
-                f.style.setProperty('--rrot', (Math.random() * 360)); f.style.setProperty('--rx2', (Math.random() * 260 - 130));
-                f.style.setProperty('--ry2', (Math.random() * 260 - 130)); f.style.setProperty('--rrot2', (Math.random() * 360));
-                cont.appendChild(f);
+            const cont = document.getElementById('fichas-animadas');
+            if (!cont) return;
+            cont.replaceChildren();
+            // Radio limitado por el tamaño real de la mesa: también funciona en móviles.
+            const ancho = cont.clientWidth || window.innerWidth;
+            const alto = cont.clientHeight || window.innerHeight;
+            const rx = Math.min(225, Math.max(65, ancho * 0.29));
+            const ry = Math.min(100, Math.max(36, alto * 0.18));
+            for (let i = 0; i < 28; i++) {
+                const ficha = document.createElement('div');
+                ficha.className = 'ficha-revuelta';
+                const ang = (i / 28) * Math.PI * 2;
+                const radio = 0.35 + (i % 7) / 9;
+                const x = Math.cos(ang) * rx * radio;
+                const y = Math.sin(ang) * ry * radio;
+                const px = (v) => `${Math.round(v)}px`;
+                ficha.style.setProperty('--x0', px(x));
+                ficha.style.setProperty('--y0', px(y));
+                ficha.style.setProperty('--x1', px(-x * .65 + Math.sin(i * 2) * 23));
+                ficha.style.setProperty('--y1', px(-y * .65 + Math.cos(i * 3) * 16));
+                ficha.style.setProperty('--x2', px(x * .8 + Math.cos(i * 3) * 18));
+                ficha.style.setProperty('--y2', px(y * .8 + Math.sin(i * 2) * 14));
+                ficha.style.setProperty('--g0', `${i * 17}deg`);
+                ficha.style.setProperty('--g1', `${i * 17 + 130}deg`);
+                ficha.style.setProperty('--g2', `${i * 17 + 275}deg`);
+                ficha.style.setProperty('--retraso', `${-(i % 9) * .12}s`);
+                ficha.style.setProperty('--orden', String(i + 1));
+                cont.appendChild(ficha);
             }
         }
 
@@ -3927,6 +4054,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, set, get, update, onValue, push, onDisconnect, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzLLZ9KzEe4nGFUfi7_YzgZro8oUCxJoU",
@@ -3941,6 +4069,24 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+        let promesaAutenticacion = null;
+        async function asegurarAutenticacion() {
+            if (auth.currentUser) return auth.currentUser;
+            if (!promesaAutenticacion) {
+                promesaAutenticacion = new Promise((resolve, reject) => {
+                    const cancelar = onAuthStateChanged(auth, usuario => {
+                        if (usuario) { cancelar(); resolve(usuario); }
+                        else { cancelar(); signInAnonymously(auth).then(r => resolve(r.user), reject); }
+                    }, reject);
+                }).catch(error => { promesaAutenticacion = null; throw error; });
+            }
+            return promesaAutenticacion;
+        }
+        // Autenticación disponible antes de crear, consultar o reservar salas.
+        window.domidoAutenticacion = asegurarAutenticacion;
+        asegurarAutenticacion().catch(error => console.warn('DOMI-DO: autenticación pendiente', error));
+
 
         // Torneos online: lectura remota previa para evitar abortar transacciones
         // cuando el caché local de Firebase devuelve null antes de cargar el servidor.
@@ -4001,8 +4147,59 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         let ultimoTimestampAccion = 0;
         window.jugadoresConectados = 0; 
 
+        // DOMI-DO 1.2: presencia por conexión, independiente de la propiedad del asiento.
+        // Un onDisconnect atrasado jamás escribe directamente sobre un asiento ya ocupado.
+        let rdPresenciaActual = null;
+        let rdCancelacionPresencia = null;
+        function rdNuevoToken() {
+            if (globalThis.crypto?.randomUUID) return crypto.randomUUID().replaceAll('-', '');
+            return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 16);
+        }
+        async function rdRegistrarPresencia(codigo, puesto, token) {
+            if (rdPresenciaActual) {
+                try { await onDisconnect(rdPresenciaActual).cancel(); } catch (_) {}
+            }
+            const ruta = ref(db, `salas/${codigo}/presencias/${puesto}/${token}`);
+            // Registrar primero el onDisconnect para evitar conexiones fantasma.
+            await onDisconnect(ruta).set({ conectado:false, actualizadoEn:Date.now() });
+            await set(ruta, { conectado:true, actualizadoEn:Date.now() });
+            rdPresenciaActual = ruta;
+        }
+        let rdRevisandoPresencias = false;
+        async function rdRevisarPresencias(codigo, sala) {
+            if (rdRevisandoPresencias || !sala?.jugadores) return;
+            rdRevisandoPresencias = true;
+            try {
+                for (const puesto of [1,2,3,4]) {
+                    const jugador = sala.jugadores[puesto];
+                    if (!jugador || jugador.isBot || !jugador.tokenConexion || jugador.conectado === false) continue;
+                    const registro = sala.presencias?.[puesto]?.[jugador.tokenConexion];
+                    if (!registro || registro.conectado !== false) continue;
+                    await runTransaction(ref(db, `salas/${codigo}/jugadores/${puesto}`), actual => {
+                        if (!actual || actual.isBot || actual.tokenConexion !== jugador.tokenConexion || actual.conectado === false) return;
+                        return {...actual, conectado:false};
+                    }, {applyLocally:false});
+                }
+            } catch (e) { console.warn('Presencia pendiente de sincronización', e); }
+            finally { rdRevisandoPresencias = false; }
+        }
+        async function rdSoyOcupanteActual() {
+            if (!window.salaIdActual || !window.miPuesto) return false;
+            const user = await asegurarAutenticacion();
+            const snap = await get(ref(db, `salas/${window.salaIdActual}/jugadores/${window.miPuesto}`));
+            const j = snap.val();
+            return !!(j && !j.isBot && j.conectado !== false && j.authUid === user.uid && j.uid === obtenerUidJugador());
+        }
+        async function rdEnviarAccionHumana(tipo, extra = {}) {
+            if (!(await rdSoyOcupanteActual())) throw Error('Tu asiento cambió. Vuelve a entrar a la sala.');
+            const accion = push(ref(db, `salas/${window.salaIdActual}/acciones`));
+            await set(accion, {tipo, puestoAbsoluto:window.miPuesto, ...extra, authUid:auth.currentUser.uid, uid:obtenerUidJugador(), timestamp:Date.now()});
+            return accion.key;
+        }
+
         window.crearSalaReal = async function() {
             try {
+                const usuarioFirebase = await asegurarAutenticacion();
                 let nombreRed = document.getElementById('input-nombre-red').value.trim();
                 if(!nombreRed) nombreRed = "Jugador 1";
                 let avatarRed = document.getElementById('input-avatar-red').value;
@@ -4012,6 +4209,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 // Crear anfitrión con identidad independiente de otras pestañas.
                 sessionStorage.setItem('dominoRD_uid_instancia', 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14));
                 sessionStorage.removeItem('dominoRD_sesion_instancia');
+                const tokenConexion = rdNuevoToken();
                 let codigo = null;
                 let salaCreada = false;
                 const configLocal = window.getConfiguracionJuego();
@@ -4024,7 +4222,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                             estado:'esperando', creadaEn:Date.now(), creadorNombre:nombreRed,
                             ultimaActividad:Date.now(), publica:true,
                             metaPuntos:configLocal.metaPuntos, modoRobar:configLocal.modoRobar,
-                            jugadores:{1:{nombre:nombreRed,avatar:avatarRed,listo:true,isBot:false,conectado:true,uid:obtenerUidJugador()}}
+                            jugadores:{1:{nombre:nombreRed,avatar:avatarRed,listo:true,isBot:false,conectado:true,uid:obtenerUidJugador(),authUid:usuarioFirebase.uid,tokenConexion}}
                         };
                     }, {applyLocally:false});
                     if (resultado.committed) {codigo=candidato;salaCreada=true;}
@@ -4040,8 +4238,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 document.getElementById('lobby-codigo').innerText = codigo;
 
                 // GESTIÓN DE DESCONEXIÓN: Si el creador se desconecta, se convierte en bot para no trabar la mesa
-                const miJugadorRef = ref(db, 'salas/' + codigo + '/jugadores/1');
-                await onDisconnect(miJugadorRef).update({ conectado: false });
+                await rdRegistrarPresencia(codigo, 1, tokenConexion);
 
                 escucharCambiosSala(codigo);
             } catch (error) { window.mostrarToast("Error creando sala."); }
@@ -4061,6 +4258,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
 
         window.unirseSalaReal = async function(codigoDirecto = null) {
             try {
+                const usuarioFirebase = await asegurarAutenticacion();
                 const inputCodigo = document.getElementById('input-codigo-sala');
                 const val = String(codigoDirecto || (inputCodigo ? inputCodigo.value : '')).trim().toUpperCase();
                 if(val.length < 4) { window.mostrarToast("Ingresa un código válido"); return; }
@@ -4082,6 +4280,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 // Cada entrada explícita es un jugador nuevo. Las pestañas duplicadas pueden
                 // heredar sessionStorage, por eso NO reutilizamos el UID ni un asiento previo.
                 const uidInvitado = 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14);
+                const tokenConexion = rdNuevoToken();
                 const salaReservaRef = ref(db, 'salas/' + val);
                 const reserva = await runTransaction(salaReservaRef, sala => {
                     if (!sala || !['esperando','jugando'].includes(sala.estado)) return;
@@ -4099,7 +4298,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                     // La mano, las acciones y la puntuación permanecen en sala.partida.
                     jugadores[asiento] = {
                         nombre: nombreRed, avatar: avatarRed, listo: true, isBot: false,
-                        botTemporal: false, conectado: true, uid: uidInvitado,
+                        botTemporal: false, conectado: true, uid: uidInvitado, authUid: usuarioFirebase.uid, tokenConexion,
                         ultimaConexion: Date.now()
                     };
                     // El nombre del creador también debe reflejar al ocupante actual
@@ -4130,8 +4329,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 document.getElementById('lobby-codigo').innerText = val;
 
                 // La reserva de puesto y la marca de actividad se guardaron atómicamente.
-                const miJugadorRef = ref(db, 'salas/' + val + '/jugadores/' + asientoLibre);
-                await onDisconnect(miJugadorRef).update({ conectado: false });
+                await rdRegistrarPresencia(val, asientoLibre, tokenConexion);
                 if (datosSala.estado === 'jugando') {
                     window.rdEntrandoEnCurso = true;
                     window.ultimaManoJugada = 0;
@@ -4144,9 +4342,17 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             }
         };
 
+        window.rdSolicitarRevancha = async function() {
+            if (!window.salaIdActual || !await rdSoyOcupanteActual()) throw Error('Asiento no válido');
+            await update(ref(db, 'salas/' + window.salaIdActual), {
+                solicitudRevancha: { puesto: window.miPuesto, momento: Date.now() }
+            });
+        };
+        let rdUltimaSolicitudRevancha = 0;
+
         window.iniciarPartidaRed = async function(esNuevaPartida = false, rellenarBots = true) {
             if (!window.miPuesto || !window.salaIdActual || !window.datosSala) return;
-            if (window.miPuesto !== 1) { window.mostrarToast('Solo el anfitrión puede iniciar la partida.'); return; }
+            if (window.miPuesto !== 1 || !(await rdSoyOcupanteActual())) { window.mostrarToast('Solo el anfitrión activo puede iniciar la partida.'); return; }
             
             let asientosDb = Object.keys(window.datosSala.jugadores).map(Number);
             
@@ -4194,8 +4400,10 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 turnoInicial = window.getUltimoGanadorRed() || asientosDb[0]; 
             }
 
-            let nuevaMano = (window.ultimaManoJugada || 0) + 1;
-            if (esNuevaPartida) nuevaMano = 1; 
+            let nuevaMano = Math.max(window.ultimaManoJugada || 0, Number(window.datosSala?.partida?.numeroMano || 0)) + 1;
+            // No volver a 1: los clientes detectan la nueva mano por número creciente.
+            // La puntuación sí se reinicia al comenzar una revancha.
+            
 
             const configLocal = window.getConfiguracionJuego();
             const salaRef = ref(db, 'salas/' + window.salaIdActual);
@@ -4203,9 +4411,11 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             await update(salaRef, { 
                 estado: 'jugando',
                 acciones: null,
+                solicitudRevancha: null,
                 ...(esNuevaPartida ? { marcador: { equipoImpar: 0, equipoPar: 0, actualizadoEn: Date.now() } } : {}),
                 partida: {
                     numeroMano: nuevaMano,
+                    idPartida: rdNuevoToken(),
                     esNuevaPartida: esNuevaPartida,
                     asientosActivos: asientosDb, 
                     manos: manosGeneradas,
@@ -4232,10 +4442,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         };
         window.enviarJugadaFirebase = async function(ficha, colocarIzquierda, esCapicua) {
             try {
-                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
-                const nuevaAccion = push(accionesRef);
-                const accionId = nuevaAccion.key;
-                await set(nuevaAccion, { tipo: 'JUGAR', puestoAbsoluto: window.miPuesto, ficha: ficha, colocarIzquierda: colocarIzquierda, esCapicua: esCapicua, timestamp: Date.now() });
+                const accionId = await rdEnviarAccionHumana('JUGAR', {ficha, colocarIzquierda, esCapicua});
                 // Si el evento de Firebase no vuelve, avisar sin duplicar la jugada.
                 setTimeout(() => {
                     if (window.bloqueoRed && window.rdUltimaAccionConfirmada !== accionId && window.esMultijugador) {
@@ -4247,22 +4454,19 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
 
         window.enviarPaseFirebase = async function() {
             try {
-                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
-                const nuevaAccion = push(accionesRef);
-                await set(nuevaAccion, { tipo: 'PASAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+                await rdEnviarAccionHumana('PASAR');
             } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
         };
 
         window.enviarRobarFirebase = async function() {
             try {
-                const accionesRef = ref(db, 'salas/' + window.salaIdActual + '/acciones');
-                const nuevaAccion = push(accionesRef);
-                await set(nuevaAccion, { tipo: 'ROBAR', puestoAbsoluto: window.miPuesto, timestamp: Date.now() });
+                await rdEnviarAccionHumana('ROBAR');
             } catch(e) { window.mostrarToast("Error enviando"); window.bloqueoRed = false; }
         };
 
         window.enviarReaccionFirebase = async function(texto) {
             try {
+                if (!(await rdSoyOcupanteActual())) return;
                 const refReacciones = ref(db, 'salas/' + window.salaIdActual + '/reacciones');
                 await push(refReacciones, {
                     puesto: window.miPuesto,
@@ -4274,6 +4478,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         
         window.enviarChatFirebase = async function(texto) {
             try {
+                if (!(await rdSoyOcupanteActual())) return;
                 const refChat = ref(db, 'salas/' + window.salaIdActual + '/chat');
                 await push(refChat, {
                     puesto: window.miPuesto,
@@ -4308,8 +4513,33 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             } catch(e) {}
         };
 
+        // Mostrar una decisión explícita antes de recuperar la sesión anterior.
         window.continuarPartidaInicio = function(){
+            const raw = sessionStorage.getItem('dominoRD_sesion_instancia');
+            if (!raw) { window.mostrarToast?.('No hay una partida pendiente.'); return; }
+            try {
+                const ses = JSON.parse(raw);
+                const detalle = document.getElementById('decision-continuar-detalle');
+                if (detalle) detalle.textContent = `Sala ${ses.codigo || 'online'} · Puesto ${ses.puesto || '—'}`;
+            } catch(e) { window.mostrarToast?.('No se pudo leer la partida pendiente.'); return; }
+            document.getElementById('modal-decision-continuar').style.display = 'flex';
+        };
+        window.cerrarDecisionContinuar = function(){
+            document.getElementById('modal-decision-continuar').style.display = 'none';
+        };
+        window.confirmarDecisionContinuar = function(){
+            window.cerrarDecisionContinuar();
             if (window.reconectarJugador) window.reconectarJugador();
+        };
+        window.descartarDecisionContinuar = function(){
+            // Solo olvidar el acceso guardado en este navegador: nunca borrar una sala compartida.
+            sessionStorage.removeItem('dominoRD_sesion_instancia');
+            const boton = document.getElementById('btn-continuar-inicio');
+            if (boton) boton.style.display = 'none';
+            const tarjeta = document.getElementById('reconexion-card');
+            if (tarjeta) tarjeta.style.display = 'none';
+            window.cerrarDecisionContinuar();
+            window.mostrarToast?.('Partida pendiente descartada de este dispositivo.');
         };
         function actualizarInicioDinamico(salas){
             let mesas=0,humanos=0;
@@ -4328,7 +4558,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 const ses=JSON.parse(raw);if(!ses.codigo||Date.now()-(ses.fecha||0)>24*60*60*1000)return;
                 const snap=await get(ref(db,`salas/${ses.codigo}`));if(!snap.exists())return;
                 const sala=snap.val(),j=sala.jugadores&&sala.jugadores[ses.puesto];
-                if(j&&j.uid===ses.uid&&!j.isBot){
+                if(j&&j.uid===ses.uid&&(!j.isBot||j.botTemporal===true)){
                     const b=document.getElementById('btn-continuar-inicio'),d=document.getElementById('detalle-continuar');
                     if(b)b.style.display='block';if(d)d.textContent=`${ses.codigo} · Tu puesto ${ses.puesto} está disponible`;
                 }
@@ -4362,8 +4592,30 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         window.toggleListo=async function(){if(!window.salaIdActual||!window.miPuesto)return;const me=window.datosSala?.jugadores?.[window.miPuesto];await update(ref(db,`salas/${window.salaIdActual}/jugadores/${window.miPuesto}`),{listo:!(me&&me.listo),ultimaConexion:Date.now()});};
         window.solicitarRevancha=async function(){if(!window.salaIdActual||!window.miPuesto)return;await set(ref(db,`salas/${window.salaIdActual}/revancha/${window.miPuesto}`),{acepta:true,nombre:window.datosSala?.jugadores?.[window.miPuesto]?.nombre||'Jugador',timestamp:Date.now()});window.mostrarToast('🔥 Solicitud de revancha enviada');};
         window.mostrarRankingSala=async function(){const el=document.getElementById('ranking-mini');if(!el)return;el.style.display=el.style.display==='none'?'block':'none';if(el.style.display==='none')return;const snap=await get(ref(db,'ranking'));const arr=Object.values(snap.val()||{}).sort((a,b)=>(b.puntos||0)-(a.puntos||0)).slice(0,5);el.innerHTML='<h4>🏆 Ranking semanal</h4>'+(arr.length?arr.map((x,i)=>`<div class="ranking-fila"><span>${i+1}. ${x.nombre||'Jugador'}</span><b>${x.puntos||0} pts</b></div>`).join(''):'<div class="ranking-fila"><span>Aún no hay puntuaciones</span></div>');};
-        window.reconectarJugador=async function(){const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;const ses=JSON.parse(raw);const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&j.uid===ses.uid&&!j.isBot){window.salaIdActual=ses.codigo;window.miPuesto=ses.puesto;window.esMultijugador=true;await update(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`),{nombre:ses.nombre,avatar:ses.avatar,uid:ses.uid,isBot:false,conectado:true,listo:true});escucharCambiosSala(ses.codigo);document.getElementById('ui-menu-principal').style.display='none';document.getElementById('ui-sala-espera').style.display='flex';window.mostrarToast('✅ Recuperaste tu asiento');}};
-        (async()=>{try{const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;const ses=JSON.parse(raw);if(Date.now()-ses.fecha>24*60*60*1000)return;const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&j.uid===ses.uid&&!j.isBot){const c=document.getElementById('reconexion-card');if(c)c.style.display='block';}}catch(e){console.warn(e)}})();
+        window.reconectarJugador = async function() {
+            try {
+                const raw = sessionStorage.getItem('dominoRD_sesion_instancia');
+                if (!raw) { window.mostrarToast('No hay una sesión anterior.'); return; }
+                const ses = JSON.parse(raw), usuario = await asegurarAutenticacion();
+                const tokenConexion = rdNuevoToken();
+                const puestoRef = ref(db, `salas/${ses.codigo}/jugadores/${ses.puesto}`);
+                const resultado = await runTransaction(puestoRef, j => {
+                    if (!j || j.uid !== ses.uid || j.authUid !== usuario.uid) return;
+                    if (j.isBot && j.botTemporal !== true) return;
+                    return {...j, nombre:ses.nombre, avatar:ses.avatar, isBot:false, botTemporal:false,
+                        conectado:true, listo:true, tokenConexion, ultimaConexion:Date.now()};
+                }, {applyLocally:false});
+                if (!resultado.committed) { window.mostrarToast('Tu asiento ya no está disponible. Puedes entrar a otra sala.'); return; }
+                window.salaIdActual=ses.codigo; window.miPuesto=Number(ses.puesto); window.esMultijugador=true;
+                await rdRegistrarPresencia(ses.codigo, ses.puesto, tokenConexion);
+                window.rdEntrandoEnCurso=true;
+                escucharCambiosSala(ses.codigo);
+                document.getElementById('ui-menu-principal').style.display='none';
+                document.getElementById('ui-sala-espera').style.display='flex';
+                window.mostrarToast('✅ Recuperaste tu asiento y tu partida');
+            } catch(e) { console.warn(e); window.mostrarToast('No se pudo recuperar el asiento. Comprueba tu conexión.'); }
+        };
+        (async()=>{try{const raw=sessionStorage.getItem('dominoRD_sesion_instancia');if(!raw)return;const ses=JSON.parse(raw);if(Date.now()-ses.fecha>24*60*60*1000)return;const snap=await get(ref(db,`salas/${ses.codigo}/jugadores/${ses.puesto}`));const j=snap.val();if(j&&j.uid===ses.uid&&(!j.isBot||j.botTemporal===true)){const c=document.getElementById('reconexion-card');if(c)c.style.display='block';}}catch(e){console.warn(e)}})();
 
         const TIEMPO_LIMPIEZA_SALA = 15 * 60 * 1000; // 15 minutos sin humanos
         let ultimaLimpiezaSalas = 0;
@@ -4387,57 +4639,105 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             if (tareas.length) await Promise.all(tareas);
         }
 
-        window.limpiarSalasManual = async function() {
-            // Este PIN es una barrera visual, NO una autorización segura: el JS público se puede inspeccionar.
-            // Para una protección real, validar permisos de administrador en Firebase/Auth y reglas del servidor.
-            const pinIngresado = window.prompt('🔐 ADMINISTRACIÓN DOMI-DO\nIntroduce el PIN para limpiar las salas:');
-            if (pinIngresado === null) return;
-            if (pinIngresado.trim() !== '0507') {
-                window.alert('❌ PIN incorrecto. No se ha eliminado ninguna sala.');
-                return;
-            }
-            const ok = window.confirm('⚠️ Se eliminarán TODAS las salas de Firebase, incluidas las partidas activas. Esta acción no se puede deshacer. ¿Confirmas?');
-            if (!ok) return;
-            const btn = document.getElementById('btn-limpiar-salas');
-            const textoOriginal = btn ? btn.innerHTML : '';
-            if (btn) { btn.disabled = true; btn.innerHTML = '⏳ VACIANDO SALAS...'; }
-            try {
-                const snap = await get(ref(db, 'salas'));
-                const total = snap.exists() ? Object.keys(snap.val() || {}).length : 0;
-                if (!total) {
-                    window.mostrarToast('✅ La lista de salas ya está vacía');
-                    return;
+        // Ambas vistas comparten una única suscripción Firebase, sin consultas adicionales.
+        let rdSalasVisibles = [];
+        function rdFiltroCodigo(texto) {
+            return String(texto || '').trim().toUpperCase().replace(/\s+/g, '');
+        }
+        function rdPintarSala(item, cont) {
+            const disponible = item.cupos > 0;
+            const fila = document.createElement('div');
+            fila.className = 'sala-publica';
+            const info = document.createElement('div');
+            info.className = 'sala-publica-info';
+            const codigo = document.createElement('div');
+            codigo.className = 'sala-publica-codigo';
+            codigo.textContent = item.codigo;
+            const detalle = document.createElement('div');
+            detalle.className = 'sala-publica-detalle';
+            detalle.textContent = `♟ ${item.humanos}/4 Jugadores · 🤖 ${item.bots} bots · 🪑 ${item.espacios} libres | `;
+            const estado = document.createElement('span');
+            estado.className = item.sala.estado === 'jugando' ? 'estado-jugando' : 'estado-esperando';
+            estado.textContent = item.sala.estado === 'jugando' ? 'Jugando' : 'Esperando';
+            detalle.appendChild(estado);
+            info.append(codigo, detalle);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-entrar-sala-lista';
+            btn.disabled = !disponible;
+            btn.textContent = disponible ? 'ENTRAR' : 'LLENA';
+            if (disponible) btn.addEventListener('click', async () => {
+                if (btn.disabled) return;
+                btn.disabled = true;
+                btn.textContent = 'ENTRANDO...';
+                try {
+                    const nombre = document.getElementById('input-nombre-red');
+                    if (!nombre || !nombre.value.trim()) {
+                        window.rdCerrarTodasSalas();
+                        window.prepararEntradaSala(item.codigo);
+                        window.mostrarToast('Escribe tu nombre para entrar a esta sala.');
+                        if (nombre) nombre.focus();
+                        return;
+                    }
+                    await window.unirseSalaReal(item.codigo);
+                    window.rdCerrarTodasSalas();
+                } catch (error) {
+                    console.warn('No se pudo entrar a la sala:', error);
+                    window.mostrarToast('No se pudo entrar. Comprueba si la sala sigue disponible.');
+                } finally {
+                    if (btn.isConnected) { btn.disabled = false; btn.textContent = 'ENTRAR'; }
                 }
-                // Reset total del nodo de salas. Ideal para limpiar las salas de prueba acumuladas.
-                await remove(ref(db, 'salas'));
-                window.salaIdActual = null;
-                window.miPuesto = null;
-                window.esMultijugador = false;
-                window.mostrarToast(`✅ ${total} salas eliminadas. Firebase quedó limpio.`);
-            } catch (error) {
-                console.error('Error vaciando salas:', error);
-                window.mostrarToast('❌ Firebase no permitió borrar las salas. Revisa permiso de escritura en /salas.');
-            } finally {
-                if (btn) { btn.disabled = false; btn.innerHTML = textoOriginal; }
+            });
+            fila.append(info, btn);
+            cont.appendChild(fila);
+        }
+        function rdActualizarListadosSalas() {
+            const busqueda = rdFiltroCodigo(document.getElementById('rd-buscar-sala')?.value);
+            const busquedaTodas = rdFiltroCodigo(document.getElementById('rd-buscar-todas')?.value);
+            const principal = document.getElementById('lista-salas-publicas');
+            const todas = document.getElementById('rd-lista-todas');
+            const filtradas = rdSalasVisibles.filter(item => rdFiltroCodigo(item.codigo).includes(busqueda));
+            const filtradasTodas = rdSalasVisibles.filter(item => rdFiltroCodigo(item.codigo).includes(busquedaTodas));
+            if (principal) {
+                principal.replaceChildren();
+                // El listado inicial se mantiene compacto; el modal permite ver todas.
+                filtradas.slice(0, 5).forEach(item => rdPintarSala(item, principal));
+                if (!filtradas.length) principal.innerHTML = '<div class="sin-salas">No se encontraron salas con ese código.</div>';
             }
+            if (todas) {
+                todas.replaceChildren();
+                filtradasTodas.forEach(item => rdPintarSala(item, todas));
+                if (!filtradasTodas.length) todas.innerHTML = '<div class="sin-salas">No se encontraron salas con ese código.</div>';
+            }
+            const estado = document.getElementById('estado-lista-salas');
+            if (estado) estado.textContent = rdSalasVisibles.length + (rdSalasVisibles.length === 1 ? ' sala visible' : ' salas visibles');
+            const estadoTodas = document.getElementById('rd-estado-todas');
+            if (estadoTodas) estadoTodas.textContent = `${filtradasTodas.length} de ${rdSalasVisibles.length} salas · Actualización en vivo`;
+        }
+        window.rdAbrirTodasSalas = function() {
+            const modal = document.getElementById('rd-modal-todas-salas');
+            if (modal) modal.classList.add('rd-visible');
+            rdActualizarListadosSalas();
+            document.getElementById('rd-buscar-todas')?.focus();
         };
-
+        window.rdCerrarTodasSalas = function() {
+            document.getElementById('rd-modal-todas-salas')?.classList.remove('rd-visible');
+        };
+        document.getElementById('rd-buscar-sala')?.addEventListener('input', rdActualizarListadosSalas);
+        document.getElementById('rd-buscar-todas')?.addEventListener('input', rdActualizarListadosSalas);
+        document.getElementById('rd-modal-todas-salas')?.addEventListener('click', e => {
+            if (e.target.id === 'rd-modal-todas-salas') window.rdCerrarTodasSalas();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') window.rdCerrarTodasSalas();
+        });
         function iniciarListadoSalasPublicas() {
-            const salasRef = ref(db, 'salas');
-            onValue(salasRef, (snapshot) => {
-                const cont = document.getElementById('lista-salas-publicas');
-                const estado = document.getElementById('estado-lista-salas');
-                if (!cont) return;
+            onValue(ref(db, 'salas'), snapshot => {
                 const salas = snapshot.val() || {};
-                limpiarSalasAbandonadas(salas);
-                const filas = Object.entries(salas)
+                rdSalasVisibles = Object.entries(salas)
                     .filter(([codigo, sala]) => {
                         if (!sala || sala.publica === false || !['esperando','jugando'].includes(sala.estado)) return false;
-                        const jugadoresSala = sala.jugadores || {};
-                        // Una sala vieja/cerrada suele quedar en Firebase con todos sus asientos como bots/desconectados.
-                        // Solo publicamos salas que todavía tengan por lo menos un jugador humano conectado.
-                        const tieneHumanoConectado = Object.values(jugadoresSala).some(j => j && j.isBot !== true && j.conectado !== false);
-                        return tieneHumanoConectado;
+                        return Object.values(sala.jugadores || {}).some(j => j && j.isBot !== true && j.conectado !== false);
                     })
                     .map(([codigo, sala]) => {
                         const jugadoresSala = sala.jugadores || {};
@@ -4448,56 +4748,18 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                             else if (j.isBot === true || j.conectado === false) bots++;
                             else humanos++;
                         }
-                        const cupos = sala.estado === 'jugando' ? bots : espacios;
-                        return { codigo, sala, humanos, bots, espacios, cupos };
+                        return { codigo, sala, humanos, bots, espacios, cupos: sala.estado === 'jugando' ? bots : espacios };
                     })
                     .sort((a,b) => (b.cupos - a.cupos) || ((b.sala.creadaEn || 0) - (a.sala.creadaEn || 0)));
-
-                estado.textContent = filas.length ? filas.length + (filas.length === 1 ? ' sala visible' : ' salas visibles') : 'Sin salas';
-                if (!filas.length) {
-                    cont.innerHTML = '<div class="sin-salas">No hay salas públicas ahora mismo. Puedes crear una.</div>';
-                    return;
-                }
-                cont.innerHTML = '';
-                filas.forEach(item => {
-                    const disponible = item.cupos > 0;
-                    const fila = document.createElement('div');
-                    fila.className = 'sala-publica';
-                    const detalleBots = ` · 🤖 ${item.bots} bot${item.bots === 1 ? '' : 's'} · 🪑 ${item.espacios} libre${item.espacios === 1 ? '' : 's'}`;
-                    fila.innerHTML = `
-                        <div class="sala-publica-info">
-                            <div><span class="sala-publica-codigo">${item.codigo}</span></div>
-                            <div class="sala-publica-detalle">♟ ${item.humanos}/4 Jugadores${detalleBots} | <span class="${item.sala.estado === 'jugando' ? 'estado-jugando' : 'estado-esperando'}">${item.sala.estado === 'jugando' ? 'Jugando' : 'Esperando'}</span></div>
-                        </div>
-                        <button type="button" class="btn-entrar-sala-lista" ${disponible ? '' : 'disabled'}>${disponible ? 'ENTRAR' : 'LLENA'}</button>`;
-                    const btn = fila.querySelector('button');
-                    if (disponible) btn.addEventListener('click', async () => {
-                        // El botón del listado debe entrar realmente, no limitarse a rellenar el código.
-                        if (btn.disabled) return;
-                        btn.disabled = true;
-                        const original = btn.textContent;
-                        btn.textContent = 'ENTRANDO...';
-                        try {
-                            const nombre = document.getElementById('input-nombre-red');
-                            if (!nombre || !nombre.value.trim()) {
-                                window.prepararEntradaSala(item.codigo);
-                                window.mostrarToast('Escribe tu nombre para entrar a esta sala.');
-                                if (nombre) nombre.focus();
-                                return;
-                            }
-                            await window.unirseSalaReal(item.codigo);
-                        } finally {
-                            if (btn.isConnected) { btn.disabled = false; btn.textContent = original; }
-                        }
-                    });
-                    cont.appendChild(fila);
-                });
-            }, (error) => {
-                console.error(error);
+                rdActualizarListadosSalas();
+            }, error => {
+                console.error('Error al listar salas:', error);
                 const estado = document.getElementById('estado-lista-salas');
-                const cont = document.getElementById('lista-salas-publicas');
                 if (estado) estado.textContent = 'No disponible';
-                if (cont) cont.innerHTML = '<div class="sin-salas">No se pudo cargar la lista. Revisa las reglas de lectura de Firebase.</div>';
+                for (const id of ['lista-salas-publicas', 'rd-lista-todas']) {
+                    const cont = document.getElementById(id);
+                    if (cont) cont.innerHTML = '<div class="sin-salas">No se pudo cargar la lista. Revisa la conexión y las reglas de Firebase.</div>';
+                }
             });
         }
         iniciarListadoSalasPublicas();
@@ -4572,10 +4834,18 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                 if (!datos) return;
                 
                 window.datosSala = datos;
+                if (window.miPuesto === 1 && datos.solicitudRevancha?.momento &&
+                    datos.solicitudRevancha.momento > rdUltimaSolicitudRevancha) {
+                    rdUltimaSolicitudRevancha = datos.solicitudRevancha.momento;
+                    if (datos.solicitudRevancha.puesto !== 1) {
+                        window.mostrarToast('🎲 Puesto ' + datos.solicitudRevancha.puesto + ' pide revancha. Pulsa JUGAR DE NUEVO.');
+                    }
+                }
                 renderLobbyPro(datos);
                 if (datos.marcador && !window.rdHidratandoPartida && window.rdRestaurarMarcador) {
                     window.rdRestaurarMarcador(datos.marcador.equipoImpar, datos.marcador.equipoPar);
                 }
+                rdRevisarPresencias(codigoSala, datos);
                 rdSustituirDesconectados(codigoSala, datos);
                 // Recalcular controlador cuando se desconecta el anfitrión.
                 if (datos.estado === 'jugando' && window.rdSoyControladorBots()) {
@@ -4638,6 +4908,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
                         
                         if (datos.partida.esNuevaPartida) {
                             window.resetearPuntosRed();
+                            document.getElementById('modal-victoria')?.classList.add('oculto');
                         }
 
                         window.setJuegoIniciado(true);
@@ -5269,10 +5540,10 @@ body.rd-ux-less-motion *,body.rd-ux-less-motion *::before,body.rd-ux-less-motion
   }
   // No bloquear la carga si falla algún recurso externo (Firebase, confeti, etc.).
   const inicio=Date.now();
-  function terminarConPausa(){setTimeout(terminarArranque,Math.max(0,1400-(Date.now()-inicio)))}
+  function terminarConPausa(){setTimeout(terminarArranque,Math.max(0,3500-(Date.now()-inicio)))}
   if(document.readyState==='complete')terminarConPausa();
   else window.addEventListener('load',terminarConPausa,{once:true});
-  setTimeout(terminarArranque,4000);
+  setTimeout(terminarArranque,6500);
   // El menú inicial siempre es vertical; la mesa pide horizontal al jugar.
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{
     if(typeof window.domidoSolicitarVertical==='function')window.domidoSolicitarVertical();
