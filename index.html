@@ -1212,7 +1212,7 @@ body.mesa-isla .zona-tapete { border-color:#9b7132; box-shadow:0 0 0 2px #e8c879
   border:1px solid rgba(38,34,28,.62);
   box-shadow:2px 5px 9px rgba(0,0,0,.55),inset 2px 2px 4px rgba(255,255,255,.85),inset -2px -2px 4px rgba(0,0,0,.15);
   scroll-snap-align:center;
-  touch-action:pan-x;
+  touch-action:none;
   transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,filter .18s ease !important;
 }
 #mi-mano .ficha .punto {width:clamp(6px,.85vw,9px);height:clamp(6px,.85vw,9px)}
@@ -1220,7 +1220,7 @@ body.mesa-isla .zona-tapete { border-color:#9b7132; box-shadow:0 0 0 2px #e8c879
 #mi-mano .ficha.seleccionada { transform:translateY(-12px) !important; }
 #mi-mano .ficha.jugable:active { transform:translateY(-9px) scale(1.035) !important; }
 #mi-mano .ficha.arrastrando { transform:scale(1.13) translateY(-13px) !important; }
-@keyframes domidoFichaPRO { 0%{opacity:.45;filter:brightness(1.45);transform:scale(.92)} 65%{opacity:1;filter:brightness(1.13);transform:scale(1.025)} 100%{opacity:1;filter:brightness(1);transform:scale(1)} }
+@keyframes domidoFichaPRO { 0%{opacity:.75;filter:brightness(1.22)} 100%{opacity:1;filter:brightness(1)} }
 #zoom-container .ficha-mesa.rd-ultima-colocada {animation:domidoFichaPRO .27s cubic-bezier(.2,.8,.25,1) both !important;}
 @media (max-width:430px) {
   #mi-mano { max-width:calc(100vw - 100px) !important;gap:4px !important;padding:6px 7px 5px !important; }
@@ -1234,6 +1234,26 @@ body.mesa-isla .zona-tapete { border-color:#9b7132; box-shadow:0 0 0 2px #e8c879
   #mi-mano .ficha {transition:none !important;}
 }
 /* === FIN MESA PRO === */
+/* DOMI-DO 1.2 · Corrección de fichas y arrastre */
+#zoom-container .ficha-mesa {
+  background:var(--ficha-bg) !important;
+  opacity:1;
+  overflow:hidden;
+  isolation:isolate;
+}
+#zoom-container .ficha-mesa .mitad, #zoom-container .ficha-mesa .linea-divisoria {position:relative;z-index:1}
+body > .ficha.arrastrando {
+  position:fixed !important;
+  z-index:99999 !important;
+  pointer-events:none !important;
+  touch-action:none !important;
+  background:var(--ficha-bg) !important;
+  opacity:1 !important;
+  transform:none !important;
+  margin:0 !important;
+  transition:none !important;
+}
+
 </style>
 <style id="domido-mesas-fix">
 /* Corrección: el estilo Mesa PRO fijaba un fondo verde con !important. */
@@ -2849,14 +2869,19 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             element.style.opacity = '0.2'; 
             crearZonasDrop(puedeIzq, puedeDer);
             
-            document.onpointermove = moverArrastre;
-            document.onpointerup = finalizarArrastre;
+            window.addEventListener('pointermove', moverArrastre, {passive:false});
+            window.addEventListener('pointerup', finalizarArrastre);
+            window.addEventListener('pointercancel', cancelarArrastre);
+            window.addEventListener('blur', cancelarArrastre);
+            document.addEventListener('visibilitychange', cancelarArrastre);
         }
 
         function moverArrastre(e) {
             if (!isDragging) return;
-            dragTile.style.left = (e.clientX - 24) + 'px';
-            dragTile.style.top = (e.clientY - 45) + 'px';
+            if (!dragTile) { cancelarArrastre(); return; }
+            if (e.cancelable) e.preventDefault();
+            dragTile.style.left = (e.clientX - dragTile.offsetWidth / 2) + 'px';
+            dragTile.style.top = (e.clientY - dragTile.offsetHeight / 2) + 'px';
             
             // GENERAR PARTÍCULA DE RASTRO MAGICO
             crearParticulaTrail(e.clientX, e.clientY);
@@ -2866,9 +2891,27 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             if (elemAbaixo && elemAbaixo.classList.contains('zona-drop')) { elemAbaixo.classList.add('hover'); }
         }
 
+        function limpiarArrastreVisual() {
+            isDragging = false;
+            window.removeEventListener('pointermove', moverArrastre);
+            window.removeEventListener('pointerup', finalizarArrastre);
+            window.removeEventListener('pointercancel', cancelarArrastre);
+            window.removeEventListener('blur', cancelarArrastre);
+            document.removeEventListener('visibilitychange', cancelarArrastre);
+            if (dragTile) { dragTile.remove(); dragTile = null; }
+            document.querySelectorAll('.zona-drop').forEach(z => z.remove());
+            const mano = document.getElementById('mi-mano');
+            if (mano) Array.from(mano.children).forEach(f => { f.style.opacity = ''; });
+        }
+
+        function cancelarArrastre() {
+            if (!isDragging) return;
+            limpiarArrastreVisual();
+        }
+
         function finalizarArrastre(e) {
             if (!isDragging) return;
-            isDragging = false; document.onpointermove = null; document.onpointerup = null;
+            if (!e || !Number.isFinite(e.clientX) || !Number.isFinite(e.clientY)) { cancelarArrastre(); return; }
             
             let draggedDist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
             let elemAbaixo = document.elementFromPoint(e.clientX, e.clientY);
@@ -2877,11 +2920,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             let soltadoEnDer = elemAbaixo && elemAbaixo.classList.contains('der');
             let soltadoEnCentro = elemAbaixo && elemAbaixo.classList.contains('centro');
 
-            dragTile.remove(); dragTile = null;
-            document.querySelectorAll('.zona-drop').forEach(z => z.remove());
-            
-            let miManoEl = document.getElementById('mi-mano');
-            if (miManoEl && miManoEl.children[dragTileIndex]) { miManoEl.children[dragTileIndex].style.opacity = '1'; }
+            limpiarArrastreVisual();
 
             if (juegoTerminado || turnoActual !== 1) return;
 
@@ -2930,6 +2969,7 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
         }
 
         function renderizarManos() {
+            if (isDragging) limpiarArrastreVisual();
             const miMano = document.getElementById('mi-mano'); miMano.innerHTML = ''; 
             
             // Asignar clase para controlar el estado visual del turno
