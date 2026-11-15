@@ -1357,8 +1357,26 @@ body.ficha-azul .punto, body.ficha-rojo .punto {
 #domido-giro-flotante:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media (max-height:420px){#domido-giro-flotante{width:37px;height:37px;top:5px;right:8px;border-radius:11px}#domido-giro-flotante svg{width:22px;height:22px}}
 </style>
+
+<style id="domido-arranque-estilos">
+#domido-arranque{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 38%,#17314a 0%,#0b1729 48%,#050a13 100%);display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;transition:opacity .45s ease,visibility .45s ease;overflow:hidden}
+#domido-arranque.cerrando{opacity:0;visibility:hidden;pointer-events:none}
+#domido-arranque .arranque-caja{text-align:center;width:min(92vw,390px);display:flex;flex-direction:column;align-items:center;gap:14px}
+#domido-arranque .arranque-emblema{font-size:clamp(54px,17vw,90px);filter:drop-shadow(0 5px 22px rgba(0,188,212,.45));animation:domidoRespirar 1.35s ease-in-out infinite alternate}
+#domido-arranque .arranque-titulo{font-size:clamp(29px,9vw,44px);font-weight:1000;letter-spacing:3px;color:#fff;text-shadow:0 0 24px rgba(0,188,212,.45)}
+#domido-arranque .arranque-titulo span{color:#ff385d}
+#domido-arranque .arranque-texto{font-size:14px;font-weight:800;letter-spacing:1px;color:#e7f5ff}
+#domido-arranque .arranque-pista{font-size:12px;color:#a7bbd0}
+#domido-arranque .arranque-barra{height:7px;width:min(76vw,280px);background:#20364d;border-radius:30px;overflow:hidden;border:1px solid #31516a}
+#domido-arranque .arranque-progreso{height:100%;width:40%;background:linear-gradient(90deg,#00bcd4,#ffe18a,#ff3156);border-radius:30px;animation:domidoCarga 1.3s ease-in-out infinite}
+@keyframes domidoCarga{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
+@keyframes domidoRespirar{to{transform:scale(1.08)}}
+@media(prefers-reduced-motion:reduce){#domido-arranque .arranque-emblema,#domido-arranque .arranque-progreso{animation:none}}
+</style>
 </head>
 <body class="ficha-blanco mesa-verde">
+<div id="domido-arranque" role="status" aria-live="polite" aria-label="Iniciando DOMI-DO"><div class="arranque-caja"><div class="arranque-emblema" aria-hidden="true">🇩🇴🎲</div><div class="arranque-titulo">DOMI<span>-DO</span></div><div class="arranque-texto">INICIANDO JUEGO...</div><div class="arranque-barra"><div class="arranque-progreso"></div></div><div class="arranque-pista">¡El dominó se vive aquí!</div></div></div>
+
 <style>
 #rd-splash-pwa{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 50% 35%,#1d4631,#071b14 75%);color:white;display:none;align-items:center;justify-content:center;text-align:center;font-family:system-ui,Arial,sans-serif;transition:opacity .35s ease}
 #rd-splash-pwa .rd-splash-imagen{width:116px;height:116px;object-fit:contain;border-radius:25px;box-shadow:0 8px 32px #0009}#rd-splash-pwa h1{font-size:clamp(28px,8vw,43px);margin:12px 0 6px;font-weight:900}#rd-splash-pwa h1 span{color:#f2384b}#rd-splash-pwa p{color:#f5cc76;font-weight:700}#rd-splash-pwa small{display:block;color:#c6d5cb;margin-top:12px}.rd-splash-ring{height:34px;width:34px;border-radius:50%;border:4px solid #2a503d;border-top-color:#4be1a5;animation:rdSplashSpin .8s linear infinite;margin:23px auto 0}@keyframes rdSplashSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.rd-splash-ring{animation:none}}
@@ -4899,10 +4917,11 @@ window.rdArena=(()=>{
   ${(state.trofeos||[]).length?`<p class="isla-premios">🎖️ Tus premios: ${state.trofeos.map(esc).join(' · ')}</p>`:''}
   <p class="isla-nota">Progreso guardado en este dispositivo. Los rivales juegan con la IA actual de DOMI-DO; las nuevas personalidades tácticas se incorporarán en una actualización posterior.</p>`;
  }
- function abrir(){if(typeof window.domidoSolicitarHorizontal==='function')window.domidoSolicitarHorizontal();state=load()||fresh();render();el('rd-arena').classList.remove('oculto');}
+ function abrir(){if(typeof window.domidoSolicitarVertical==='function')window.domidoSolicitarVertical();state=load()||fresh();render();el('rd-arena').classList.remove('oculto');}
  function cerrar(){el('rd-arena').classList.add('oculto');}
  function reiniciar(){state=state||load()||fresh();if(!confirm('¿Comenzar La Isla de Campeones desde cero? Se borrará solamente el progreso de este torneo IA.'))return;state=fresh();save();render();}
  function startMatch(){
+  if(typeof window.domidoSolicitarHorizontal==='function')window.domidoSolicitarHorizontal();
   // El torneo debe arrancar el motor local, incluso si había una sesión anterior.
   window.esMultijugador=false;
   const modalRed=el('modal-multijugador');if(modalRed)modalRed.classList.add('oculto');
@@ -4945,7 +4964,7 @@ window.rdArena=(()=>{
   }else if(gano){state.copaRonda++;if(state.copaRonda>=4){state.phase='champion';state.trofeos=state.trofeos||[];state.trofeos.push('🏆 Copa Nacional DOMI-DO');}}
   else state.derrotas=(state.derrotas||0)+1;
   if(state.phase!=='champion')state.phase='ready';
-  save();setTimeout(()=>{render();el('rd-arena').classList.remove('oculto');},1200);
+  save();setTimeout(()=>{render();el('rd-arena').classList.remove('oculto');if(typeof window.domidoSolicitarVertical==='function')window.domidoSolicitarVertical();},1200);
  }
  return {abrir,cerrar,reiniciar,accion,registrarResultado};
 })();
@@ -5172,27 +5191,40 @@ body.rd-ux-less-motion *,body.rd-ux-less-motion *::before,body.rd-ux-less-motion
     }catch(_){/* El navegador puede rechazar la solicitud; no bloquear el juego. */}
     return false;
   };
-  // Los inicios online se disparan desde controles distintos al inicio contra IA.
-  // Capturamos el gesto de los botones de comenzar partida sin afectar sus manejadores.
+  window.domidoSolicitarVertical=async function(){
+    try{
+      // Soltar el bloqueo horizontal antes de regresar a los menús.
+      if(screen.orientation?.unlock)screen.orientation.unlock();
+      if(document.fullscreenElement && document.exitFullscreen){
+        try{await document.exitFullscreen()}catch(_){}
+      }
+      if(screen.orientation?.lock){
+        try{await screen.orientation.lock('portrait');return true}catch(_){}
+      }
+    }catch(_){/* Navegadores que no admiten bloqueo de orientación */}
+    return false;
+  };
+  // Solo girar cuando se pulsa un control que inicia una partida real.
   document.addEventListener('click',function(e){
-    const b=e.target.closest?.('button');
-    if(!b)return;
+    const b=e.target.closest?.('button');if(!b)return;
     const action=(b.getAttribute('onclick')||'')+' '+(b.id||'')+' '+(b.textContent||'');
-    if(/(?:INICIAR SOLO CON|JUGAR \d+ HUMANOS|JUGAR CON \d+ BOTS|COMENZAR PARTIDA|LA ISLA DE DOMI-DO|TORNEOS IA|JUGAR VS IA|JUGAR EN LÍNEA|rdArena\.accion|rdArena\.abrir)/i.test(action)){
+    if(/(?:comenzarDesdeBienvenida|rdArena\.accion|INICIAR SOLO CON|JUGAR \d+ HUMANOS|JUGAR CON \d+ BOTS|COMENZAR PARTIDA|JUGAR DESAFÍO|INICIAR PARTIDA PENDIENTE)/i.test(action)){
       window.domidoSolicitarHorizontal();
     }
   },true);
-  // Primer toque en la pantalla inicial: intentar orientación horizontal para toda la app.
-  // Solo se solicita durante una interacción real, como exigen Android y los navegadores.
-  let orientacionSolicitadaEnInicio=false;
-  document.addEventListener('pointerdown',function(e){
-    if(orientacionSolicitadaEnInicio)return;
+  // Detectar vuelta a navegación y liberar el bloqueo de pantalla.
+  let enMesa=false;
+  const actualizarModo=()=>{
     const bienvenida=document.getElementById('pantalla-bienvenida');
-    if(!bienvenida||getComputedStyle(bienvenida).display==='none')return;
-    if(e.target.closest?.('#domido-giro-flotante'))return;
-    orientacionSolicitadaEnInicio=true;
-    window.domidoSolicitarHorizontal();
-  },{capture:true,passive:true});
+    const arena=document.getElementById('rd-arena');
+    const inicioVisible=!!bienvenida && getComputedStyle(bienvenida).display!=='none' && !bienvenida.classList.contains('desvanecer');
+    const arenaVisible=!!arena && !arena.classList.contains('oculto');
+    if((inicioVisible||arenaVisible)&&enMesa){enMesa=false;window.domidoSolicitarVertical()}
+    else if(!inicioVisible&&!arenaVisible)enMesa=true;
+  };
+  const observador=new MutationObserver(actualizarModo);
+  ['pantalla-bienvenida','rd-arena'].forEach(id=>{const node=document.getElementById(id);if(node)observador.observe(node,{attributes:true,attributeFilter:['style','class']})});
+  actualizarModo();
   let hideTimer;
   function mostrar(){
     const bienvenida=document.getElementById('pantalla-bienvenida');
@@ -5223,6 +5255,29 @@ body.rd-ux-less-motion *,body.rd-ux-less-motion *::before,body.rd-ux-less-motion
     }
     mostrar();
   });
+})();
+</script>
+
+<script id="domido-arranque-js">
+(function(){
+  'use strict';
+  function terminarArranque(){
+    const splash=document.getElementById('domido-arranque');
+    if(!splash)return;
+    splash.classList.add('cerrando');
+    setTimeout(()=>splash.remove(),550);
+  }
+  // No bloquear la carga si falla algún recurso externo (Firebase, confeti, etc.).
+  const inicio=Date.now();
+  function terminarConPausa(){setTimeout(terminarArranque,Math.max(0,1400-(Date.now()-inicio)))}
+  if(document.readyState==='complete')terminarConPausa();
+  else window.addEventListener('load',terminarConPausa,{once:true});
+  setTimeout(terminarArranque,4000);
+  // El menú inicial siempre es vertical; la mesa pide horizontal al jugar.
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{
+    if(typeof window.domidoSolicitarVertical==='function')window.domidoSolicitarVertical();
+  },{once:true});
+  else if(typeof window.domidoSolicitarVertical==='function')window.domidoSolicitarVertical();
 })();
 </script>
 </body>
