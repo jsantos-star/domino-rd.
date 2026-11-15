@@ -1,13 +1,13 @@
 {
-  "name": "DOMI-DO — Dominó Dominicano",
+  "name": "DOMI-DO",
   "short_name": "DOMI-DO",
-  "description": "DOMI-DO: el dominó se vive aquí. Juega contra la IA, con amigos y en La Isla.",
+  "description": "DOMI-DO: dominó dominicano, torneos IA y multijugador.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "portrait",
-  "background_color": "#071b14",
-  "theme_color": "#071b14",
+  "background_color": "#070a10",
+  "theme_color": "#00bcd4",
   "icons": [
     {
       "src": "icono-192.png",
