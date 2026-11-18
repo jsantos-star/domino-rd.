@@ -1234,6 +1234,23 @@ body.mesa-isla .zona-tapete { border-color:#9b7132; box-shadow:0 0 0 2px #e8c879
   #mi-mano .ficha {transition:none !important;}
 }
 /* === FIN MESA PRO === */
+/* DOMI-DO 1.2 · Ficha y puntos aparecen como una sola pieza. */
+#zoom-container .ficha-mesa.rd-ultima-colocada {
+  animation:none !important;
+  opacity:1 !important;
+}
+#zoom-container .ficha-mesa,
+body > .rd-ficha-vuelo .ficha-mesa {
+  background:var(--ficha-bg) !important;
+  opacity:1 !important;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  transform:translateZ(0);
+}
+body > .rd-ficha-vuelo .ficha-mesa .mitad,
+body > .rd-ficha-vuelo .ficha-mesa .linea-divisoria {
+  opacity:1 !important;
+}
 /* DOMI-DO 1.2 · Corrección de fichas y arrastre */
 #zoom-container .ficha-mesa {
   background:var(--ficha-bg) !important;
@@ -3171,12 +3188,15 @@ Si no aparece en la lista, escribe el código ${codigo} y pulsa ENTRAR.
             clon.style.setProperty('height', altoNativo + 'px', 'important');
             clon.style.setProperty('transform', 'none', 'important');
             const envoltura = document.createElement('div');
+            envoltura.className = 'rd-ficha-vuelo';
             envoltura.style.cssText = `position:fixed;left:${a.left+a.width/2}px;top:${a.top+a.height/2}px;width:0;height:0;z-index:9999;pointer-events:none;overflow:visible;`;
             const escalaFicha = document.createElement('div');
             escalaFicha.style.cssText = `position:absolute;left:${-anchoNativo/2}px;top:${-altoNativo/2}px;width:${anchoNativo}px;height:${altoNativo}px;transform:scale(${escala});transform-origin:center;`;
             escalaFicha.appendChild(clon);
             envoltura.appendChild(escalaFicha);
             document.body.appendChild(envoltura);
+            // Preparar fondo, bordes y puntos juntos antes de iniciar el vuelo.
+            void clon.offsetHeight;
             destino.style.visibility = 'hidden';
             const dx = (b.left+b.width/2)-(a.left+a.width/2);
             const dy = (b.top+b.height/2)-(a.top+a.height/2);
